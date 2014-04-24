@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
+		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
+		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -20,16 +23,11 @@
 		CCD9546F19074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
 		CCD9547719074299005EFE06 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CCD9547519074299005EFE06 /* InfoPlist.strings */; };
 		CCD9547919074299005EFE06 /* anonogramTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD9547819074299005EFE06 /* anonogramTests.m */; };
-		CCD9549919074BA3005EFE06 /* cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9548919074BA3005EFE06 /* cancel.png */; };
-		CCD9549A19074BA3005EFE06 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9548A19074BA3005EFE06 /* circle.png */; };
 		CCD9549B19074BA3005EFE06 /* comments-icon-614x460.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9548B19074BA3005EFE06 /* comments-icon-614x460.png */; };
-		CCD9549C19074BA3005EFE06 /* cross_red.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9548C19074BA3005EFE06 /* cross_red.png */; };
 		CCD9549D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9548D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png */; };
 		CCD9549E19074BA3005EFE06 /* glyphicons_003_user.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9548E19074BA3005EFE06 /* glyphicons_003_user.png */; };
-		CCD9549F19074BA3005EFE06 /* glyphicons_012_heart.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9548F19074BA3005EFE06 /* glyphicons_012_heart.png */; };
 		CCD954A019074BA3005EFE06 /* glyphicons_019_heart_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9549019074BA3005EFE06 /* glyphicons_019_heart_empty.png */; };
 		CCD954A119074BA3005EFE06 /* glyphicons_136_cogwheel.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9549119074BA3005EFE06 /* glyphicons_136_cogwheel.png */; };
-		CCD954A219074BA3005EFE06 /* glyphicons_197_remove.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9549219074BA3005EFE06 /* glyphicons_197_remove.png */; };
 		CCD954A319074BA3005EFE06 /* icon-letter-mail-hi.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9549319074BA3005EFE06 /* icon-letter-mail-hi.png */; };
 		CCD954A419074BA3005EFE06 /* instagram-512-2.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9549419074BA3005EFE06 /* instagram-512-2.png */; };
 		CCD954A519074BA3005EFE06 /* lockImage.png in Resources */ = {isa = PBXBuildFile; fileRef = CCD9549519074BA3005EFE06 /* lockImage.png */; };
@@ -92,6 +90,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
+		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
+		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -110,16 +111,11 @@
 		CCD9547419074299005EFE06 /* anonogramTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "anonogramTests-Info.plist"; sourceTree = "<group>"; };
 		CCD9547619074299005EFE06 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CCD9547819074299005EFE06 /* anonogramTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = anonogramTests.m; sourceTree = "<group>"; };
-		CCD9548919074BA3005EFE06 /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel.png; sourceTree = "<group>"; };
-		CCD9548A19074BA3005EFE06 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circle.png; sourceTree = "<group>"; };
 		CCD9548B19074BA3005EFE06 /* comments-icon-614x460.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "comments-icon-614x460.png"; sourceTree = "<group>"; };
-		CCD9548C19074BA3005EFE06 /* cross_red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cross_red.png; sourceTree = "<group>"; };
 		CCD9548D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "facebook-70251b04a4be865178ab592bc9586c83.png"; sourceTree = "<group>"; };
 		CCD9548E19074BA3005EFE06 /* glyphicons_003_user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_003_user.png; sourceTree = "<group>"; };
-		CCD9548F19074BA3005EFE06 /* glyphicons_012_heart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_012_heart.png; sourceTree = "<group>"; };
 		CCD9549019074BA3005EFE06 /* glyphicons_019_heart_empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_019_heart_empty.png; sourceTree = "<group>"; };
 		CCD9549119074BA3005EFE06 /* glyphicons_136_cogwheel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_136_cogwheel.png; sourceTree = "<group>"; };
-		CCD9549219074BA3005EFE06 /* glyphicons_197_remove.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_197_remove.png; sourceTree = "<group>"; };
 		CCD9549319074BA3005EFE06 /* icon-letter-mail-hi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-letter-mail-hi.png"; sourceTree = "<group>"; };
 		CCD9549419074BA3005EFE06 /* instagram-512-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "instagram-512-2.png"; sourceTree = "<group>"; };
 		CCD9549519074BA3005EFE06 /* lockImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lockImage.png; sourceTree = "<group>"; };
@@ -349,16 +345,14 @@
 		CCD9548819074BA3005EFE06 /* icons */ = {
 			isa = PBXGroup;
 			children = (
-				CCD9548919074BA3005EFE06 /* cancel.png */,
-				CCD9548A19074BA3005EFE06 /* circle.png */,
+				CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */,
+				CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */,
+				CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */,
 				CCD9548B19074BA3005EFE06 /* comments-icon-614x460.png */,
-				CCD9548C19074BA3005EFE06 /* cross_red.png */,
 				CCD9548D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png */,
 				CCD9548E19074BA3005EFE06 /* glyphicons_003_user.png */,
-				CCD9548F19074BA3005EFE06 /* glyphicons_012_heart.png */,
 				CCD9549019074BA3005EFE06 /* glyphicons_019_heart_empty.png */,
 				CCD9549119074BA3005EFE06 /* glyphicons_136_cogwheel.png */,
-				CCD9549219074BA3005EFE06 /* glyphicons_197_remove.png */,
 				CCD9549319074BA3005EFE06 /* icon-letter-mail-hi.png */,
 				CCD9549419074BA3005EFE06 /* instagram-512-2.png */,
 				CCD9549519074BA3005EFE06 /* lockImage.png */,
@@ -519,9 +513,10 @@
 				CCD954A819074BA3005EFE06 /* twitter_logo_white.png in Resources */,
 				CCD954A419074BA3005EFE06 /* instagram-512-2.png in Resources */,
 				CCD9546619074299005EFE06 /* Images.xcassets in Resources */,
-				CCD954A219074BA3005EFE06 /* glyphicons_197_remove.png in Resources */,
+				CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */,
 				CCD954DA19074E2B005EFE06 /* requestAccess.php in Resources */,
 				CCD9545819074299005EFE06 /* InfoPlist.strings in Resources */,
+				CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */,
 				CCD9549D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png in Resources */,
 				CCD9551A1908B9ED005EFE06 /* Main.storyboard in Resources */,
 				CCD954D419074E2B005EFE06 /* MKStoreKitConfigs.plist in Resources */,
@@ -529,11 +524,9 @@
 				CCD954A119074BA3005EFE06 /* glyphicons_136_cogwheel.png in Resources */,
 				CCD954D719074E2B005EFE06 /* AddDevice.html in Resources */,
 				CCD954A619074BA3005EFE06 /* more-512.png in Resources */,
-				CCD9549A19074BA3005EFE06 /* circle.png in Resources */,
-				CCD9549C19074BA3005EFE06 /* cross_red.png in Resources */,
-				CCD9549919074BA3005EFE06 /* cancel.png in Resources */,
 				CCD954A019074BA3005EFE06 /* glyphicons_019_heart_empty.png in Resources */,
 				CCD954D819074E2B005EFE06 /* DBSetup.sql in Resources */,
+				CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */,
 				CCD954DB19074E2B005EFE06 /* verifyProduct.php in Resources */,
 				CCD9550F19075001005EFE06 /* TapjoyResources.bundle in Resources */,
 				CCD954D919074E2B005EFE06 /* featureCheck.php in Resources */,
@@ -542,7 +535,6 @@
 				CCD954A719074BA3005EFE06 /* square.png in Resources */,
 				CCD954A319074BA3005EFE06 /* icon-letter-mail-hi.png in Resources */,
 				CCD9549B19074BA3005EFE06 /* comments-icon-614x460.png in Resources */,
-				CCD9549F19074BA3005EFE06 /* glyphicons_012_heart.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

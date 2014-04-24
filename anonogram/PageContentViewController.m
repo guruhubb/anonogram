@@ -79,8 +79,15 @@
     
     Cell *cell = [tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
     
-//    cell.pageContent.text = [_pageContent objectAtIndex:indexPath.row];
+    cell.pageContent.text = [_pageContent objectAtIndex:indexPath.row];
+    
     return cell;
+}
+- (IBAction)likeAction:(id)sender {
+    
+}
+
+- (IBAction)flagAction:(id)sender {
 }
 
 

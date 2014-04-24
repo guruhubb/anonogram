@@ -10,5 +10,7 @@
 
 @interface Cell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *pageContent;
+@property (weak, nonatomic) IBOutlet UILabel *likeCount;
+@property (weak, nonatomic) IBOutlet UILabel *timestamp;
 
 @end

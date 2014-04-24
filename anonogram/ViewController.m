@@ -19,7 +19,7 @@
     [super viewDidLoad];
 	// Create the data model
     _pageTitles = @[@"Over 200 Tips and Tricks", @"Discover Hidden Features", @"Bookmark Favorite Tip", @"Free Regular Update"];
-    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
+//    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
     
     // Create page view controller
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageViewController"];
@@ -70,18 +70,18 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
-    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(compose)];
-    UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(compose)];
+    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
+    UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
-
+   
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
     if (index==0)
         self.navigationItem.title= @"ANONOGRAM";
     else
         self.navigationItem.title= [NSString stringWithFormat:@"Page %d",index];
-    if (index==0) self.navigationItem.rightBarButtonItem = barButton1;
-    else self.navigationItem.rightBarButtonItem = barButton2;
+    if (index==0) self.navigationItem.leftBarButtonItem = barButton1;
+    else self.navigationItem.leftBarButtonItem = barButton2;
 
     if ((index == 0) || (index == NSNotFound)) {
         return nil;
@@ -93,16 +93,22 @@
 - (void) compose {
     
 }
+- (void) goHome {
+    
+}
+- (void) goToSettings{
+    
+}
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
-    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(compose)];
-    UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(compose)];
+    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
+    UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
     self.navigationItem.title= [NSString stringWithFormat:@"Page %d",index];
-    if (index==0) self.navigationItem.rightBarButtonItem = barButton1;
-    else self.navigationItem.rightBarButtonItem = barButton2;
+    if (index==0) self.navigationItem.leftBarButtonItem = barButton1;
+    else self.navigationItem.leftBarButtonItem = barButton2;
 
     if (index == NSNotFound) {
         return nil;
