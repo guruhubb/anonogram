@@ -1,12 +1,17 @@
 //
 //  AppDelegate.h
-//  anonogram
+//  One Frame
 //
-//  Created by Saswata Basu on 4/22/14.
+//  Created by Saswata Basu on 3/18/14.
 //  Copyright (c) 2014 Saswata Basu. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import <Tapjoy/Tapjoy.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+#import "MKStoreManager.h"
+#import "Flurry.h"
+
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
