@@ -70,6 +70,10 @@
     [txtChat addSubview:label];
     [self createInputAccessoryView];
     [self.view addSubview:txtChat];
+    _searchBarButton.hidden=YES;
+//    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
+//    [txtChat setKeyboardType:UIKeyboardTypeTwitter];
+
 //    if (currentIndex==5 || currentIndex == 6){
 //        searchBar.userInteractionEnabled=YES;
 //        _searchButton.hidden=NO;
@@ -81,7 +85,6 @@
     
 //    [searchBar setFrame:CGRectMake(0, screenSpecificSetting(200+64+44, 114+64+44), 320, 44)];
 //    searchBar.delegate=self;
-    _searchBarButton.hidden=YES;
 //    [self.view addSubview:searchBar];
     
 }
@@ -114,7 +117,10 @@
     if (([self.pageTitles count] == 0) || (index >= [self.pageTitles count])) {
         return nil;
     }
-    
+    if (!(currentIndex==5 || currentIndex ==6)){
+        _searchBarButton.hidden=YES;
+        [_searchBarButton resignFirstResponder];
+    }
     // Create a new view controller and pass suitable data.
     PageContentViewController *pageContentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageContentViewController"];
 //    pageContentViewController.imageFile = self.pageImages[index];
@@ -132,7 +138,10 @@
     UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
-   
+    _searchBarButton.hidden=YES;
+    txtChat.hidden=YES;
+    [_searchBarButton resignFirstResponder];
+    [txtChat resignFirstResponder];
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
     currentIndex = index;
 //    if (index==0)
@@ -213,6 +222,10 @@
     UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
+    _searchBarButton.hidden=YES;
+    txtChat.hidden=YES;
+    [_searchBarButton resignFirstResponder];
+    [txtChat resignFirstResponder];
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
     currentIndex = index;
     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
@@ -280,9 +293,15 @@
 
 }
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar{
+    if(![searchBar.text isEqualToString:@""]){
+
     NSString *string  =[NSString stringWithFormat:@"%@", searchBar.text ];
     _pageTitles[currentIndex]= string;
      self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
+    }
+    _searchBarButton.hidden=NO;
+    [searchBar resignFirstResponder];
+
 //    searchBook=searchBar.text;
 //    firstTimeSearch = YES;
 }
