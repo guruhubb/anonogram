@@ -1,6 +1,6 @@
 //
 //  SettingVC.m
-//  One Frame
+//  Anonogram
 //
 //  Created by Saswata Basu on 3/21/14.
 //  Copyright (c) 2014 Saswata Basu. All rights reserved.
@@ -32,14 +32,14 @@
 {
     [super viewDidLoad];
     defaults = [NSUserDefaults standardUserDefaults];
-    CGRect frame = CGRectMake(0, 0, 125, 40);
-    UILabel *label = [[UILabel alloc] initWithFrame:frame];
-    label.backgroundColor = [UIColor clearColor];
-    label.font = [UIFont systemFontOfSize:18];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.textColor = [UIColor whiteColor];
-    label.text = @"SETTINGS";
-    self.navigationItem.titleView = label;
+//    CGRect frame = CGRectMake(0, 0, 125, 40);
+//    UILabel *label = [[UILabel alloc] initWithFrame:frame];
+//    label.backgroundColor = [UIColor clearColor];
+//    label.font = [UIFont systemFontOfSize:18];
+//    label.textAlignment = NSTextAlignmentCenter;
+//    label.textColor = [UIColor whiteColor];
+//    label.text = @"SETTINGS";
+//    self.navigationItem.titleView = label;
     editArr = [[NSArray alloc]initWithObjects:
                @"Photo Background Color",@"Auto-Save to Camera Roll",@"Add Watermark",@"Output Pixel format",
                @"Follow us on Instagram", @"Like us on Facebook",@"Follow us on Twitter",
@@ -49,7 +49,10 @@
 
     
 }
-
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
 
 
 - (void)rateApp {
@@ -92,7 +95,7 @@
     [pickerMail setSubject:@"Customer Feedback"];
     [pickerMail setToRecipients:[NSArray arrayWithObject:@"oneframeapp@yahoo.com"]];
     // Fill out the email body text
-    NSString *emailBody = @"Hi, I have the following feedback on One Frame...";
+    NSString *emailBody = @"Hi, I have the following feedback on Anonogram...";
     [pickerMail setMessageBody:emailBody isHTML:NO];
     [[UINavigationBar appearance] setTintColor:[UIColor blueColor]];
 
@@ -421,8 +424,6 @@
         [defaults setBool:NO forKey:kFeature2];
     
 }
-
-
 
 
 -(void)frameActionSettings

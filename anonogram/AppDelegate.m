@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  One Frame
+//  Anonogram
 //
 //  Created by Saswata Basu on 3/18/14.
 //  Copyright (c) 2014 Saswata Basu. All rights reserved.
@@ -23,51 +23,13 @@
 //					   secretKey:@"LXEMsdurBKZdub6vA7OA" options:@{ TJC_OPTION_ENABLE_LOGGING : @(YES) }];
     
  
-//    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];  //text color on nav bar
-//
-//    [[UINavigationBar appearance] setBackgroundImage:[[UIImage alloc] init] forBarMetrics:UIBarMetricsDefault];
-//    [[UINavigationBar appearance] setShadowImage:[[UIImage alloc] init]];
-
-
     [MKStoreManager sharedManager];
     
-    //create album
-//    NSString *albumName = @"One Frame";
-//    __block BOOL albumFound = NO;
-//    ALAssetsLibrary *library = [AppDelegate defaultAssetsLibrary];
-//    [library enumerateGroupsWithTypes:ALAssetsGroupAlbum
-//                           usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-//                               if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:albumName]) {
-//                                   NSLog(@"found album %@", albumName);
-//                                   albumFound=YES;
-//                               }
-//                           }
-//                         failureBlock:^(NSError* error) {
-//                             NSLog(@"failed to enumerate albums:\nError: %@", [error localizedDescription]);
-//                         }];
-//    
-//    if (!albumFound){
-//        [library addAssetsGroupAlbumWithName:albumName
-//                                 resultBlock:^(ALAssetsGroup *group) {
-//                                 }
-//                                failureBlock:^(NSError *error) {
-//                                    NSLog(@"error adding album");
-//                                }];
-//    }
-//    [[MKStoreManager sharedManager] removeAllKeychainData];  //test purpose to reset in-app purchase
+ //    [[MKStoreManager sharedManager] removeAllKeychainData];  //test purpose to reset in-app purchase
 
     return YES;
 }
 #pragma mark - assets
-//+ (ALAssetsLibrary *)defaultAssetsLibrary
-//{
-//    static dispatch_once_t pred = 0;
-//    static ALAssetsLibrary *library = nil;
-//    dispatch_once(&pred, ^{
-//        library = [[ALAssetsLibrary alloc] init];
-//    });
-//    return library;
-//}
 
 -(void)tjcConnectSuccess:(NSNotification*)notifyObj
 {

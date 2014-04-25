@@ -26,11 +26,18 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="ANONOGRAM" id="ZwE-XD-9MZ">
+                        <barButtonItem key="backBarButtonItem" title=" " id="50C-kh-6U5"/>
                         <barButtonItem key="leftBarButtonItem" image="glyphicons_136_cogwheel.png" id="RG8-Lt-fTg">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <segue destination="OwT-Og-lfv" kind="push" identifier="goToSettings" id="I6a-6O-mza"/>
+                            </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Ex5-Q7-ttI">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="composeAction:" destination="vXZ-lx-hvc" id="DDB-gq-dLS"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                 </viewController>
@@ -46,35 +53,35 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="100" sectionHeaderHeight="22" sectionFooterHeight="22" id="415-cX-shi">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="200" sectionHeaderHeight="22" sectionFooterHeight="22" id="415-cX-shi">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="anonogramCell" id="RPh-9o-vNk" customClass="Cell">
-                                        <rect key="frame" x="0.0" y="22" width="320" height="100"/>
+                                        <rect key="frame" x="0.0" y="22" width="320" height="200"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RPh-9o-vNk" id="1CQ-db-1r3">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="99"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="199"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SKP-jW-gl2">
-                                                    <rect key="frame" x="15" y="0.0" width="290" height="70"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SKP-jW-gl2">
+                                                    <rect key="frame" x="15" y="3" width="290" height="180"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <string key="text">How many characters can I write ?  That is the question for us right now?  I think we are good with 140 characters.  What do you think? </string>
-                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                                    <string key="text">How many characters can I write ?  That is the question for us right now?  I think we are good with 140 characters.  What do you think?  There are 35 characters in each line </string>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2m ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Gn6-jG-5yD">
-                                                    <rect key="frame" x="255" y="68" width="50" height="21"/>
+                                                    <rect key="frame" x="255" y="174" width="50" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" alpha="0.49999999999999961" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="pEN-RQ-Ao2">
-                                                    <rect key="frame" x="172" y="65" width="50" height="30"/>
+                                                <button opaque="NO" alpha="0.24999999999999967" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="pEN-RQ-Ao2">
+                                                    <rect key="frame" x="176" y="171" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="20" minY="9" maxX="20" maxY="9"/>
                                                     <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
@@ -83,12 +90,12 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" alpha="0.59999999999999964" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Yf7-e4-VNw">
-                                                    <rect key="frame" x="15" y="64" width="56" height="30"/>
+                                                    <rect key="frame" x="15" y="170" width="56" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="15" maxY="0.0"/>
                                                     <state key="normal" title="+">
-                                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
@@ -96,14 +103,14 @@
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="340k" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="54b-Qi-BK2" userLabel="Label - #likes">
-                                                    <rect key="frame" x="15" y="69" width="50" height="21"/>
+                                                    <rect key="frame" x="15" y="175" width="50" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" alpha="0.49999999999999961" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="7dy-Nn-uIz">
-                                                    <rect key="frame" x="95" y="65" width="50" height="30"/>
+                                                <button opaque="NO" alpha="0.24999999999999967" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="7dy-Nn-uIz">
+                                                    <rect key="frame" x="97" y="170" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="17" minY="9" maxX="17" maxY="9"/>
                                                     <state key="normal" title="Share" image="glyphicons_222_share.png">
@@ -118,6 +125,7 @@
                                         <connections>
                                             <outlet property="likeCount" destination="54b-Qi-BK2" id="Ods-67-SDP"/>
                                             <outlet property="pageContent" destination="SKP-jW-gl2" id="LGz-h5-HAh"/>
+                                            <outlet property="share" destination="7dy-Nn-uIz" id="sZR-1e-dI2"/>
                                             <outlet property="timestamp" destination="Gn6-jG-5yD" id="8Bv-yY-Kcs"/>
                                         </connections>
                                     </tableViewCell>
@@ -154,7 +162,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Wcj-rQ-Pww">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="1" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="24"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -270,7 +278,14 @@
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title=" " id="yCz-lg-Lh5" userLabel="Navigation Item -"/>
+                    <navigationItem key="navigationItem" title=" " id="yCz-lg-Lh5" userLabel="Navigation Item -">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="Khh-iG-crL">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <action selector="cancel:" destination="zUk-ta-EmQ" id="Oy4-9T-rej"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="imageView1" destination="4a8-BM-H3p" id="2fs-By-heB"/>
                         <outlet property="imageView2" destination="gNV-l7-eGa" id="V7H-Bf-bXE"/>
@@ -292,7 +307,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="dz1-nv-YM0">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.68627452850000004" green="0.74509805439999999" blue="0.082352943720000002" alpha="1" colorSpace="deviceRGB"/>
+                        <color key="barTintColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </textAttributes>
@@ -306,12 +321,12 @@
             </objects>
             <point key="canvasLocation" x="1887" y="152"/>
         </scene>
-        <!--SettingVC - Settings-->
+        <!--SettingVC - SETTINGS-->
         <scene sceneID="gLl-bD-nYf">
             <objects>
-                <tableViewController title="Settings" id="OwT-Og-lfv" customClass="SettingVC" sceneMemberID="viewController">
+                <tableViewController title="SETTINGS" id="OwT-Og-lfv" customClass="SettingVC" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="JCd-Xq-aGs">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -330,7 +345,9 @@
                             <outlet property="delegate" destination="OwT-Og-lfv" id="NXb-Dt-9MK"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="st5-4Q-zyy"/>
+                    <navigationItem key="navigationItem" title="SETTINGS" id="st5-4Q-zyy">
+                        <barButtonItem key="backBarButtonItem" title=" " id="zjm-Jf-kM5"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="settingsTableView" destination="JCd-Xq-aGs" id="nAs-2A-8Pd"/>
                     </connections>
@@ -351,6 +368,7 @@
         <image name="more-512.png" width="512" height="512"/>
         <image name="twitter_logo_white.png" width="432" height="297"/>
     </resources>
+    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

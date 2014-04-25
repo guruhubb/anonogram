@@ -1,6 +1,6 @@
 //
 //  shareViewController.m
-//  One Frame
+//  Anonogram
 //
 //  Created by Saswata Basu on 3/23/14.
 //  Copyright (c) 2014 Saswata Basu. All rights reserved.
@@ -37,7 +37,8 @@
     label.text = @"SHARE";
     self.navigationItem.titleView = label;
 	// Do any additional setup after loading the view.
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"CANCEL" style:UIBarButtonItemStyleBordered target:self action:@selector(cancel)];
+    NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:@"image"];
+    self.image = [UIImage imageWithData:imageData];
     NSLog(@"self.image is %@",self.image);
     [self setupCircles];
 
@@ -54,9 +55,13 @@
     self.imageView7.layer.cornerRadius = radius;
     self.imageView8.layer.cornerRadius = radius;
 }
-- (void)cancel {
+- (IBAction)cancel:(id)sender {
     [self dismissViewControllerAnimated: NO completion: nil];
+
 }
+
+
+
 
 - (IBAction)postToFacebook:(id)sender {
     [Flurry logEvent:@"Facebook"];
@@ -71,7 +76,7 @@
 
         SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
         
-        [controller setInitialText:@"#OneFrame created with One Frame app"];
+        [controller setInitialText:@"#anonogram from Anonogram app"];
         [controller addImage:self.image];
         
         [self presentViewController:controller animated:YES completion:nil];
@@ -87,7 +92,7 @@
 
         SLComposeViewController *tweetSheet = [SLComposeViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
-        [tweetSheet setInitialText:@"#OneFrame created with @oneframeapp"];
+        [tweetSheet setInitialText:@"#anonogram from @anonogram"];
         [tweetSheet addImage:self.image];
         [self presentViewController:tweetSheet animated:YES completion:nil];
     }
@@ -99,7 +104,7 @@
 //
 //        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeSinaWeibo];
 //        
-//        [controller setInitialText:@"#One Frame created with @One Frame"];
+//        [controller setInitialText:@"#Anonogram from @Anonogram"];
 //        [controller addImage:self.image];
 //        
 //        [self presentViewController:controller animated:YES completion:nil];
@@ -112,7 +117,7 @@
 //
 //        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTencentWeibo];
 //        
-//        [controller setInitialText:@"#One Frame created with @One Frame"];
+//        [controller setInitialText:@"#Anonogram from @Anonogram"];
 //        [controller addImage:self.image];
 //        
 //        [self presentViewController:controller animated:YES completion:nil];
@@ -141,7 +146,7 @@
     _docController.delegate=self;
     //key to open Instagram app - need to make sure docController is "strong"
     _docController.UTI = @"com.instagram.exclusivegram";
-    _docController.annotation = [NSDictionary dictionaryWithObject:@"#OneFrame created with @oneframeapp" forKey:@"InstagramCaption"];
+    _docController.annotation = [NSDictionary dictionaryWithObject:@"#anonogram from @anonogram" forKey:@"InstagramCaption"];
     [_docController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
     
     //    [_docController release];
@@ -196,13 +201,13 @@
     MFMailComposeViewController *pickerMail = [[MFMailComposeViewController alloc] init];
     pickerMail.mailComposeDelegate = self;
     
-    [pickerMail setSubject:@"I created One Frame!"];
+    [pickerMail setSubject:@"I'm sharing an Anonogram!"];
     
     // Fill out the email body text
 //    NSString *temp = @"bookly";
 //    NSString *booklyMediaId = [temp stringByAppendingString:[labelContents objectForKey:@"id"]];
 //    NSString *encodedString = [inputData base64EncodedString];      //encode
-    NSString *string= @"Check it out!  \n\n______\nCreated using One Frame app.  Download for FREE! \nhttp://itunes.apple.com/app/id866641636";
+    NSString *string= @"Check it out!  \n\n______\nFrom Anonogram app.  Download for FREE! \nhttp://itunes.apple.com/app/id866641636";
 //    if (isImage)
 //        string= [NSString stringWithFormat:@"http://getbooklyapp.com/image.php?mediaId=%@",encodedString];
 //    else
@@ -256,7 +261,7 @@
         return;
     }
 //    NSArray *recipents = @[@"12345678", @"72345524"];
-    NSString *message = [NSString stringWithFormat:@"Created using One Frame app.  Download for FREE! \nhttp://itunes.apple.com/app/id866641636"];
+    NSString *message = [NSString stringWithFormat:@"From Anonogram app.  Download for FREE! \nhttp://itunes.apple.com/app/id866641636"];
     MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
     [messageController addAttachmentData:UIImagePNGRepresentation(self.image) typeIdentifier:@"public.data" filename:@"image.png"];
     messageController.messageComposeDelegate = self;

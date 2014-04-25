@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *pageContent;
 @property (weak, nonatomic) IBOutlet UILabel *likeCount;
 @property (weak, nonatomic) IBOutlet UILabel *timestamp;
+@property (weak, nonatomic) IBOutlet UIButton *share;
 
 @end

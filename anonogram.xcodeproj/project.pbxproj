@@ -10,6 +10,7 @@
 		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
+		CC0FD3EA1909E7B5008F4A63 /* NSDate+NVTimeAgo.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0FD3E91909E7B5008F4A63 /* NSDate+NVTimeAgo.m */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -93,6 +94,8 @@
 		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
 		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
+		CC0FD3E81909E7B5008F4A63 /* NSDate+NVTimeAgo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+NVTimeAgo.h"; sourceTree = "<group>"; };
+		CC0FD3E91909E7B5008F4A63 /* NSDate+NVTimeAgo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+NVTimeAgo.m"; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -227,9 +230,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CC0FD3E71909E7B5008F4A63 /* NSDate-Time-Ago */ = {
+			isa = PBXGroup;
+			children = (
+				CC0FD3E81909E7B5008F4A63 /* NSDate+NVTimeAgo.h */,
+				CC0FD3E91909E7B5008F4A63 /* NSDate+NVTimeAgo.m */,
+			);
+			path = "NSDate-Time-Ago";
+			sourceTree = "<group>";
+		};
 		CCD9544119074298005EFE06 = {
 			isa = PBXGroup;
 			children = (
+				CC0FD3E71909E7B5008F4A63 /* NSDate-Time-Ago */,
 				CCD9550B19075001005EFE06 /* Tapjoy.embeddedframework */,
 				CCD954B919074E2A005EFE06 /* MKStoreKit-master */,
 				CCD954B519074D38005EFE06 /* Flurry */,
@@ -560,6 +573,7 @@
 				CCD9545E19074299005EFE06 /* AppDelegate.m in Sources */,
 				CCD954D119074E2B005EFE06 /* SFHFKeychainUtils.m in Sources */,
 				CCD954D519074E2B005EFE06 /* MKStoreManager.m in Sources */,
+				CC0FD3EA1909E7B5008F4A63 /* NSDate+NVTimeAgo.m in Sources */,
 				CCD9545A19074299005EFE06 /* main.m in Sources */,
 				CCD954DC19074E2B005EFE06 /* VerificationController.m in Sources */,
 				CCD954D019074E2B005EFE06 /* NSData+MKBase64.m in Sources */,
