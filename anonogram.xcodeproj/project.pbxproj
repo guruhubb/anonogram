@@ -11,6 +11,7 @@
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
 		CC0FD3EA1909E7B5008F4A63 /* NSDate+NVTimeAgo.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0FD3E91909E7B5008F4A63 /* NSDate+NVTimeAgo.m */; };
+		CC0FD3EC190A5419008F4A63 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3EB190A5419008F4A63 /* trash.png */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -96,6 +97,7 @@
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
 		CC0FD3E81909E7B5008F4A63 /* NSDate+NVTimeAgo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+NVTimeAgo.h"; sourceTree = "<group>"; };
 		CC0FD3E91909E7B5008F4A63 /* NSDate+NVTimeAgo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+NVTimeAgo.m"; sourceTree = "<group>"; };
+		CC0FD3EB190A5419008F4A63 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -365,6 +367,7 @@
 				CCD9548D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png */,
 				CCD9548E19074BA3005EFE06 /* glyphicons_003_user.png */,
 				CCD9549019074BA3005EFE06 /* glyphicons_019_heart_empty.png */,
+				CC0FD3EB190A5419008F4A63 /* trash.png */,
 				CCD9549119074BA3005EFE06 /* glyphicons_136_cogwheel.png */,
 				CCD9549319074BA3005EFE06 /* icon-letter-mail-hi.png */,
 				CCD9549419074BA3005EFE06 /* instagram-512-2.png */,
@@ -535,6 +538,7 @@
 				CCD954D419074E2B005EFE06 /* MKStoreKitConfigs.plist in Resources */,
 				CCD954D619074E2B005EFE06 /* README.mdown in Resources */,
 				CCD954A119074BA3005EFE06 /* glyphicons_136_cogwheel.png in Resources */,
+				CC0FD3EC190A5419008F4A63 /* trash.png in Resources */,
 				CCD954D719074E2B005EFE06 /* AddDevice.html in Resources */,
 				CCD954A619074BA3005EFE06 /* more-512.png in Resources */,
 				CCD954A019074BA3005EFE06 /* glyphicons_019_heart_empty.png in Resources */,

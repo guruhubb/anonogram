@@ -16,7 +16,9 @@
 @interface ViewController (){
     NSUserDefaults *defaults;
     UITextView        *txtChat;
+//    UISearchBar *searchBar;
     UIToolbar *_inputAccessoryView;
+    NSInteger currentIndex;
 
 }
 @end
@@ -30,7 +32,8 @@
 //        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
 //    }
 	// Create the data model
-    _pageTitles = @[@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace"];
+    _pageTitles = [NSMutableArray arrayWithObjects:@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace", nil];
+//    [@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace"];
 //    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
     
     // Create page view controller
@@ -38,6 +41,7 @@
     self.pageViewController.dataSource = self;
     
     PageContentViewController *startingViewController = [self viewControllerAtIndex:3];
+//    startingViewController.pageTitles=_pageTitles;
     NSArray *viewControllers = @[startingViewController];
     [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
     
@@ -53,9 +57,6 @@
         [self performSelector:@selector(showSurvey) withObject:nil afterDelay:0.1];
     defaults = [NSUserDefaults standardUserDefaults];
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
-//    txtChat.layer.borderColor=[UIColor lightGrayColor].CGColor;
-//    txtChat.layer.borderWidth=20;
-//    txtChat.backgroundColor=[UIColor whiteColor];
     txtChat.delegate=self;
     txtChat.hidden=YES;
     txtChat.font=[UIFont systemFontOfSize:16];
@@ -67,10 +68,22 @@
     label.text= @"140";
     label.tag =100;
     [txtChat addSubview:label];
-    
     [self createInputAccessoryView];
-
     [self.view addSubview:txtChat];
+//    if (currentIndex==5 || currentIndex == 6){
+//        searchBar.userInteractionEnabled=YES;
+//        _searchButton.hidden=NO;
+//    }
+//    else {
+//        _searchButton.hidden=YES;
+//        searchBar.userInteractionEnabled=NO;
+//    }
+    
+//    [searchBar setFrame:CGRectMake(0, screenSpecificSetting(200+64+44, 114+64+44), 320, 44)];
+//    searchBar.delegate=self;
+    _searchBarButton.hidden=YES;
+//    [self.view addSubview:searchBar];
+    
 }
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -78,6 +91,10 @@
 //    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
 //        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
 //    }
+//    if (currentIndex==5 || currentIndex == 6)
+//        searchBar.userInteractionEnabled=YES;
+//    else
+//        searchBar.userInteractionEnabled=NO;
 }
 - (void)didReceiveMemoryWarning
 {
@@ -117,12 +134,19 @@
     barButton2.tintColor=[UIColor whiteColor];
    
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
+    currentIndex = index;
 //    if (index==0)
 //        self.navigationItem.title= @"ANONOGRAM";
 //    else
         self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
-    if (index==3) self.navigationItem.leftBarButtonItem = barButton1;
-    else self.navigationItem.leftBarButtonItem = barButton2;
+    if (index==3)
+        self.navigationItem.leftBarButtonItem = barButton1;
+    else
+        self.navigationItem.leftBarButtonItem = barButton2;
+    if (index==5 || index ==6)
+        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
+    else
+        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
 
     if ((index == 0) || (index == NSNotFound)) {
         return nil;
@@ -134,9 +158,10 @@
 
 - (void) goHome {
 
-
+    [txtChat resignFirstResponder];
+    txtChat.hidden=YES;
     PageContentViewController *targetPageViewController = [self viewControllerAtIndex:3 ];
-
+    currentIndex = 3;
     NSArray *theViewControllers = nil;
     theViewControllers = [NSArray arrayWithObjects:targetPageViewController, nil];
 
@@ -146,10 +171,14 @@
     barButton1.tintColor=[UIColor whiteColor];
     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[3]];
     self.navigationItem.leftBarButtonItem = barButton1;
+
+        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
     
 }
 - (void) goToSettings{
     NSLog(@"settings");
+    [txtChat resignFirstResponder];
+    txtChat.hidden=YES;
     [self performSegueWithIdentifier: @"goToSettings" sender: self];
 //    SettingVC *settings = [self.storyboard instantiateViewControllerWithIdentifier:@"SettingVC"];
 //    [self presentViewController:settings animated:YES completion:nil];
@@ -185,10 +214,14 @@
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
+    currentIndex = index;
     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
     if (index==3) self.navigationItem.leftBarButtonItem = barButton1;
     else self.navigationItem.leftBarButtonItem = barButton2;
-
+    if (index==5 || index ==6)
+        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
+    else
+        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
     if (index == NSNotFound) {
         return nil;
     }
@@ -240,6 +273,37 @@
     //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/850204569"]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=866641636&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
 }
+- (IBAction)searchAction:(id)sender {
+    _searchBarButton.hidden=NO;
+    [self.view bringSubviewToFront:_searchBarButton];
+    [_searchBarButton becomeFirstResponder];
+
+}
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar{
+    NSString *string  =[NSString stringWithFormat:@"%@", searchBar.text ];
+    _pageTitles[currentIndex]= string;
+     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
+//    searchBook=searchBar.text;
+//    firstTimeSearch = YES;
+}
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
+    searchBar.hidden=YES;
+    if(![searchBar.text isEqualToString:@""]){
+        NSString *string  =[NSString stringWithFormat:@"%@", searchBar.text ];
+        _pageTitles[currentIndex]= string;
+        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
+//        [self openSearch];
+    }
+}
+- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;
+{
+    [searchBar resignFirstResponder];
+    searchBar.hidden=YES;
+    
+}
+
+
 #pragma mark - textfield delegated methods
 
 //- (BOOL)textViewShouldBeginEditing:(UITextView *)textView{

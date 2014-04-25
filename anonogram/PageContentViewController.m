@@ -19,7 +19,8 @@
     NSUserDefaults *defaults;
     NSString *token;
     NSInteger loadMore;
-
+    NSIndexPath *indexPathRow;
+    UIRefreshControl *refreshControl;
 }
 
 @end
@@ -45,7 +46,9 @@
 //    NSString *timeAgoFormattedDate = [NSDate mysqlDatetimeFormattedAsTimeAgo:mysqlDatetime];
     defaults = [NSUserDefaults standardUserDefaults];
     token = [defaults objectForKey:@"booklyAccessToken"];
-
+    refreshControl = [[UIRefreshControl alloc]init];
+    [self.theTableView addSubview:refreshControl];
+    [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
 }
 
 - (void) createContentPages
@@ -56,7 +59,7 @@
         NSString *contentString = [[NSString alloc]initWithFormat:@"Chapter %d \nThis is the page %d of content displayed using UIPageViewController in iOS 5.", i, i];
         [pageStrings addObject:contentString];
     }
-    _pageContent = [[NSArray alloc] initWithArray:pageStrings];
+    _pageContent = [[NSMutableArray alloc] initWithArray:pageStrings];
     NSLog(@"pageContent is %@",_pageContent);
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -78,6 +81,15 @@
 //    cell.likeCount.text = [_likeCountArray objectAtIndex:indexPath.row];
 //    cell.timestamp.text = [_timestampArray objectAtIndex:indexPath.row];
 //    cell.share.tag = indexPath.row;
+    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
+//    cell.flag.imageView.image=nil;
+    if (_pageIndex==0 || _pageIndex==2)
+        [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
+    else
+        [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
+
+    cell.flag.tag=indexPath.row;
+    indexPathRow=indexPath;
     
     return cell;
 }
@@ -108,14 +120,14 @@
 //    }
 //    [tableView endUpdates];
 //}
-- (void) deleteText : (NSIndexPath *) indexPath {
+- (void) deleteText  {
     [self.theTableView beginUpdates];
 //    UITableViewCellEditingStyle editingStyle=1;
 //    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
         [Flurry logEvent:@"Comment: Delete"];
         //add code here for when you hit delete
         
-        NSString *commentId=[[self.array objectAtIndex:indexPath.row] objectForKey:@"id"];
+        NSString *commentId=[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id"];
 
         NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 
@@ -127,7 +139,7 @@
         NSLog(@"url is%@",url);
         [NSData dataWithContentsOfURL:url];
         [self.array removeObjectAtIndex:1];
-        [self.theTableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
+        [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
 //    }
     [self.theTableView endUpdates];
 }
@@ -211,10 +223,19 @@
 }
 
 - (IBAction)flagAction:(id)sender {
+//   UIButton *btn = (UIButton *)sender;
     
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
-    actionSheet.tag=0;
+    if (_pageIndex==0 || _pageIndex==2){
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:nil];
+        actionSheet.tag=0;
+        [actionSheet showInView:sender];
+    }
+    
+    else {
+            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+    actionSheet.tag=1;
     [actionSheet showInView:sender];
+    }
     
     
 }
@@ -285,6 +306,12 @@
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == 0) {
         if (buttonIndex==0){
+            NSLog(@"delete");
+            [self deleteText];
+        }
+    }
+    if (actionSheet.tag == 1) {
+        if (buttonIndex==0){
             NSLog(@"flag as inappropriate");
         }
     }
@@ -311,6 +338,9 @@
 //        [self loadxmlparsing];
     });
     //   dispatch_release(queue);
+    [self.theTableView reloadData];
+    [refreshControl endRefreshing];
+
 }
 
 @end

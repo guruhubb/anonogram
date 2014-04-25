@@ -15,9 +15,10 @@
 @property NSUInteger pageIndex;
 
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
-@property (strong, nonatomic) NSArray *pageContent;
-@property (strong, nonatomic) NSArray *likeCountArray;
-@property (strong, nonatomic) NSArray *timestampArray;
+@property (strong, nonatomic) NSMutableArray *pageContent;
+//@property (strong, nonatomic) NSArray *pageTitles;
+@property (strong, nonatomic) NSMutableArray *likeCountArray;
+@property (strong, nonatomic) NSMutableArray *timestampArray;
 @property (strong, nonatomic) NSMutableArray *array;
 
 

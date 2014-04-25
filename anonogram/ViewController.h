@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "PageContentViewController.h"
 
-@interface ViewController : UIViewController <UIPageViewControllerDataSource,UITextViewDelegate>
+@interface ViewController : UIViewController <UIPageViewControllerDataSource,UITextViewDelegate,UITextFieldDelegate,UISearchBarDelegate>
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBarButton;
 
 @property (strong, nonatomic) UIPageViewController *pageViewController;
-@property (strong, nonatomic) NSArray *pageTitles;
-@property (strong, nonatomic) NSArray *pageImages;
+@property (strong, nonatomic) NSMutableArray *pageTitles;
 
 @end
