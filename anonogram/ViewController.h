@@ -9,9 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "PageContentViewController.h"
 
-@interface ViewController : UIViewController <UIPageViewControllerDataSource>
+@interface ViewController : UIViewController <UIPageViewControllerDataSource,UITextViewDelegate>
 
-- (IBAction)startWalkthrough:(id)sender;
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) NSArray *pageTitles;
 @property (strong, nonatomic) NSArray *pageImages;

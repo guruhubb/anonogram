@@ -15,7 +15,6 @@
 @interface SettingVC : UITableViewController<UITableViewDataSource,UITableViewDelegate,NSURLConnectionDelegate,NSURLConnectionDataDelegate,UIAlertViewDelegate, MFMailComposeViewControllerDelegate, UIActionSheetDelegate,SKStoreProductViewControllerDelegate>{
     
     NSArray *editArr;
-    UISwitch *savePhoto;
     UISwitch *watermark;
     NSUserDefaults *defaults;
     BOOL restoreON;

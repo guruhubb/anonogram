@@ -82,20 +82,43 @@
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView beginUpdates];
-    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
+//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+//    [tableView beginUpdates];
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
+//        [Flurry logEvent:@"Comment: Delete"];
+//        //add code here for when you hit delete
+//        
+//        NSString *commentId=[[self.array objectAtIndex:indexPath.row] objectForKey:@"id"];
+//        //        NSString *strlblcomments =[[self.array objectAtIndex:indexPath.row] objectForKey:@"comment"];
+//        //        NSLog(@"commentId is %@",strlblcomments);
+//        //        if ([strlblcomments isEqualToString:@""]) return;
+//        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+////        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+////        NSString *token = [defaults objectForKey:@"booklyAccessToken"];
+//        
+//        NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
+//        
+//        NSLog(@"final url is %@",urlString1);
+//        
+//        NSURL *url = [[NSURL alloc]initWithString:urlString1];
+//        NSLog(@"url is%@",url);
+//        [NSData dataWithContentsOfURL:url];
+//        [self.array removeObjectAtIndex:1];
+//        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
+//    }
+//    [tableView endUpdates];
+//}
+- (void) deleteText : (NSIndexPath *) indexPath {
+    [self.theTableView beginUpdates];
+//    UITableViewCellEditingStyle editingStyle=1;
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
         [Flurry logEvent:@"Comment: Delete"];
         //add code here for when you hit delete
         
         NSString *commentId=[[self.array objectAtIndex:indexPath.row] objectForKey:@"id"];
-        //        NSString *strlblcomments =[[self.array objectAtIndex:indexPath.row] objectForKey:@"comment"];
-        //        NSLog(@"commentId is %@",strlblcomments);
-        //        if ([strlblcomments isEqualToString:@""]) return;
+
         NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//        NSString *token = [defaults objectForKey:@"booklyAccessToken"];
-        
+
         NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
         
         NSLog(@"final url is %@",urlString1);
@@ -104,9 +127,9 @@
         NSLog(@"url is%@",url);
         [NSData dataWithContentsOfURL:url];
         [self.array removeObjectAtIndex:1];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
-    }
-    [tableView endUpdates];
+        [self.theTableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
+//    }
+    [self.theTableView endUpdates];
 }
 - (IBAction)likeAction:(id)sender {
     
@@ -192,10 +215,8 @@
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
     actionSheet.tag=0;
     [actionSheet showInView:sender];
-//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0,0,self.view.frame.size.width, self.view.frame.size.height)];
-//    view.tag = 1;
-//    [self.view addSubview:view];
-//    [popupQuery showInView:[self.view viewWithTag:0]];
+    
+    
 }
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -251,14 +272,14 @@
     [captureView.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage * screenshot = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
-    /* Render the screen shot at custom resolution */
-    CGRect cropRect= CGRectMake(0 ,0 ,2560,2560);
-    UIGraphicsBeginImageContextWithOptions(cropRect.size, YES, 1.0f);
-    [screenshot drawInRect:cropRect];
-    UIImage * customScreenShot = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return customScreenShot;
+    return screenshot;
+//    /* Render the screen shot at custom resolution */
+//    CGRect cropRect= CGRectMake(0 ,0 ,2560,2560);
+//    UIGraphicsBeginImageContextWithOptions(cropRect.size, YES, 1.0f);
+//    [screenshot drawInRect:cropRect];
+//    UIImage * customScreenShot = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    return customScreenShot;
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {

@@ -32,16 +32,9 @@
 {
     [super viewDidLoad];
     defaults = [NSUserDefaults standardUserDefaults];
-//    CGRect frame = CGRectMake(0, 0, 125, 40);
-//    UILabel *label = [[UILabel alloc] initWithFrame:frame];
-//    label.backgroundColor = [UIColor clearColor];
-//    label.font = [UIFont systemFontOfSize:18];
-//    label.textAlignment = NSTextAlignmentCenter;
-//    label.textColor = [UIColor whiteColor];
-//    label.text = @"SETTINGS";
-//    self.navigationItem.titleView = label;
+
     editArr = [[NSArray alloc]initWithObjects:
-               @"Photo Background Color",@"Auto-Save to Camera Roll",@"Add Watermark",@"Output Pixel format",
+               @"Share Background Color",@"Share Watermark",
                @"Follow us on Instagram", @"Like us on Facebook",@"Follow us on Twitter",
                @"Rate App",@"Feedback",@"Restore Purchases",nil];
     [self.settingsTableView reloadData];
@@ -61,29 +54,8 @@
 //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/app/850204569"]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=866641636&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
 
-
-    return;
-    // Initialize Product View Controller
-    SKStoreProductViewController *storeProductViewController = [[SKStoreProductViewController alloc] init];
-    // Configure View Controller  850204569
-    [storeProductViewController setDelegate:self];
-    [storeProductViewController loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier : @"866641636"} completionBlock:^(BOOL result, NSError *error) {
-        if (error) {
-            NSLog(@"Error %@ with User Info %@.", error, [error userInfo]);
-        } else {
-            // Present Store Product View Controller
-            [[UINavigationBar appearance] setTintColor:[UIColor blueColor]];
-
-            [self presentViewController:storeProductViewController animated:YES completion:nil];
-        }
-    }];
-
 }
-- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
-    [self dismissViewControllerAnimated:YES completion:nil];
-    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
 
-}
 
 
 - (void) sendMail
@@ -116,7 +88,7 @@
 {
     switch (section) {
         case (0):
-            return 4;
+            return 2;
         case (1):
             return 3;
         case (2):
@@ -153,23 +125,8 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId] ;
     }
 
-//        [cell.textLabel setFont:[UIFont systemFontOfSize:18]];
-//        cell.selectionStyle = UITableViewCellSelectionStyleGray;
         if (indexPath.section == 0){
-//            if (indexPath.row==0) {
-//                [cell.textLabel setText:[editArr objectAtIndex:0]];
-//                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-//                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(255, 0, 40, 40)];
-//                label.textColor = [UIColor lightGrayColor];
-//                label.font = [UIFont systemFontOfSize:14];
-//                label.tag = 100;
-//                [cell.contentView addSubview:label];
-//                if ([defaults boolForKey:@"fill"])
-//                    label.text = @"Fit";
-//                else
-//                    label.text = @"Fill";
-//            
-//            }
+
             if (indexPath.row==0) {
                 [cell.textLabel setText:[editArr objectAtIndex:0]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
@@ -184,34 +141,9 @@
                     label.text = @"White";
                 
             }
-//            if (indexPath.row==2) {
-//                [cell.textLabel setText:[editArr objectAtIndex:2]];
-//                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-//                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(255, 0, 40, 40)];
-//                label.textColor = [UIColor lightGrayColor];
-//                label.font = [UIFont systemFontOfSize:14];
-//                label.tag = 102;
-//                [cell.contentView addSubview:label];
-//                if ([defaults boolForKey:@"filter"])
-//                    label.text = @"No";
-//                else
-//                    label.text = @"Yes";
-//                
-//            }
+
             if (indexPath.row==1) {
                 [cell.textLabel setText:[editArr objectAtIndex:1]];
-                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-                savePhoto = [[UISwitch alloc] initWithFrame:CGRectZero];
-                [savePhoto addTarget: self action: @selector(flip) forControlEvents:UIControlEventValueChanged];
-                if ([defaults boolForKey:@"savePhoto"])  //if 0 then save is ON
-                    savePhoto.on = NO;
-                else
-                    savePhoto.on = YES;
-                cell.accessoryView = savePhoto;
-
-            }
-            if (indexPath.row==2) {
-                [cell.textLabel setText:[editArr objectAtIndex:2]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
                 watermark = [[UISwitch alloc] initWithFrame:CGRectZero];
                 [watermark addTarget: self action: @selector(watermarkAction) forControlEvents:UIControlEventValueChanged];
@@ -225,51 +157,33 @@
                     watermark.on = YES;
                 
             }
-            else if(indexPath.row==3) {
-                [cell.textLabel setText:[editArr objectAtIndex:3]];
-                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-                UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(190, 0, 100, 40)];
-                label.textColor = [UIColor lightGrayColor];
-                label.textAlignment=NSTextAlignmentRight;
-                label.font = [UIFont systemFontOfSize:14];
-                label.tag = 103;
-                [cell.contentView addSubview:label];
-                if ([defaults integerForKey:@"pixel"]==1)
-                    label.text = @"640x640";
-                else if ([defaults integerForKey:@"pixel"]==0) {
-                    label.text = @"1280x1280";
-                }
-                else if ([defaults integerForKey:@"pixel"]==2){
-                    label.text = @"2560x2560";
-                }
-            }
-            
+
         }
         if (indexPath.section == 1) {
             if(indexPath.row==0){
-                [cell.textLabel setText:[editArr objectAtIndex:4]];
+                [cell.textLabel setText:[editArr objectAtIndex:2]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             if(indexPath.row==1){
-                [cell.textLabel setText:[editArr objectAtIndex:5]];
+                [cell.textLabel setText:[editArr objectAtIndex:3]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             if (indexPath.row==2) {
-                [cell.textLabel setText:[editArr objectAtIndex:6]];
+                [cell.textLabel setText:[editArr objectAtIndex:4]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
         }
         if (indexPath.section == 2) {
             if(indexPath.row==0){
-                [cell.textLabel setText:[editArr objectAtIndex:7]];
+                [cell.textLabel setText:[editArr objectAtIndex:5]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             if(indexPath.row==1){
-                [cell.textLabel setText:[editArr objectAtIndex:8]];
+                [cell.textLabel setText:[editArr objectAtIndex:6]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             if(indexPath.row==2){
-                [cell.textLabel setText:[editArr objectAtIndex:9]];
+                [cell.textLabel setText:[editArr objectAtIndex:7]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             
@@ -282,25 +196,13 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
-//        if (indexPath.row==0) {
-//            [self frameActionSettings];
-//        }
-
         if (indexPath.row==0) {
             [self backgroundColorAction];
-        }
-//        if (indexPath.row==2) {
-//            [self filterAction];
-//        }
-        if (indexPath.row==3){
-            [self pixelAction];
         }
     }
     if (indexPath.section == 2){
         if (indexPath.row==0) {
-
             [self rateApp];
-            
         }
         if (indexPath.row==1) {
             [self sendMail];
@@ -331,18 +233,7 @@
     }
      [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-- (void)flip {
-    
-    if (savePhoto.on) {  //if 1 then  save
-        NSLog(@"save");
-        [defaults setBool:NO forKey:@"savePhoto"];
-    }
-    else {   //if 0 then don't save
-        NSLog(@"dont save");
-        [defaults setBool:YES forKey:@"savePhoto"];
-        [Flurry logEvent:@"NoSave"];
-    }
-}
+
 -(void)watermarkAction
 {
     UIActionSheet *popupQuery;
@@ -408,15 +299,7 @@
     
 }
 - (void) updateAppViewAndDefaults {
-//    if ([MKStoreManager isFeaturePurchased:kFeature0])
-//        [defaults setBool:YES forKey:kFeature0];
-//    else
-//        [defaults setBool:NO forKey:kFeature0];
-//    
-//    if([MKStoreManager isFeaturePurchased:kFeature1])
-//        [defaults setBool:YES forKey:kFeature1];
-//    else
-//        [defaults setBool:NO forKey:kFeature1];
+
     
     if([MKStoreManager isFeaturePurchased:kFeature2])
         [defaults setBool:YES forKey:kFeature2];
@@ -426,13 +309,7 @@
 }
 
 
--(void)frameActionSettings
-{
-    UIActionSheet *popupQuery;
-    popupQuery = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Fill Frame",@"Fit Frame",nil];
-    popupQuery.tag=0;
-    [popupQuery showInView:self.view];
-}
+
 
 -(void)backgroundColorAction
 {
@@ -441,63 +318,23 @@
     popupQuery.tag=1;
     [popupQuery showInView:self.view];
 }
--(void)filterAction
-{
-    UIActionSheet *popupQuery;
-    popupQuery = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Auto Filter",@"No Filter",nil];
-    popupQuery.tag=2;
-    [popupQuery showInView:self.view];
-}
--(void)pixelAction
-{
-    UIActionSheet *popupQuery;
-    popupQuery = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"cancel" destructiveButtonTitle:nil otherButtonTitles:@"640x640",@"1280x1280",@"2560x2560",nil];
-    popupQuery.tag=4;
-    [popupQuery showInView:self.view];
-}
+
+
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-        if (actionSheet.tag == 0) {
-            if (buttonIndex==0){
-                [defaults setBool:NO forKey:@"fill"];
-            }
-            else if (buttonIndex==1)[defaults setBool:YES forKey:@"fill"];
-            
-        }
-        else if (actionSheet.tag == 1){
+
+        if (actionSheet.tag == 1){
             if (buttonIndex==0){
                 [defaults setBool:NO forKey:@"white"];
             }
             else if (buttonIndex==1)[defaults setBool:YES forKey:@"white"];
-        }
-        else if (actionSheet.tag == 2){
-            if (buttonIndex==0){
-                [defaults setBool:NO forKey:@"filter"];
-            }
-            else if (buttonIndex==1)[defaults setBool:YES forKey:@"filter"];
         }
         else if (actionSheet.tag == 3) {
             if (buttonIndex==1){
                 [self inAppBuyAction:actionSheet.tag];
             }
         }
-        else if (actionSheet.tag == 4) {
-            if (buttonIndex==0){
-                [defaults setInteger:1 forKey:@"pixel"];
-            }
-            else if (buttonIndex==1)
-                [defaults setInteger:0 forKey:@"pixel"];
-            else if (buttonIndex==2)
-                [defaults setInteger:2 forKey:@"pixel"];
-        }
-    
-    UILabel *label1 = (UILabel *) [self.view viewWithTag:100];
     UILabel *label2 = (UILabel *) [self.view viewWithTag:101];
-    UILabel *label3 = (UILabel *) [self.view viewWithTag:102];
-    UILabel *label4 = (UILabel *) [self.view viewWithTag:103];
-    [label1 removeFromSuperview];
     [label2 removeFromSuperview];
-    [label3 removeFromSuperview];
-    [label4 removeFromSuperview];
 
     [self.settingsTableView reloadData];
 

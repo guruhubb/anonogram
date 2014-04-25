@@ -15,7 +15,7 @@
 
 @interface ViewController (){
     NSUserDefaults *defaults;
-    UITextField        *txtChat;
+    UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
 
 }
@@ -30,14 +30,14 @@
 //        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
 //    }
 	// Create the data model
-    _pageTitles = @[@"Over 200 Tips and Tricks", @"Discover Hidden Features", @"Bookmark Favorite Tip", @"Free Regular Update"];
+    _pageTitles = @[@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace"];
 //    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
     
     // Create page view controller
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageViewController"];
     self.pageViewController.dataSource = self;
     
-    PageContentViewController *startingViewController = [self viewControllerAtIndex:0];
+    PageContentViewController *startingViewController = [self viewControllerAtIndex:3];
     NSArray *viewControllers = @[startingViewController];
     [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
     
@@ -52,7 +52,25 @@
     if ([defaults boolForKey:@"showSurvey"]&&![defaults boolForKey:@"rateDone"])
         [self performSelector:@selector(showSurvey) withObject:nil afterDelay:0.1];
     defaults = [NSUserDefaults standardUserDefaults];
+    txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
+//    txtChat.layer.borderColor=[UIColor lightGrayColor].CGColor;
+//    txtChat.layer.borderWidth=20;
+//    txtChat.backgroundColor=[UIColor whiteColor];
+    txtChat.delegate=self;
+    txtChat.hidden=YES;
+    txtChat.font=[UIFont systemFontOfSize:16];
+    txtChat.text=@"placeholder";
+    txtChat.textColor = [UIColor lightGrayColor];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
+    label.textColor=[UIColor lightGrayColor];
+    label.font = [UIFont systemFontOfSize:16];
+    label.text= @"140";
+    label.tag =100;
+    [txtChat addSubview:label];
+    
+    [self createInputAccessoryView];
 
+    [self.view addSubview:txtChat];
 }
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -67,11 +85,11 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)startWalkthrough:(id)sender {
-    PageContentViewController *startingViewController = [self viewControllerAtIndex:0];
-    NSArray *viewControllers = @[startingViewController];
-    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionReverse animated:NO completion:nil];
-}
+//- (IBAction)startWalkthrough:(id)sender {
+//    PageContentViewController *startingViewController = [self viewControllerAtIndex:0];
+//    NSArray *viewControllers = @[startingViewController];
+//    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionReverse animated:NO completion:nil];
+//}
 
 - (PageContentViewController *)viewControllerAtIndex:(NSUInteger)index
 {
@@ -99,11 +117,11 @@
     barButton2.tintColor=[UIColor whiteColor];
    
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
-    if (index==0)
-        self.navigationItem.title= @"ANONOGRAM";
-    else
-        self.navigationItem.title= [NSString stringWithFormat:@"Page %d",index];
-    if (index==0) self.navigationItem.leftBarButtonItem = barButton1;
+//    if (index==0)
+//        self.navigationItem.title= @"ANONOGRAM";
+//    else
+        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
+    if (index==3) self.navigationItem.leftBarButtonItem = barButton1;
     else self.navigationItem.leftBarButtonItem = barButton2;
 
     if ((index == 0) || (index == NSNotFound)) {
@@ -113,10 +131,21 @@
     index--;
     return [self viewControllerAtIndex:index];
 }
-- (void) compose {
-    
-}
+
 - (void) goHome {
+
+
+    PageContentViewController *targetPageViewController = [self viewControllerAtIndex:3 ];
+
+    NSArray *theViewControllers = nil;
+    theViewControllers = [NSArray arrayWithObjects:targetPageViewController, nil];
+
+    [self.pageViewController setViewControllers:theViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:NULL];  //NO animation is important to prevent false rendering of navigation buttons
+    
+    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
+    barButton1.tintColor=[UIColor whiteColor];
+    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[3]];
+    self.navigationItem.leftBarButtonItem = barButton1;
     
 }
 - (void) goToSettings{
@@ -156,8 +185,8 @@
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
-    self.navigationItem.title= [NSString stringWithFormat:@"Page %d",index];
-    if (index==0) self.navigationItem.leftBarButtonItem = barButton1;
+    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
+    if (index==3) self.navigationItem.leftBarButtonItem = barButton1;
     else self.navigationItem.leftBarButtonItem = barButton2;
 
     if (index == NSNotFound) {
@@ -176,10 +205,10 @@
     return [self.pageTitles count];
 }
 
-- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
-{
-    return 0;
-}
+//- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
+//{
+//    return 3;
+//}
 
 - (void) showSurvey {
     NSLog(@"showSurvey");
@@ -213,60 +242,59 @@
 }
 #pragma mark - textfield delegated methods
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    //            // changing frame of tableview and toolbar when textfield resign.
-    [textField resignFirstResponder];
-    //    [UIView animateWithDuration:0.2 animations:^{
-    //
-    //        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
-    //        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
-    //    }];
+//- (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
+//    txtChat.text=@"placeholder";
+//    return YES;
+//}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+//    if ([textView.text isEqualToString:@"placeholder"]) {
+        textView.text = @"";
+//        textView.textColor = [UIColor blackColor]; //optional
+//    }
+    [textView becomeFirstResponder];
+
+}
+- (void)textViewDidEndEditing:(UITextView *)textView{
     
-    // check if comment is nil or not.
+    [textView resignFirstResponder];
     if(![txtChat.text isEqualToString:@""])
         [self postComment];
-    
-    // make comment nil now.
     txtChat.text = @"";
+    txtChat.hidden=YES;
+
+}
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
+    NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
+    NSUInteger location = replacementTextRange.location;
     
-    
+    if (textView.text.length + text.length > 140){
+        if (location != NSNotFound){
+            [textView resignFirstResponder];
+        }
+        return NO;
+    }
+    else if (location != NSNotFound){
+        [textView resignFirstResponder];
+        return NO;
+    }
     return YES;
 }
-
-
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-{
-    // changing frame of tableview and toolbar when textfield begin editing.
-//    [UIView animateWithDuration:0.2 animations:^{
-//        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(411-209, 323-209))];
-//        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(200+64, 112+64), 320, 44)];
-//    }];
+- (void)textViewDidChange:(UITextView *)textView{
+    NSLog(@"textViewDidChange:");
+    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.text = [NSString stringWithFormat:@"%d",140-textView.text.length];
     
-    [self createInputAccessoryView];
-    [textField setInputAccessoryView:_inputAccessoryView];
-    txtChat=textField;
-    return YES;
 }
-
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    return (newLength > 200) ? NO : YES;
-}
-
-
 
 -(void)createInputAccessoryView {
     
     _inputAccessoryView = [[UIToolbar alloc] init];
-    //    _inputAccessoryView.barStyle = UIBarStyleBlackOpaque;
+    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
     [_inputAccessoryView sizeToFit];
     
     _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
-    
-    //    UIBarButtonItem *fontItem = [[UIBarButtonItem alloc] initWithTitle:@"Font"
-    //                                                                 style:UIBarButtonItemStyleBordered
-    //                                                                target:self action:@selector(changeFont:)];
     UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                    style:UIBarButtonItemStyleBordered
                                                                   target:self action:@selector(cancelKeyboard)];
@@ -285,6 +313,8 @@
 
 -(void)doneKeyboard{
     [txtChat resignFirstResponder];
+    txtChat.hidden=YES;
+
 //    [UIView animateWithDuration:0.2 animations:^{
 //        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
 //        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
@@ -299,6 +329,7 @@
 -(void)cancelKeyboard{
     [txtChat resignFirstResponder];
     txtChat.text=@"";
+    txtChat.hidden=YES;
 //    [UIView animateWithDuration:0.2 animations:^{
 //        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
 //        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
@@ -306,7 +337,11 @@
  
 }
 - (IBAction)composeAction:(id)sender {
+    NSLog(@"compose");
+    txtChat.hidden=NO;
+    [self.view bringSubviewToFront:txtChat];
     [txtChat becomeFirstResponder];
+    
 }
 -(void)postComment
 {

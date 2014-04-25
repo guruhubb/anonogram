@@ -11,13 +11,10 @@
 
 
 @interface PageContentViewController : UIViewController < UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate>
-//@property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
-//@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+
 @property NSUInteger pageIndex;
-//@property NSString *titleText;
-//@property NSString *imageFile;
+
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
-//@property (strong, nonatomic) id dataObject;
 @property (strong, nonatomic) NSArray *pageContent;
 @property (strong, nonatomic) NSArray *likeCountArray;
 @property (strong, nonatomic) NSArray *timestampArray;

@@ -11,18 +11,6 @@
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="eSZ-9w-j39">
-                                <rect key="frame" x="123" y="530" width="75" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Start again">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="startWalkthrough:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="sAW-df-Rsu"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="ANONOGRAM" id="ZwE-XD-9MZ">
@@ -177,7 +165,7 @@
             </objects>
             <point key="canvasLocation" x="-216" y="152"/>
         </scene>
-        <!--Share View Controller -  -->
+        <!--Share View Controller -  SHARE-->
         <scene sceneID="Zmr-j5-n6Z">
             <objects>
                 <viewController autoresizesArchivedViewToFullSize="NO" id="zUk-ta-EmQ" customClass="shareViewController" sceneMemberID="viewController">
@@ -278,7 +266,7 @@
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title=" " id="yCz-lg-Lh5" userLabel="Navigation Item -">
+                    <navigationItem key="navigationItem" title=" SHARE" id="yCz-lg-Lh5" userLabel="Navigation Item -">
                         <barButtonItem key="rightBarButtonItem" systemItem="stop" id="Khh-iG-crL">
                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <connections>
@@ -309,6 +297,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="24"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </textAttributes>
                     </navigationBar>
