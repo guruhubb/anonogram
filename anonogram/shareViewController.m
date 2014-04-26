@@ -95,7 +95,7 @@
     _docController.delegate=self;
     //key to open Instagram app - need to make sure docController is "strong"
     _docController.UTI = @"com.instagram.exclusivegram";
-    _docController.annotation = [NSDictionary dictionaryWithObject:@"#anonogram from @anonogram" forKey:@"InstagramCaption"];
+    _docController.annotation = [NSDictionary dictionaryWithObject:@"#anonogram from Anonogram app" forKey:@"InstagramCaption"];
     [_docController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
 }
 
@@ -116,7 +116,7 @@
     
     // Fill out the email body text
 
-    NSString *string= @"Check it out!  \n\n______\nFrom Anonogram app.  Download for FREE! \nhttp://itunes.apple.com/app/id866641636";
+    NSString *string= @"Check it out!  \n\n______\nFrom Anonogram app.  Download for FREE! \nhttp://itunes.apple.com/app/id869802697";
     
     NSString *emailBody = string;
     
@@ -148,7 +148,7 @@
         [warningAlert show];
         return;
     }
-    NSString *message = [NSString stringWithFormat:@"From Anonogram app.  Download for FREE! \nhttp://itunes.apple.com/app/id866641636"];
+    NSString *message = [NSString stringWithFormat:@"From Anonogram app.  Download for FREE! \nhttp://itunes.apple.com/app/id869802697"];
     MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
     [messageController addAttachmentData:UIImagePNGRepresentation(self.image) typeIdentifier:@"public.data" filename:@"image.png"];
     messageController.messageComposeDelegate = self;

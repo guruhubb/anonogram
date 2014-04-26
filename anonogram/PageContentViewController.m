@@ -345,7 +345,7 @@
         }
     }
     if (actionSheet.tag == 2){
-        [Flurry logEvent:@"TwitterHandle"];
+        [Flurry logEvent:@"TwitterSwitch"];
 
           [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
     }

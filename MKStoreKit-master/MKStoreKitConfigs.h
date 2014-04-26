@@ -53,7 +53,7 @@
 
 //#define kFeature0 @"com.guruhubb.oneframe.frames"
 //#define kFeature1 @"com.guruhubb.oneframe.filters"
-#define kFeature2 @"com.guruhubb.oneframe.watermark"
+#define kFeature2 @"com.guruhubb.anonogram.watermark"
 
 //#define kFeature3 @"com.guruhubb.oneframe.resize" 
 //#define kFeature3 @"com.guruhubb.bookly.stickersPack"

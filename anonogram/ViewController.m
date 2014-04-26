@@ -211,6 +211,7 @@
 }
 
 - (void) goHome {
+    [Flurry logEvent:@"goHome"];
 
     [txtChat resignFirstResponder];
     txtChat.hidden=YES;
@@ -390,6 +391,8 @@
 }
 - (void)searchBarClicked
 {
+    [Flurry logEvent:@"Search"];
+
     [_searchBarButton resignFirstResponder];
     _searchBarButton.hidden=YES;
     _inputAccessoryView.hidden=YES;
@@ -485,6 +488,8 @@
     [txtChat addSubview:inputAccessoryView1];
 }
 -(void) addText {
+    [Flurry logEvent:@"isPrivate Tapped"];
+
     txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=YES;
@@ -534,6 +539,7 @@
  
 }
 - (IBAction)composeAction:(id)sender {
+    
     NSLog(@"compose");
     txtChat.hidden=NO;
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
@@ -544,6 +550,8 @@
 }
 -(void)postComment
 {
+    [Flurry logEvent:@"Post"];
+
     
 
     NSString *hashString;  //find recurrence of #strings and space them apart in a string

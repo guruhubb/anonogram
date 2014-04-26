@@ -17,12 +17,11 @@
     self.client = [MSClient clientWithApplicationURLString:@"https://anonogram.azure-mobile.net/"
                                             applicationKey:@"oAKRURLTEiBfoIJRVwqrKecBxLtMxW68"];
 //    [Flurry setCrashReportingEnabled:YES];
-//    [Flurry startSession:@" KQQ83V4SXWGQ6RMMSZBJ"];
+//    [Flurry startSession:@"QVX85GQB3X9V2SVHGVJH"];
 //    
 //    
-//	[Tapjoy requestTapjoyConnect:@"cd59eaf2-03cc-4281-bde5-097cf77d4fb8"
-//					   secretKey:@"LXEMsdurBKZdub6vA7OA" options:@{ TJC_OPTION_ENABLE_LOGGING : @(YES) }];
-    
+//	[Tapjoy requestTapjoyConnect:@"e771b5ff-5727-4ff9-8b31-5a2dfaeda76b"
+//					   secretKey:@"yKagIWePRD2lkBFeG1Pm" options:@{ TJC_OPTION_ENABLE_LOGGING : @(YES) }];
  
     [MKStoreManager sharedManager];
     

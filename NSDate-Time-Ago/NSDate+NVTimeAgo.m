@@ -50,12 +50,12 @@
     
     //Should never hit this but handle the future case
     if(secondsSince < 0)
-        return @"In The Future";
+        return @"0s";
         
     
     // < 1 minute = "Just now"
     if(secondsSince < MINUTE)
-        return @"Just now";
+        return [NSString stringWithFormat:@"%ds",(int)secondsSince];
     
     
     // < 1 hour = "x minutes ago"
@@ -191,9 +191,9 @@
     
     //Handle Plural
     if(minutesSince == 1)
-        return @"1 minute ago";
+        return @"1m";
     else
-        return [NSString stringWithFormat:@"%d minutes ago", minutesSince];
+        return [NSString stringWithFormat:@"%dm", minutesSince];
 }
 
 
@@ -205,9 +205,9 @@
     
     //Handle Plural
     if(hoursSince == 1)
-        return @"1 hour ago";
+        return @"1h";
     else
-        return [NSString stringWithFormat:@"%d hours ago", hoursSince];
+        return [NSString stringWithFormat:@"%dh", hoursSince];
 }
 
 
@@ -219,7 +219,7 @@
     
     //Format
     [dateFormatter setDateFormat:@"h:mm a"];
-    return [NSString stringWithFormat:@"Yesterday at %@", [dateFormatter stringFromDate:self]];
+    return @"1d";
 }
 
 
@@ -230,7 +230,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
     //Format
-    [dateFormatter setDateFormat:@"EEEE 'at' h:mm a"];
+    [dateFormatter setDateFormat:@"mm/dd/yy"];
     return [dateFormatter stringFromDate:self];
 }
 
@@ -242,7 +242,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
     //Format
-    [dateFormatter setDateFormat:@"MMMM d 'at' h:mm a"];
+    [dateFormatter setDateFormat:@"mm/dd/yy"];
     return [dateFormatter stringFromDate:self];
 }
 
@@ -254,7 +254,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
     //Format
-    [dateFormatter setDateFormat:@"MMMM d"];
+    [dateFormatter setDateFormat:@"mm/dd/yy"];
     return [dateFormatter stringFromDate:self];
 }
 
@@ -265,8 +265,8 @@
     //Create date formatter
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
-    //Format
-    [dateFormatter setDateFormat:@"LLLL d, yyyy"];
+    //Format  [dateFormat setDateFormat:@"mm/dd/yy"]
+    [dateFormatter setDateFormat:@"mm/dd/yy"];
     return [dateFormatter stringFromDate:self];
 }
 
