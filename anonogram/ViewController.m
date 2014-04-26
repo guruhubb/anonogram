@@ -23,6 +23,7 @@
     UIToolbar *_inputAccessoryView;
     NSInteger currentIndex;
     NSMutableArray *buttonsArray;
+    BOOL isPrivateOn;
 
 }
 @property (nonatomic)           NSInteger busyCount;
@@ -393,8 +394,6 @@
     _searchBarButton.hidden=YES;
     _inputAccessoryView.hidden=YES;
     NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
-
-    NSLog(@"_searchBarButton.text whitespace length is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
     if(!([[_searchBarButton.text stringByTrimmingCharactersInSet: set] length] == 0) )
     {
           NSLog(@"_searchBarButton.text whitespace length again is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
@@ -426,7 +425,9 @@
 - (void)textViewDidEndEditing:(UITextView *)textView{
     
     [textView resignFirstResponder];
-    if(![txtChat.text isEqualToString:@""])
+//    if(![txtChat.text isEqualToString:@""])
+    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+    if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
         [self postComment];
     txtChat.text = @"";
     txtChat.hidden=YES;
@@ -514,14 +515,12 @@
     txtChat.hidden=YES;
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.text = @"140";
-//    [UIView animateWithDuration:0.2 animations:^{
-//        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
-//        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
-//    }];
-    if(![txtChat.text isEqualToString:@""])
+    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+    if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
+//    {
+//    if(![txtChat.text isEqualToString:@""])
         [self postComment];
-    
-    // make comment nil now.
+
     txtChat.text = @"";
     
 
@@ -532,10 +531,6 @@
     txtChat.hidden=YES;
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.text = @"140";
-//    [UIView animateWithDuration:0.2 animations:^{
-//        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
-//        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
-//    }];
  
 }
 - (IBAction)composeAction:(id)sender {
@@ -549,6 +544,50 @@
 }
 -(void)postComment
 {
+    
+
+    NSString *hashString;  //find recurrence of #strings and space them apart in a string
+    NSString *atString;  //find recurrence of @strings and space them apart in a string
+    NSString * aString = [NSString stringWithString:txtChat.text];
+    NSString * bString = [NSString stringWithString:txtChat.text];
+    
+    NSMutableArray *substrings = [NSMutableArray new];
+    NSScanner *scanner = [NSScanner scannerWithString:aString];
+    [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before #
+    while(![scanner isAtEnd]) {
+        NSString *substring = nil;
+        [scanner scanString:@"#" intoString:nil]; // Scan the # character
+        if([scanner scanUpToString:@" " intoString:&substring]) {
+            // If the space immediately followed the #, this will be skipped
+            [substrings addObject:substring];
+        }
+        [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before next #
+    }
+    for (NSString *string in substrings)
+        hashString = [NSString stringWithFormat:@"%@ ",string];
+    
+    NSMutableArray *substrings2 = [NSMutableArray new];
+    NSScanner *scanner2 = [NSScanner scannerWithString:bString];
+    [scanner2 scanUpToString:@"#" intoString:nil]; // Scan all characters before #
+    while(![scanner2 isAtEnd]) {
+        NSString *substring2 = nil;
+        [scanner2 scanString:@"#" intoString:nil]; // Scan the # character
+        if([scanner2 scanUpToString:@" " intoString:&substring2]) {
+            // If the space immediately followed the #, this will be skipped
+            [substrings2 addObject:substring2];
+        }
+        [scanner2 scanUpToString:@"#" intoString:nil]; // Scan all characters before next #
+    }
+    for (NSString *string in substrings2)
+        atString = [NSString stringWithFormat:@"%@ ",string];
+    
+    if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
+        isPrivateOn = YES;
+    
+    [txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])] ;
+    
+    
+        
 }
 //-(void)postComment
 //{

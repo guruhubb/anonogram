@@ -25,6 +25,7 @@
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
+    NSInteger flagButton;
 }
 @property (nonatomic)           NSInteger busyCount;
 @property (nonatomic, strong)   MSTable *table;
@@ -93,20 +94,23 @@
    
     
     Cell *cell = [tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
+    NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
     if (_pageIndex==0 ){
-    cell.pageContent.text = [_pageContent objectAtIndex:indexPath.row];
-    cell.likeCount.text = [_likeCountArray objectAtIndex:indexPath.row];
-    cell.timestamp.text = [_timestampArray objectAtIndex:indexPath.row];
+    cell.pageContent.text = [dictionary objectForKey:@"text"];
+    cell.likeCount.text = [dictionary objectForKey:@"likeCount"];
+    cell.timestamp.text = [dictionary objectForKey:@"timestamp"];
     cell.share.tag = indexPath.row;
+        cell.flag.tag=indexPath.row;
+        cell.like.tag=indexPath.row;
     }
 //    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
 //    cell.flag.imageView.image=nil;
-    if (_pageIndex==0 || _pageIndex==2)
+    if (_pageIndex==0 )
         [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
     else
         [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
 
-    cell.flag.tag=indexPath.row;
+
     indexPathRow=indexPath;
     
     return cell;
@@ -142,107 +146,111 @@
     [self.theTableView beginUpdates];
 //    UITableViewCellEditingStyle editingStyle=1;
 //    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
-        [Flurry logEvent:@"Comment: Delete"];
+        [Flurry logEvent:@"Delete"];
         //add code here for when you hit delete
         
-        NSString *commentId=[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id"];
+        NSString *postId=[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id"];
 
-        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+//        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 
-        NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
-        
-        NSLog(@"final url is %@",urlString1);
-        
-        NSURL *url = [[NSURL alloc]initWithString:urlString1];
-        NSLog(@"url is%@",url);
-        [NSData dataWithContentsOfURL:url];
-        [self.array removeObjectAtIndex:1];
+//        NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
+    
+//        NSLog(@"final url is %@",urlString1);
+    
+//        NSURL *url = [[NSURL alloc]initWithString:urlString1];
+//        NSLog(@"url is%@",url);
+//        [NSData dataWithContentsOfURL:url];
+        [self.array removeObjectAtIndex:indexPathRow.row];
         [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
 //    }
     [self.theTableView endUpdates];
 }
 - (IBAction)likeAction:(id)sender {
-    
+    [Flurry logEvent:@"Like"];
     UIButton *btnPressLike = (UIButton*)sender;
-    NSInteger tagLikeBtn = btnPressLike.tag;
-    //    cell.btnLike.tag = btnPressLike.tag;
-    NSDictionary *dictionary=[self.array objectAtIndex:tagLikeBtn];
-    BOOL isLikeValue = [[dictionary objectForKey:@"islike"] boolValue];  // 0 for UnLike, 1 for Like
-    NSInteger count = [[dictionary objectForKey:@"like"] integerValue];
-    if (!isLikeValue) {
-//        [self facebookUpdateNewLikeActivity];
-        [dictionary setValue:@"1" forKey:@"islike"];
-        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
-        count++;
-        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
-        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
-        //  btnPressLike.userInteractionEnabled=FALSE;
-        [self.theTableView reloadData];
-        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-        
-        dispatch_barrier_async(queue, ^{
-            
-            
-            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
-            NSString *strMediaId=[dicMedia objectForKey:@"id"];
-            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-            NSLog(@"media id is%@",strWithOutSpaceMediaId);
-            
-            NSString *strTagId=[dicMedia objectForKey:@"tagId"];
-            NSString *strWithOutSpaceTagId = [strTagId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-            
-            NSLog(@"tag id IS %@",strWithOutSpaceTagId);
-            
-            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postLike&mediaId=%@&tagId=%@&authtoken=%@",strWithOutSpaceMediaId,strWithOutSpaceTagId,token];
-            
-            
-            NSLog(@"final url is %@",urlString);
-            
-            NSURL *url = [[NSURL alloc] initWithString:urlString];
-            NSLog(@"url is%@",url);
-            //    IsLikeUnlikeTag=TRUE;
-            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-            url=nil;
-            xmlParser=nil;
-            //        [xmlParser setDelegate:self];
-        });
-        //   dispatch_release(queue);
-    } else {
-        [dictionary setValue:@"0" forKey:@"islike"];
-        count--;
-        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
-        [self.theTableView reloadData];
-        
-        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-        
-        dispatch_barrier_async(queue, ^{
-            
-            
-            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
-            NSString *strMediaId=[dicMedia objectForKey:@"id"];
-            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-            NSLog(@"media id is%@",strWithOutSpaceMediaId);
-            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=disLike&mediaId=%@&authtoken=%@",strWithOutSpaceMediaId,token];
-            
-            
-            NSLog(@"final url is %@",urlString);
-            
-            NSURL *url = [[NSURL alloc] initWithString:urlString];
-            NSLog(@"url is%@",url);
-            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-            //        [NSData dataWithContentsOfURL:url];
-            url=nil;
-            xmlParser=nil;
-        });
-        //   dispatch_release(queue);
-    }
+    btnPressLike.userInteractionEnabled=NO;
+    NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
+    [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)[[dictionary objectForKey:@"like"] integerValue]+1] forKey:@"like"];
+    [self.theTableView reloadData];
+
+
+//    NSInteger tagLikeBtn = btnPressLike.tag;
+//    BOOL isLikeValue = [[dictionary objectForKey:@"islike"] boolValue];  // 0 for UnLike, 1 for Like
+//    if (!isLikeValue) {
+////        [self facebookUpdateNewLikeActivity];
+//        [dictionary setValue:@"1" forKey:@"islike"];
+//        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
+//        count++;
+//        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
+//        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
+//        //  btnPressLike.userInteractionEnabled=FALSE;
+//        [self.theTableView reloadData];
+//        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
+//        
+//        dispatch_barrier_async(queue, ^{
+//            
+//            
+//            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
+//            NSString *strMediaId=[dicMedia objectForKey:@"id"];
+//            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+//            NSLog(@"media id is%@",strWithOutSpaceMediaId);
+//            
+//            NSString *strTagId=[dicMedia objectForKey:@"tagId"];
+//            NSString *strWithOutSpaceTagId = [strTagId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+//            
+//            NSLog(@"tag id IS %@",strWithOutSpaceTagId);
+//            
+//            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postLike&mediaId=%@&tagId=%@&authtoken=%@",strWithOutSpaceMediaId,strWithOutSpaceTagId,token];
+//            
+//            
+//            NSLog(@"final url is %@",urlString);
+//            
+//            NSURL *url = [[NSURL alloc] initWithString:urlString];
+//            NSLog(@"url is%@",url);
+//            //    IsLikeUnlikeTag=TRUE;
+//            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
+//            url=nil;
+//            xmlParser=nil;
+//            //        [xmlParser setDelegate:self];
+//        });
+//        //   dispatch_release(queue);
+//    }
+//    else {
+//        [dictionary setValue:@"0" forKey:@"islike"];
+//        count--;
+//        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
+//        [self.theTableView reloadData];
+//        
+//        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
+//        
+//        dispatch_barrier_async(queue, ^{
+//            
+//            
+//            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
+//            NSString *strMediaId=[dicMedia objectForKey:@"id"];
+//            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+//            NSLog(@"media id is%@",strWithOutSpaceMediaId);
+//            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=disLike&mediaId=%@&authtoken=%@",strWithOutSpaceMediaId,token];
+//            
+//            
+//            NSLog(@"final url is %@",urlString);
+//            
+//            NSURL *url = [[NSURL alloc] initWithString:urlString];
+//            NSLog(@"url is%@",url);
+//            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
+//            //        [NSData dataWithContentsOfURL:url];
+//            url=nil;
+//            xmlParser=nil;
+//        });
+//        //   dispatch_release(queue);
+//    }
     
 
 }
 
 - (IBAction)flagAction:(id)sender {
-//   UIButton *btn = (UIButton *)sender;
-    
+   UIButton *btn = (UIButton *)sender;
+    flagButton = btn.tag;
     if (_pageIndex==0 || _pageIndex==2){
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:nil];
         actionSheet.tag=0;
@@ -283,7 +291,7 @@
 
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,60 , 290, 180)];
-    UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(190,280 , 110, 30)];
+    UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(185,275 , 110, 30)];
     label.textAlignment=NSTextAlignmentCenter;
     label.numberOfLines=6;
     label.font = [UIFont fontWithName:@"GillSans-Light" size:20.0];
@@ -330,11 +338,15 @@
     }
     if (actionSheet.tag == 1) {
         if (buttonIndex==0){
+            [Flurry logEvent:@"Flag"];
+            UIButton *btn = (UIButton *)[self.view viewWithTag:flagButton];
+            btn.userInteractionEnabled=NO;
             NSLog(@"flag as inappropriate");
         }
     }
     if (actionSheet.tag == 2){
-       
+        [Flurry logEvent:@"TwitterHandle"];
+
           [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
     }
 //    [[self.view viewWithTag:1] removeFromSuperview];
