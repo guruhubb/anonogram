@@ -21,7 +21,7 @@
     UITextField        *txtChat;
     NSUserDefaults *defaults;
     NSString *token;
-    NSInteger loadMore;
+    BOOL loadMore;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
@@ -29,10 +29,13 @@
 }
 @property (nonatomic)           NSInteger busyCount;
 @property (nonatomic, strong)   MSTable *table;
+@property (nonatomic, strong)   MSTable *isLikeTable;
+@property (nonatomic, strong)   MSTable *isFlagTable;
+
 @end
 
 @implementation PageContentViewController
-@synthesize items;
+//@synthesize items;
 
 
 - (void)viewWillAppear:(BOOL)animated
@@ -44,10 +47,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self createContentPages];
-    self.items = [[NSMutableArray alloc] init];
+//    [self createContentPages];
+//    self.items = [[NSMutableArray alloc] init];
     self.busyCount = 0;
     self.table = [self.client tableWithName:@"anonogramTable"];
+    self.isLikeTable = [self.client tableWithName:@"isLike"];
+    self.isFlagTable = [self.client tableWithName:@"isFlag"];
+
     if (!IS_TALL_SCREEN) {
         self.theTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
@@ -55,7 +61,7 @@
 //    NSString *mysqlDatetime = <Get from the database>
 //    NSString *timeAgoFormattedDate = [NSDate mysqlDatetimeFormattedAsTimeAgo:mysqlDatetime];
     defaults = [NSUserDefaults standardUserDefaults];
-    token = [defaults objectForKey:@"booklyAccessToken"];
+//    token = [defaults objectForKey:@"booklyAccessToken"];
     refreshControl = [[UIRefreshControl alloc]init];
     [self.theTableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
@@ -67,18 +73,20 @@
 //        [self.theTableView reloadData];
 //    }];
 //    if (_pageIndex==2) [self getTwitterUsername];
+    loadMore=YES;
+    [self getData];
 }
 
 - (void) createContentPages
 {
-    NSMutableArray *pageStrings = [[NSMutableArray alloc] init];
-    for (int i = 1; i < 10; i++)
-    {
-        NSString *contentString = [[NSString alloc]initWithFormat:@"Chapter %d \nThis is the page %d of content displayed using UIPageViewController in iOS 5.", i, i];
-        [pageStrings addObject:contentString];
-    }
-    _pageContent = [[NSMutableArray alloc] initWithArray:pageStrings];
-    NSLog(@"pageContent is %@",_pageContent);
+//    NSMutableArray *pageStrings = [[NSMutableArray alloc] init];
+//    for (int i = 1; i < 10; i++)
+//    {
+//        NSString *contentString = [[NSString alloc]initWithFormat:@"Chapter %d \nThis is the page %d of content displayed using UIPageViewController in iOS 5.", i, i];
+//        [pageStrings addObject:contentString];
+//    }
+//    _pageContent = [[NSMutableArray alloc] initWithArray:pageStrings];
+//    NSLog(@"pageContent is %@",_pageContent);
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -86,7 +94,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection: (NSInteger)section
 {
-    return _pageContent.count;
+    return _array.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
@@ -100,8 +108,10 @@
     cell.likeCount.text = [dictionary objectForKey:@"likeCount"];
     cell.timestamp.text = [dictionary objectForKey:@"timestamp"];
     cell.share.tag = indexPath.row;
-        cell.flag.tag=indexPath.row;
-        cell.like.tag=indexPath.row;
+    cell.flag.tag=indexPath.row;
+    cell.like.tag=indexPath.row;
+        
+        
     }
 //    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
 //    cell.flag.imageView.image=nil;
@@ -109,13 +119,34 @@
         [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
     else
         [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
-
+    
+    //TO DO get isFlag and isLike status and disable button if already set
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@",@"userId",userId,@"%K == %@",@"id",[dictionary objectForKey:@"id" ]];
+    [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        //loop through our results
+        if (items.count) cell.like.userInteractionEnabled=NO;
+    }];
+ 
+    [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        //loop through our results
+        if (items.count) cell.flag.userInteractionEnabled=NO;
+    }];
+    
 
     indexPathRow=indexPath;
     
     return cell;
 }
-
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+    if (bottomEdge >= scrollView.contentSize.height) {
+        // we are at the end
+        loadMore++;
+//        [self loadxmlparsing];
+        
+    }
+}
 //- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
 //    [tableView beginUpdates];
 //    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
@@ -149,7 +180,7 @@
         [Flurry logEvent:@"Delete"];
         //add code here for when you hit delete
         
-        NSString *postId=[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id"];
+//        NSString *postId=[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id"];
 
 //        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 
@@ -160,6 +191,9 @@
 //        NSURL *url = [[NSURL alloc]initWithString:urlString1];
 //        NSLog(@"url is%@",url);
 //        [NSData dataWithContentsOfURL:url];
+    [self.table delete:[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id" ] completion:^(id itemId, NSError *error) {
+        //handle errors or any additional logic as needed
+    }];
         [self.array removeObjectAtIndex:indexPathRow.row];
         [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
 //    }
@@ -170,7 +204,20 @@
     UIButton *btnPressLike = (UIButton*)sender;
     btnPressLike.userInteractionEnabled=NO;
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
-    [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)[[dictionary objectForKey:@"like"] integerValue]+1] forKey:@"like"];
+    NSInteger likesCount =[[dictionary objectForKey:@"likes"] integerValue]+1;
+    [dictionary setValue:[NSString stringWithFormat:@"%d",likesCount ] forKey:@"likes"];
+    NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": [NSNumber numberWithInteger:likesCount]};
+    [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+        //handle errors or any additional logic as needed
+         [self logErrorIfNotNil:error];
+    }];
+    
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSDictionary *item1 =@{@"id" : [dictionary objectForKey:@"id" ], @"userId": userId};
+    [self.isLikeTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+        //handle errors or any additional logic as needed
+        [self logErrorIfNotNil:error];
+    }];
     [self.theTableView reloadData];
 
 
@@ -342,6 +389,24 @@
             UIButton *btn = (UIButton *)[self.view viewWithTag:flagButton];
             btn.userInteractionEnabled=NO;
             NSLog(@"flag as inappropriate");
+            
+            NSDictionary *dictionary=[self.array objectAtIndex:flagButton];
+            NSInteger flagsCount =[[dictionary objectForKey:@"flags"] integerValue]+1;
+            [dictionary setValue:[NSString stringWithFormat:@"%d",flagsCount ] forKey:@"flags"];
+            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"flags": [NSNumber numberWithInteger:flagsCount]};
+            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                //handle errors or any additional logic as needed
+                [self logErrorIfNotNil:error];
+            }];
+            
+            NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+            NSDictionary *item1 =@{@"id" : [dictionary objectForKey:@"id" ], @"userId": userId};
+            [self.isFlagTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+                //handle errors or any additional logic as needed
+                [self logErrorIfNotNil:error];
+            }];
+            [self.theTableView reloadData];
+
         }
     }
     if (actionSheet.tag == 2){
@@ -364,14 +429,14 @@
 //    packagesOriginalImages=nil;
     self.array = [[NSMutableArray alloc] init];
 //    packagesOriginalImages=[[NSMutableArray alloc]init];
-    
-    loadMore=1;
-    
-    dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-    dispatch_barrier_async(queue, ^{
-//        [self loadxmlparsing];
-    });
-    //   dispatch_release(queue);
+    [self getData];
+//    loadMore=1;
+//    
+//    dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
+//    dispatch_barrier_async(queue, ^{
+////        [self loadxmlparsing];
+//    });
+//    //   dispatch_release(queue);
     [self.theTableView reloadData];
     [refreshControl endRefreshing];
 
@@ -391,77 +456,77 @@
     
 }
 
-- (void) refreshDataOnSuccess:(completionBlock)completion
-{
-    // TODO
-    // Create a predicate that finds items where complete is false
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
-    
-    // TODO
-    // Query the TodoItem table and update the items property with the results from the service
-    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
-     {
-         self.items = [results mutableCopy];
-         completion();
-     }];
-    
-    completion();
-}
+//- (void) refreshDataOnSuccess:(completionBlock)completion
+//{
+//    // TODO
+//    // Create a predicate that finds items where complete is false
+//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
+//    
+//    // TODO
+//    // Query the TodoItem table and update the items property with the results from the service
+//    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
+//     {
+//         self.items = [results mutableCopy];
+//         completion();
+//     }];
+//    
+//    completion();
+//}
 
--(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-{
-    // TODO
-    // Insert the item into the TodoItem table and add to the items array on completion
-    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
-        NSUInteger index = [items count];
-        [(NSMutableArray *)items insertObject:item atIndex:index];
-        
-        // Let the caller know that we finished
-        completion(index);
-    }];
-    
-    NSUInteger index = [items count];
-    [(NSMutableArray *)items insertObject:item atIndex:index];
-    
-    // Let the caller know that we finished
-    completion(index);
-    
-}
+//-(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+//{
+//    // TODO
+//    // Insert the item into the TodoItem table and add to the items array on completion
+//    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
+//        NSUInteger index = [items count];
+//        [(NSMutableArray *)items insertObject:item atIndex:index];
+//        
+//        // Let the caller know that we finished
+//        completion(index);
+//    }];
+//    
+//    NSUInteger index = [items count];
+//    [(NSMutableArray *)items insertObject:item atIndex:index];
+//    
+//    // Let the caller know that we finished
+//    completion(index);
+//    
+//}
 
--(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-{
-    // Cast the public items property to the mutable type (it was created as mutable)
-    NSMutableArray *mutableItems = (NSMutableArray *) items;
-    
-    // Set the item to be complete (we need a mutable copy)
-    NSMutableDictionary *mutable = [item mutableCopy];
-    [mutable setObject:@(YES) forKey:@"complete"];
-    
-    // Replace the original in the items array
-    NSUInteger index = [items indexOfObjectIdenticalTo:item];
-    [mutableItems replaceObjectAtIndex:index withObject:mutable];
-    
-    // TODO
-    // Update the item in the TodoItem table and remove from the items array on completion
-    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
-        
-        // TODO
-        // Get a fresh index in case the list has changed
-        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
-        
-        [mutableItems removeObjectAtIndex:index];
-        
-        // Let the caller know that we have finished
-        completion(index);
-    }];
-    
-    
-    [mutableItems removeObjectAtIndex:index];
-    
-    // Let the caller know that we have finished
-    completion(index);
-    
-}
+//-(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+//{
+//    // Cast the public items property to the mutable type (it was created as mutable)
+//    NSMutableArray *mutableItems = (NSMutableArray *) items;
+//    
+//    // Set the item to be complete (we need a mutable copy)
+//    NSMutableDictionary *mutable = [item mutableCopy];
+//    [mutable setObject:@(YES) forKey:@"complete"];
+//    
+//    // Replace the original in the items array
+//    NSUInteger index = [items indexOfObjectIdenticalTo:item];
+//    [mutableItems replaceObjectAtIndex:index withObject:mutable];
+//    
+//    // TODO
+//    // Update the item in the TodoItem table and remove from the items array on completion
+//    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
+//        
+//        // TODO
+//        // Get a fresh index in case the list has changed
+//        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
+//        
+//        [mutableItems removeObjectAtIndex:index];
+//        
+//        // Let the caller know that we have finished
+//        completion(index);
+//    }];
+//    
+//    
+//    [mutableItems removeObjectAtIndex:index];
+//    
+//    // Let the caller know that we have finished
+//    completion(index);
+//    
+//}
 
 - (void) logErrorIfNotNil:(NSError *) error
 {
@@ -469,79 +534,123 @@
         NSLog(@"ERROR %@", error);
     }
 }
-- (void) loadResults {
-    MSQuery *query = [self.table query];
-    
-    query.includeTotalCount = YES;
-    query.fetchLimit = 20;
-    query.fetchOffset = self.loadedItems.count;
-    
-    [query readWithCompletion:^(NSArray *itemsDB, NSInteger totalCount, NSError *error) {
-        if(!error) {
-            //add the items to our local copy
-            [self.loadedItems addObjectsFromArray:itemsDB];
-            
-            //set a flag to keep track if there are any additional records we need to load
-            self.moreResults = (self.loadedItems.count < totalCount);
-        }
-    }];
-    
-}
+//- (void) loadResults {
+//    MSQuery *query = [self.table query];
+//    
+//    query.includeTotalCount = YES;
+//    query.fetchLimit = 20;
+//    query.fetchOffset = self.loadedItems.count;
+//    
+//    [query readWithCompletion:^(NSArray *itemsDB, NSInteger totalCount, NSError *error) {
+//        if(!error) {
+//            //add the items to our local copy
+//            [self.loadedItems addObjectsFromArray:itemsDB];
+//            
+//            //set a flag to keep track if there are any additional records we need to load
+//            self.moreResults = (self.loadedItems.count < totalCount);
+//        }
+//    }];
+//    
+//}
 
 - (void) getData {
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
+    if (!loadMore) {
+        return;
+    }
+    NSLog(@"getting data...");
+//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+
+//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"isPrivate == YES"];
+//    NSString *attributeName = @"hashtag";
+//    NSString *attributeValue = @"great";
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@",
+//                              attributeName, attributeValue];
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hashtag == 'new'"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hashtag CONTAINS 'great'"];
+    
+    MSQuery * query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+    
+//    NSString *queryString = [NSString stringWithFormat:@"hashtag=%@", attributeValue];
+//    [itemTable readWithQueryString:queryString completion:^(NSArray *results, NSInteger totalCount, NSError *error) {
+//        [self logErrorIfNotNil:error];
+//        self.array = [results mutableCopy];
+//        NSLog(@"array is %@",results);
+//        // Let the caller know that we finished
+//        completion();
+//    }];
+//    STAssertTrue([query.description
+//                  isEqualToString:@"$filter=(name%20eq%20'bob')&$inlinecount=none"],
+//                 @"OData query string was: %@",
+//                 query.description);
     // Retrieve the MSTable's MSQuery instance with the predicate you just created.
-    MSQuery * query = [self.table queryWithPredicate:predicate];
-    
-    
-    
+//    MSQuery * query = [itemTable queryWithPredicate:predicate];
+//    MSQuery * query ;
+//    [itemTable readWithQueryString:@"new" completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSLog(@"%@",items);
+//    }];
+//
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hashtag == 'new'"];
+//    [itemTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        //loop through our results
+//        NSLog(@"items are %@",items);
+//
+//    }];
     query.includeTotalCount = YES; // Request the total item count
     
     // Start with the first item, and retrieve only three items
-    query.fetchOffset = 0;
-    query.fetchLimit = 3;
-    
-    [query orderByAscending:@"duration"];  //first order by ascending duration field
-    [query orderByAscending:@"complete"]; // second order by ascending complete field
-    query.parameters = @{
-                         @"myKey1" : @"value1",
-                         @"myKey2" : @"value2",
-                         };
-
+//    query.fetchOffset = 0;
+    query.fetchLimit = 2;
+    query.fetchOffset = self.array.count;
+//    [query orderByDescending:@"hashtag"];  //first order by ascending duration field
+//    [query orderByAscending:@"atName"]; // second order by ascending complete field
+//    query.parameters = @{
+//                         @"hashtag" : @"#ucla",
+//                         @"atName" : @"new",
+//                         };
+//    query.selectFields=@[@"hashtag"];
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-        
-        //here everything is OK(items, error), but totalCount is -1
+        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+        [self logErrorIfNotNil:error];
+        if(!error) {
+            //add the items to our local copy
+            [self.array addObjectsFromArray:items];
+            
+            //set a flag to keep track if there are any additional records we need to load
+            if(self.array.count < totalCount) loadMore=YES;
+            else loadMore=NO;
+        }
     }];
 
     
     // Invoke the MSQuery instance directly, rather than using the MSTable helper methods.
-    [query readWithCompletion:^(NSArray *results, NSInteger totalCount, NSError *error) {
-        
-        [self logErrorIfNotNil:error];
-        if(error) {
-            NSLog(@"ERROR %@", error);
-        } else {
-            for(NSDictionary *item in items) {
-                NSLog(@"Todo Item: %@", [item objectForKey:@"text"]);
-            }
-        }
-        if (!error)
-        {
-            // Log total count.
-            NSLog(@"Total item count: %@",[NSString stringWithFormat:@"%zd", (ssize_t) totalCount]);
-            items = [results mutableCopy];
-        }
-        
-        
-        
-        // Let the caller know that we finished
-//        completion();
-    }];
-    id itemId =@"37BBF396-11F0-4B39-85C8-B319C729AF6D";
-    
-    [self.table readWithId:itemId completion:^(NSDictionary *item, NSError *error) {
-        //your code here
-    }];
+//    [query readWithCompletion:^(NSArray *results, NSInteger totalCount, NSError *error) {
+//        
+//        [self logErrorIfNotNil:error];
+//        if(error) {
+//            NSLog(@"ERROR %@", error);
+//        } else {
+//            for(NSDictionary *item in items) {
+//                NSLog(@"Item: %@", item);
+//            }
+//        }
+//        if (!error)
+//        {
+//            // Log total count.
+//            NSLog(@"Total item count: %@",[NSString stringWithFormat:@"%zd", (ssize_t) totalCount]);
+//            self.array = [results mutableCopy];
+//        }
+//        
+//        
+//        
+//        // Let the caller know that we finished
+////        completion();
+//    }];
+//    id itemId =@"37BBF396-11F0-4B39-85C8-B319C729AF6D";
+//    
+//    [self.table readWithId:itemId completion:^(NSDictionary *item, NSError *error) {
+//        //your code here
+//    }];
 }
 
 - (void)TwitterSwitch {

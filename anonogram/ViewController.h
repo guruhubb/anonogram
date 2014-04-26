@@ -22,16 +22,16 @@ typedef void (^busyUpdateBlock) (BOOL busy);
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) NSMutableArray *pageTitles;
 
-@property (nonatomic, strong)   NSArray *items;
+//@property (nonatomic, strong)   NSArray *items;
 // TODO - create an MSClient proeprty
 @property (nonatomic, strong)   MSClient *client;
-- (void) refreshDataOnSuccess:(completionBlock) completion;
-
-- (void) addItem:(NSDictionary *) item
-      completion:(completionWithIndexBlock) completion;
-
-- (void) completeItem: (NSDictionary *) item
-           completion:(completionWithIndexBlock) completion;
-+ (NSString *)GetUUID;
+//- (void) refreshDataOnSuccess:(completionBlock) completion;
+//
+//- (void) addItem:(NSDictionary *) item
+//      completion:(completionWithIndexBlock) completion;
+//
+//- (void) completeItem: (NSDictionary *) item
+//           completion:(completionWithIndexBlock) completion;
+//+ (NSString *)GetUUID;
 
 @end

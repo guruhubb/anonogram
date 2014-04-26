@@ -31,13 +31,13 @@
 @end
 
 @implementation ViewController
-@synthesize items;
+//@synthesize items;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.items = [[NSMutableArray alloc] init];
-    self.busyCount = 0;
-    self.table = [self.client tableWithName:@"anonogramTable"];
+//    self.items = [[NSMutableArray alloc] init];
+//    self.busyCount = 0;
+//    self.table = [self.client tableWithName:@"anonogramTable"];
 //    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
 //        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
 //    }
@@ -484,7 +484,7 @@
                                                                 target:self action:@selector(doneKeyboard)];
     
     NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
-    [inputAccessoryView1 setItems:itemsView animated:YES];
+    [inputAccessoryView1 setItems:itemsView animated:NO];
     [txtChat addSubview:inputAccessoryView1];
 }
 -(void) addText {
@@ -513,7 +513,7 @@
                                                                 target:self action:@selector(searchBarClicked)];
     
     NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
-    [_inputAccessoryView setItems:itemsView animated:YES];
+    [_inputAccessoryView setItems:itemsView animated:NO];
 }
 -(void)doneKeyboard{
     [txtChat resignFirstResponder];
@@ -554,8 +554,16 @@
 
     
 
-    NSString *hashString;  //find recurrence of #strings and space them apart in a string
-    NSString *atString;  //find recurrence of @strings and space them apart in a string
+    NSString *hashString=@"";  //find recurrence of #strings and space them apart in a string
+    NSString *atString=@"";  //find recurrence of @strings and space them apart in a string
+    
+    if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
+        isPrivateOn = YES;
+    else
+        isPrivateOn = NO;
+    
+    txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])] ;
+    
     NSString * aString = [NSString stringWithString:txtChat.text];
     NSString * bString = [NSString stringWithString:txtChat.text];
     
@@ -571,31 +579,50 @@
         }
         [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before next #
     }
-    for (NSString *string in substrings)
-        hashString = [NSString stringWithFormat:@"%@ ",string];
+    for (NSString *string in substrings){
+        hashString = [hashString stringByAppendingString:string];
+        hashString = [hashString stringByAppendingString:@","];
+
+    }
+    NSLog(@"hashString = %@",hashString);
     
     NSMutableArray *substrings2 = [NSMutableArray new];
     NSScanner *scanner2 = [NSScanner scannerWithString:bString];
-    [scanner2 scanUpToString:@"#" intoString:nil]; // Scan all characters before #
+    [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before #
     while(![scanner2 isAtEnd]) {
         NSString *substring2 = nil;
-        [scanner2 scanString:@"#" intoString:nil]; // Scan the # character
+        [scanner2 scanString:@"@" intoString:nil]; // Scan the # character
         if([scanner2 scanUpToString:@" " intoString:&substring2]) {
             // If the space immediately followed the #, this will be skipped
             [substrings2 addObject:substring2];
         }
-        [scanner2 scanUpToString:@"#" intoString:nil]; // Scan all characters before next #
+        [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before next #
     }
-    for (NSString *string in substrings2)
-        atString = [NSString stringWithFormat:@"%@ ",string];
+    for (NSString *string in substrings2){
+        atString = [atString stringByAppendingString:string];
+        atString = [atString stringByAppendingString:@","];
+    }
+    NSLog(@"atString = %@",atString);
+
+
     
-    if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
-        isPrivateOn = YES;
+    NSLog(@"txtChat = %@",txtChat.text);
+
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     
-    [txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])] ;
     
+    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@0,@"flags" : @0, @"isPrivate":[NSNumber numberWithBool:isPrivateOn],@"hashtag":hashString, @"atName": atString};
+    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        }
+    }];
     
-        
+//        uuid, text, number of likes, hashtag, is private,atusername ,itemId, timestamp -
 }
 //-(void)postComment
 //{
@@ -650,91 +677,95 @@
 //
 //}
 
-- (void) storeData {
-    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{ @"text" : @"Awesome item" };
-    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
-    }];
+//- (void) storeData {
+//    
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    
+//    
+//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+//    NSDictionary *item = @{@"userId" : userId, @"text" : @"Awesome item" };
+//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+//    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+//        if (error) {
+//            NSLog(@"Error: %@", error);
+//        } else {
+//            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+//        }
+//    }];
+//
+//}
 
-}
-
-- (void) refreshDataOnSuccess:(completionBlock)completion
-{
-    // TODO
-    // Create a predicate that finds items where complete is false
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
-    
-    // TODO
-    // Query the TodoItem table and update the items property with the results from the service
-    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
-    {
-        self.items = [results mutableCopy];
-        completion();
-    }];
-    
-    completion();
-}
-
--(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-{
-    // TODO
-    // Insert the item into the TodoItem table and add to the items array on completion
-    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
-        NSUInteger index = [items count];
-        [(NSMutableArray *)items insertObject:item atIndex:index];
-        
-        // Let the caller know that we finished
-        completion(index);
-    }];
-    
-    NSUInteger index = [items count];
-    [(NSMutableArray *)items insertObject:item atIndex:index];
-    
-    // Let the caller know that we finished
-    completion(index);
-    
-}
-
--(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-{
-    // Cast the public items property to the mutable type (it was created as mutable)
-    NSMutableArray *mutableItems = (NSMutableArray *) items;
-    
-    // Set the item to be complete (we need a mutable copy)
-    NSMutableDictionary *mutable = [item mutableCopy];
-    [mutable setObject:@(YES) forKey:@"complete"];
-    
-    // Replace the original in the items array
-    NSUInteger index = [items indexOfObjectIdenticalTo:item];
-    [mutableItems replaceObjectAtIndex:index withObject:mutable];
-    
-    // TODO
-    // Update the item in the TodoItem table and remove from the items array on completion
-    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
-        
-        // TODO
-        // Get a fresh index in case the list has changed
-        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
-        
-        [mutableItems removeObjectAtIndex:index];
-        
-        // Let the caller know that we have finished
-        completion(index);
-    }];
-    
-    
-    [mutableItems removeObjectAtIndex:index];
-    
-    // Let the caller know that we have finished
-    completion(index);
-    
-}
+//- (void) refreshDataOnSuccess:(completionBlock)completion
+//{
+//    // TODO
+//    // Create a predicate that finds items where complete is false
+//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
+//    
+//    // TODO
+//    // Query the TodoItem table and update the items property with the results from the service
+//    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
+//    {
+//        self.items = [results mutableCopy];
+//        completion();
+//    }];
+//    
+//    completion();
+//}
+//
+//-(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+//{
+//    // TODO
+//    // Insert the item into the TodoItem table and add to the items array on completion
+//    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
+//        NSUInteger index = [items count];
+//        [(NSMutableArray *)items insertObject:item atIndex:index];
+//        
+//        // Let the caller know that we finished
+//        completion(index);
+//    }];
+//    
+//    NSUInteger index = [items count];
+//    [(NSMutableArray *)items insertObject:item atIndex:index];
+//    
+//    // Let the caller know that we finished
+//    completion(index);
+//    
+//}
+//
+//-(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+//{
+//    // Cast the public items property to the mutable type (it was created as mutable)
+//    NSMutableArray *mutableItems = (NSMutableArray *) items;
+//    
+//    // Set the item to be complete (we need a mutable copy)
+//    NSMutableDictionary *mutable = [item mutableCopy];
+//    [mutable setObject:@(YES) forKey:@"complete"];
+//    
+//    // Replace the original in the items array
+//    NSUInteger index = [items indexOfObjectIdenticalTo:item];
+//    [mutableItems replaceObjectAtIndex:index withObject:mutable];
+//    
+//    // TODO
+//    // Update the item in the TodoItem table and remove from the items array on completion
+//    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
+//        
+//        // TODO
+//        // Get a fresh index in case the list has changed
+//        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
+//        
+//        [mutableItems removeObjectAtIndex:index];
+//        
+//        // Let the caller know that we have finished
+//        completion(index);
+//    }];
+//    
+//    
+//    [mutableItems removeObjectAtIndex:index];
+//    
+//    // Let the caller know that we have finished
+//    completion(index);
+//    
+//}
 
 - (void) logErrorIfNotNil:(NSError *) error
 {

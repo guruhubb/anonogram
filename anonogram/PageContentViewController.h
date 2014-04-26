@@ -24,19 +24,19 @@ typedef void (^busyUpdateBlock) (BOOL busy);
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
 @property (strong, nonatomic) NSMutableArray *pageContent;
 @property (strong, nonatomic) NSArray *pageTitles;
-@property (strong, nonatomic) NSMutableArray *likeCountArray;
-@property (strong, nonatomic) NSMutableArray *timestampArray;
+//@property (strong, nonatomic) NSMutableArray *likeCountArray;
+//@property (strong, nonatomic) NSMutableArray *timestampArray;
 @property (strong, nonatomic) NSMutableArray *array;
-@property (nonatomic, strong)   NSArray *items;
-@property (nonatomic, strong)   NSMutableArray *loadedItems;
+//@property (nonatomic, strong)   NSArray *items;
+//@property (nonatomic, strong)   NSMutableArray *loadedItems;
 // TODO - create an MSClient proeprty
 @property (nonatomic, strong)   MSClient *client;
-- (void) refreshDataOnSuccess:(completionBlock) completion;
-
-- (void) addItem:(NSDictionary *) item
-      completion:(completionWithIndexBlock) completion;
-
-- (void) completeItem: (NSDictionary *) item
-           completion:(completionWithIndexBlock) completion;
-- (void)TwitterSwitch;
+//- (void) refreshDataOnSuccess:(completionBlock) completion;
+//
+//- (void) addItem:(NSDictionary *) item
+//      completion:(completionWithIndexBlock) completion;
+//
+//- (void) completeItem: (NSDictionary *) item
+//           completion:(completionWithIndexBlock) completion;
+//- (void)TwitterSwitch;
 @end
