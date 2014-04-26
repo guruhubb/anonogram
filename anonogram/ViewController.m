@@ -12,6 +12,9 @@
 #import "ViewController.h"
 #import "SettingVC.h"
 #import "Flurry.h"
+#import "AppDelegate.h"
+#import <Social/Social.h>
+#import <Accounts/Accounts.h>
 
 @interface ViewController (){
     NSUserDefaults *defaults;
@@ -19,20 +22,26 @@
 //    UISearchBar *searchBar;
     UIToolbar *_inputAccessoryView;
     NSInteger currentIndex;
+    NSMutableArray *buttonsArray;
 
 }
+@property (nonatomic)           NSInteger busyCount;
+@property (nonatomic, strong)   MSTable *table;
 @end
 
 @implementation ViewController
-
+@synthesize items;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.items = [[NSMutableArray alloc] init];
+    self.busyCount = 0;
+    self.table = [self.client tableWithName:@"anonogramTable"];
 //    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
 //        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
 //    }
 	// Create the data model
-    _pageTitles = [NSMutableArray arrayWithObjects:@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace", nil];
+    _pageTitles = [NSMutableArray arrayWithObjects:@"myAnonograms",  @"Private", @"ANONOGRAM",@"Popular",@"Search", nil];
 //    [@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace"];
 //    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
     
@@ -41,7 +50,7 @@
     self.pageViewController.dataSource = self;
     
     PageContentViewController *startingViewController = [self viewControllerAtIndex:3];
-//    startingViewController.pageTitles=_pageTitles;
+    startingViewController.pageTitles=_pageTitles;
     NSArray *viewControllers = @[startingViewController];
     [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
     
@@ -61,18 +70,28 @@
     txtChat.hidden=YES;
     txtChat.font=[UIFont systemFontOfSize:16];
     txtChat.text=@"placeholder";
-    txtChat.textColor = [UIColor lightGrayColor];
+//    txtChat.textColor = [UIColor lightGrayColor];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
     label.textColor=[UIColor lightGrayColor];
     label.font = [UIFont systemFontOfSize:16];
     label.text= @"140";
     label.tag =100;
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0,0,320, 30)];
+    label2.textColor=[UIColor lightGrayColor];
+    label2.font = [UIFont systemFontOfSize:16];
+    label2.text= @"Blah blah";
+    label2.tag =105;
     [txtChat addSubview:label];
+    [txtChat addSubview:label2];
     [self createInputAccessoryView];
+    [self createInputAccessoryViewForSearch];
     [self.view addSubview:txtChat];
+    [self.view addSubview:_inputAccessoryView];
+    _inputAccessoryView.hidden=YES;
     _searchBarButton.hidden=YES;
-//    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
-//    [txtChat setKeyboardType:UIKeyboardTypeTwitter];
+    _searchBarButton.placeholder = @"Search #hashtag, @username";
+    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
+    [txtChat setKeyboardType:UIKeyboardTypeTwitter];
 
 //    if (currentIndex==5 || currentIndex == 6){
 //        searchBar.userInteractionEnabled=YES;
@@ -86,18 +105,37 @@
 //    [searchBar setFrame:CGRectMake(0, screenSpecificSetting(200+64+44, 114+64+44), 320, 44)];
 //    searchBar.delegate=self;
 //    [self.view addSubview:searchBar];
+    [self getUUID];
     
 }
+- (void) getUUID {
+    
+    NSString *retrieveuuid = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    if (retrieveuuid ==NULL) {
+        CFUUIDRef theUUID = CFUUIDCreate(NULL);
+        CFStringRef string = CFUUIDCreateString(NULL, theUUID);
+        CFRelease(theUUID);
+        NSString *UUID = (__bridge NSString *)string;
+        [SSKeychain setPassword:UUID forService:@"com.anonogram.guruhubb" account:@"user"];
+        retrieveuuid=UUID;
+        NSLog(@"UUID is %@",retrieveuuid);
+
+      
+    }
+      NSLog(@"UUID is %@",retrieveuuid);
+}
+
++ (NSString *)GetUUID {
+    CFUUIDRef theUUID = CFUUIDCreate(NULL);
+    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
+    CFRelease(theUUID);
+    return (__bridge NSString *)(string);
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-//    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
-//        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
-//    }
-//    if (currentIndex==5 || currentIndex == 6)
-//        searchBar.userInteractionEnabled=YES;
-//    else
-//        searchBar.userInteractionEnabled=NO;
+
 }
 - (void)didReceiveMemoryWarning
 {
@@ -117,8 +155,9 @@
     if (([self.pageTitles count] == 0) || (index >= [self.pageTitles count])) {
         return nil;
     }
-    if (!(currentIndex==5 || currentIndex ==6)){
+    if (!(currentIndex==4)){
         _searchBarButton.hidden=YES;
+        _inputAccessoryView.hidden=YES;
         [_searchBarButton resignFirstResponder];
     }
     // Create a new view controller and pass suitable data.
@@ -136,9 +175,12 @@
 {
     UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
     UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
+    UIBarButtonItem *barButton3 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_411_twitter.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(TwitterSwitch)];
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
+    barButton3.tintColor=[UIColor whiteColor];
     _searchBarButton.hidden=YES;
+    _inputAccessoryView.hidden=YES;
     txtChat.hidden=YES;
     [_searchBarButton resignFirstResponder];
     [txtChat resignFirstResponder];
@@ -148,11 +190,13 @@
 //        self.navigationItem.title= @"ANONOGRAM";
 //    else
         self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
-    if (index==3)
+    if (index==2)
         self.navigationItem.leftBarButtonItem = barButton1;
+    else if (index==1)
+        self.navigationItem.leftBarButtonItem=barButton3;
     else
         self.navigationItem.leftBarButtonItem = barButton2;
-    if (index==5 || index ==6)
+    if (index==4)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
     else
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
@@ -169,8 +213,8 @@
 
     [txtChat resignFirstResponder];
     txtChat.hidden=YES;
-    PageContentViewController *targetPageViewController = [self viewControllerAtIndex:3 ];
-    currentIndex = 3;
+    PageContentViewController *targetPageViewController = [self viewControllerAtIndex:2 ];
+    currentIndex = 2;
     NSArray *theViewControllers = nil;
     theViewControllers = [NSArray arrayWithObjects:targetPageViewController, nil];
 
@@ -178,7 +222,7 @@
     
     UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
     barButton1.tintColor=[UIColor whiteColor];
-    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[3]];
+    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[2]];
     self.navigationItem.leftBarButtonItem = barButton1;
 
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
@@ -220,18 +264,24 @@
 {
     UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
     UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
+    UIBarButtonItem *barButton3 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_411_twitter.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(TwitterSwitch)];
+    barButton3.tintColor=[UIColor whiteColor];
+
     barButton1.tintColor=[UIColor whiteColor];
     barButton2.tintColor=[UIColor whiteColor];
     _searchBarButton.hidden=YES;
+    _inputAccessoryView.hidden=YES;
     txtChat.hidden=YES;
     [_searchBarButton resignFirstResponder];
     [txtChat resignFirstResponder];
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
     currentIndex = index;
     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
-    if (index==3) self.navigationItem.leftBarButtonItem = barButton1;
+    if (index==2) self.navigationItem.leftBarButtonItem = barButton1;
+    else if (index==1)
+        self.navigationItem.leftBarButtonItem=barButton3;
     else self.navigationItem.leftBarButtonItem = barButton2;
-    if (index==5 || index ==6)
+    if (index==4)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
     else
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
@@ -264,7 +314,7 @@
     
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    NSLog(@"buttonIndex is %d",buttonIndex);
+    NSLog(@"buttonIndex is %ld",(long)buttonIndex);
     if (buttonIndex == 1) {
         [self rateApp];
     }
@@ -275,7 +325,7 @@
     else {
         [defaults setBool:NO forKey:@"showSurvey"];
         [defaults setInteger:0 forKey:@"counter" ];
-        NSLog(@"showSurvey is %d and counter is %d",[defaults boolForKey:@"showSurvey"],[defaults integerForKey:@"counter"]);
+        NSLog(@"showSurvey is %d and counter is %ld",[defaults boolForKey:@"showSurvey"],(long)[defaults integerForKey:@"counter"]);
     }
     [defaults synchronize];
 }
@@ -288,40 +338,73 @@
 }
 - (IBAction)searchAction:(id)sender {
     _searchBarButton.hidden=NO;
+    _inputAccessoryView.hidden=NO;
     [self.view bringSubviewToFront:_searchBarButton];
     [_searchBarButton becomeFirstResponder];
+    
 
 }
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar{
-    if(![searchBar.text isEqualToString:@""]){
-
-    NSString *string  =[NSString stringWithFormat:@"%@", searchBar.text ];
-    _pageTitles[currentIndex]= string;
-     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
-    }
-    _searchBarButton.hidden=NO;
-    [searchBar resignFirstResponder];
-
-//    searchBook=searchBar.text;
-//    firstTimeSearch = YES;
-}
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [searchBar resignFirstResponder];
-    searchBar.hidden=YES;
-    if(![searchBar.text isEqualToString:@""]){
-        NSString *string  =[NSString stringWithFormat:@"%@", searchBar.text ];
-        _pageTitles[currentIndex]= string;
-        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
-//        [self openSearch];
-    }
-}
-- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;
+//- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar{
+//    if(![searchBar.text isEqualToString:@""]){
+//
+//    NSString *string  =[NSString stringWithFormat:@"%@", searchBar.text ];
+//    _pageTitles[currentIndex]= string;
+//     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
+//    }
+//    _searchBarButton.hidden=YES;
+//    _inputAccessoryView.hidden=YES;
+//    [searchBar resignFirstResponder];
+//
+////    searchBook=searchBar.text;
+////    firstTimeSearch = YES;
+//}
+//- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+//    [searchBar resignFirstResponder];
+//    searchBar.hidden=YES;
+//    _inputAccessoryView.hidden=YES;
+//    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+//
+//    if(!([[_searchBarButton.text stringByTrimmingCharactersInSet: set] length] == 0) ){
+//        NSString *string  =[NSString stringWithFormat:@"%@", searchBar.text ];
+//        _pageTitles[currentIndex]= string;
+//        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
+////        [self openSearch];
+//    }
+//}
+//- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar;
+//{
+//    [searchBar resignFirstResponder];
+//    searchBar.hidden=YES;
+//    _inputAccessoryView.hidden=YES;
+//
+//    
+//}
+- (void)searchBarCancel
 {
-    [searchBar resignFirstResponder];
-    searchBar.hidden=YES;
+    [_searchBarButton resignFirstResponder];
+    _searchBarButton.hidden=YES;
+    _inputAccessoryView.hidden=YES;
+
     
 }
+- (void)searchBarClicked
+{
+    [_searchBarButton resignFirstResponder];
+    _searchBarButton.hidden=YES;
+    _inputAccessoryView.hidden=YES;
+    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
 
+    NSLog(@"_searchBarButton.text whitespace length is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
+    if(!([[_searchBarButton.text stringByTrimmingCharactersInSet: set] length] == 0) )
+    {
+          NSLog(@"_searchBarButton.text whitespace length again is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
+        NSString *string  =[NSString stringWithFormat:@"%@", _searchBarButton.text ];
+        _pageTitles[currentIndex]= string;
+        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
+        //        [self openSearch];
+    }
+    
+}
 
 #pragma mark - textfield delegated methods
 
@@ -331,6 +414,8 @@
 //}
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
+//     UILabel *label = (UILabel *)[self.view viewWithTag:105];
+//    [label removeFromSuperview];
 //    if ([textView.text isEqualToString:@"placeholder"]) {
         textView.text = @"";
 //        textView.textColor = [UIColor blackColor]; //optional
@@ -365,13 +450,45 @@
     return YES;
 }
 - (void)textViewDidChange:(UITextView *)textView{
-    NSLog(@"textViewDidChange:");
+//    NSLog(@"textViewDidChange:");
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
-    label.text = [NSString stringWithFormat:@"%d",140-textView.text.length];
+    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
+     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+    label2.hidden=YES;
     
 }
 
 -(void)createInputAccessoryView {
+    
+    UIToolbar *inputAccessoryView1 = [[UIToolbar alloc] init];
+    inputAccessoryView1.barTintColor=[UIColor lightGrayColor];
+    [inputAccessoryView1 sizeToFit];
+    
+    inputAccessoryView1.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+                                                                   style:UIBarButtonItemStyleBordered
+                                                                  target:self action:@selector(cancelKeyboard)];
+    //Use this to put space in between your toolbox buttons
+    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                              target:nil
+                                                                              action:nil];
+    UIBarButtonItem *isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"@IsPrivate"
+                                                                 style:UIBarButtonItemStyleBordered
+                                                                target:self action:@selector(addText)];
+    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Send"
+                                                                 style:UIBarButtonItemStyleBordered
+                                                                target:self action:@selector(doneKeyboard)];
+    
+    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
+    [inputAccessoryView1 setItems:itemsView animated:YES];
+    [txtChat addSubview:inputAccessoryView1];
+}
+-(void) addText {
+    txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
+    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+    label2.hidden=YES;
+}
+-(void)createInputAccessoryViewForSearch {
     
     _inputAccessoryView = [[UIToolbar alloc] init];
     _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
@@ -380,24 +497,23 @@
     _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
     UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                    style:UIBarButtonItemStyleBordered
-                                                                  target:self action:@selector(cancelKeyboard)];
+                                                                  target:self action:@selector(searchBarCancel)];
     //Use this to put space in between your toolbox buttons
     UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                                                               target:nil
                                                                               action:nil];
-    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
-                                                                 style:UIBarButtonItemStyleDone
-                                                                target:self action:@selector(doneKeyboard)];
+    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Search"
+                                                                 style:UIBarButtonItemStyleBordered
+                                                                target:self action:@selector(searchBarClicked)];
     
-    NSArray *items = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
-    [_inputAccessoryView setItems:items animated:YES];
-    [txtChat addSubview:_inputAccessoryView];
+    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
+    [_inputAccessoryView setItems:itemsView animated:YES];
 }
-
 -(void)doneKeyboard{
     [txtChat resignFirstResponder];
     txtChat.hidden=YES;
-
+    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.text = @"140";
 //    [UIView animateWithDuration:0.2 animations:^{
 //        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
 //        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
@@ -407,12 +523,15 @@
     
     // make comment nil now.
     txtChat.text = @"";
+    
 
 }
 -(void)cancelKeyboard{
     [txtChat resignFirstResponder];
     txtChat.text=@"";
     txtChat.hidden=YES;
+    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.text = @"140";
 //    [UIView animateWithDuration:0.2 animations:^{
 //        [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
 //        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
@@ -422,6 +541,8 @@
 - (IBAction)composeAction:(id)sender {
     NSLog(@"compose");
     txtChat.hidden=NO;
+    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+    label2.hidden=NO;
     [self.view bringSubviewToFront:txtChat];
     [txtChat becomeFirstResponder];
     
@@ -481,4 +602,161 @@
 //    [self loadxmlparsing];
 //
 //}
+
+- (void) storeData {
+    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    NSDictionary *item = @{ @"text" : @"Awesome item" };
+    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        }
+    }];
+
+}
+
+- (void) refreshDataOnSuccess:(completionBlock)completion
+{
+    // TODO
+    // Create a predicate that finds items where complete is false
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
+    
+    // TODO
+    // Query the TodoItem table and update the items property with the results from the service
+    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
+    {
+        self.items = [results mutableCopy];
+        completion();
+    }];
+    
+    completion();
+}
+
+-(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+{
+    // TODO
+    // Insert the item into the TodoItem table and add to the items array on completion
+    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
+        NSUInteger index = [items count];
+        [(NSMutableArray *)items insertObject:item atIndex:index];
+        
+        // Let the caller know that we finished
+        completion(index);
+    }];
+    
+    NSUInteger index = [items count];
+    [(NSMutableArray *)items insertObject:item atIndex:index];
+    
+    // Let the caller know that we finished
+    completion(index);
+    
+}
+
+-(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+{
+    // Cast the public items property to the mutable type (it was created as mutable)
+    NSMutableArray *mutableItems = (NSMutableArray *) items;
+    
+    // Set the item to be complete (we need a mutable copy)
+    NSMutableDictionary *mutable = [item mutableCopy];
+    [mutable setObject:@(YES) forKey:@"complete"];
+    
+    // Replace the original in the items array
+    NSUInteger index = [items indexOfObjectIdenticalTo:item];
+    [mutableItems replaceObjectAtIndex:index withObject:mutable];
+    
+    // TODO
+    // Update the item in the TodoItem table and remove from the items array on completion
+    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
+        
+        // TODO
+        // Get a fresh index in case the list has changed
+        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
+        
+        [mutableItems removeObjectAtIndex:index];
+        
+        // Let the caller know that we have finished
+        completion(index);
+    }];
+    
+    
+    [mutableItems removeObjectAtIndex:index];
+    
+    // Let the caller know that we have finished
+    completion(index);
+    
+}
+
+- (void) logErrorIfNotNil:(NSError *) error
+{
+    if (error) {
+        NSLog(@"ERROR %@", error);
+    }
+}
+
+- (void)TwitterSwitch {
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+    
+    // Create an account type that ensures Twitter accounts are retrieved.
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    
+    
+    // Request access from the user to use their Twitter accounts.
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+        //    [accountStore requestAccessToAccountsWithType:accountType withCompletionHandler:^(BOOL granted, NSError *error) {
+        
+        
+        // Get the list of Twitter accounts.
+        NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
+        
+        NSLog(@"%@", accountsArray);
+        [self performSelectorOnMainThread:@selector(populateSheetAndShow:) withObject:accountsArray waitUntilDone:NO];
+    }];
+}
+
+-(void)populateSheetAndShow:(NSArray *) accountsArray {
+    buttonsArray = [NSMutableArray array];
+    [accountsArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        
+        [buttonsArray addObject:((ACAccount*)obj).username];
+    }];
+    
+    
+    NSLog(@"%@", buttonsArray);
+    
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    actionSheet.tag=2;
+    for( NSString *title in buttonsArray){
+        [actionSheet addButtonWithTitle:title];
+    }
+    [actionSheet addButtonWithTitle:@"Cancel"];
+    
+    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
+    [actionSheet showInView:self.view];
+}
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+//    if (actionSheet.tag == 0) {
+//        if (buttonIndex==0){
+//            NSLog(@"delete");
+//            [self deleteText];
+//        }
+//    }
+//    if (actionSheet.tag == 1) {
+//        if (buttonIndex==0){
+//            NSLog(@"flag as inappropriate");
+//        }
+//    }
+    if (actionSheet.tag == 2){
+        if (buttonIndex!=actionSheet.numberOfButtons-1){
+        [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
+        _pageTitles[1]= buttonsArray[buttonIndex];
+        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[1]];
+        }
+        
+
+    }
+    //    [[self.view viewWithTag:1] removeFromSuperview];
+}
 @end

@@ -13,6 +13,9 @@
 #import "shareViewController.h"
 #import "NSDate+NVTimeAgo.h"
 #import "Flurry.h"
+#import "AppDelegate.h"
+#import <Accounts/Accounts.h>
+#import <Social/Social.h>
 
 @interface PageContentViewController (){
     UITextField        *txtChat;
@@ -21,11 +24,14 @@
     NSInteger loadMore;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
+    NSMutableArray *buttonsArray;
 }
-
+@property (nonatomic)           NSInteger busyCount;
+@property (nonatomic, strong)   MSTable *table;
 @end
 
 @implementation PageContentViewController
+@synthesize items;
 
 
 - (void)viewWillAppear:(BOOL)animated
@@ -38,6 +44,9 @@
 {
     [super viewDidLoad];
     [self createContentPages];
+    self.items = [[NSMutableArray alloc] init];
+    self.busyCount = 0;
+    self.table = [self.client tableWithName:@"anonogramTable"];
     if (!IS_TALL_SCREEN) {
         self.theTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
@@ -49,6 +58,14 @@
     refreshControl = [[UIRefreshControl alloc]init];
     [self.theTableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
+    
+    // Create the todoService - this creates the Mobile Service client inside the wrapped service
+//    self.todoService = [[TodoService alloc]init];
+    
+//    [self refreshDataOnSuccess:^{
+//        [self.theTableView reloadData];
+//    }];
+//    if (_pageIndex==2) [self getTwitterUsername];
 }
 
 - (void) createContentPages
@@ -76,12 +93,13 @@
    
     
     Cell *cell = [tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
-    
-//    cell.pageContent.text = [_pageContent objectAtIndex:indexPath.row];
-//    cell.likeCount.text = [_likeCountArray objectAtIndex:indexPath.row];
-//    cell.timestamp.text = [_timestampArray objectAtIndex:indexPath.row];
-//    cell.share.tag = indexPath.row;
-    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
+    if (_pageIndex==0 ){
+    cell.pageContent.text = [_pageContent objectAtIndex:indexPath.row];
+    cell.likeCount.text = [_likeCountArray objectAtIndex:indexPath.row];
+    cell.timestamp.text = [_timestampArray objectAtIndex:indexPath.row];
+    cell.share.tag = indexPath.row;
+    }
+//    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
 //    cell.flag.imageView.image=nil;
     if (_pageIndex==0 || _pageIndex==2)
         [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
@@ -146,7 +164,7 @@
 - (IBAction)likeAction:(id)sender {
     
     UIButton *btnPressLike = (UIButton*)sender;
-    int tagLikeBtn = btnPressLike.tag;
+    NSInteger tagLikeBtn = btnPressLike.tag;
     //    cell.btnLike.tag = btnPressLike.tag;
     NSDictionary *dictionary=[self.array objectAtIndex:tagLikeBtn];
     BOOL isLikeValue = [[dictionary objectForKey:@"islike"] boolValue];  // 0 for UnLike, 1 for Like
@@ -156,7 +174,7 @@
         [dictionary setValue:@"1" forKey:@"islike"];
         //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
         count++;
-        [dictionary setValue:[NSString stringWithFormat:@"%d", count] forKey:@"like"];
+        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
         //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
         //  btnPressLike.userInteractionEnabled=FALSE;
         [self.theTableView reloadData];
@@ -192,7 +210,7 @@
     } else {
         [dictionary setValue:@"0" forKey:@"islike"];
         count--;
-        [dictionary setValue:[NSString stringWithFormat:@"%d", count] forKey:@"like"];
+        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
         [self.theTableView reloadData];
         
         dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
@@ -242,7 +260,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     UIButton * btn = (UIButton *) sender;
-    NSLog(@"btn.tag is %d",btn.tag);
+    NSLog(@"btn.tag is %ld",(long)btn.tag);
     if ([[segue identifier] isEqualToString:@"share"])
     {
         NSLog(@"blah");
@@ -315,6 +333,10 @@
             NSLog(@"flag as inappropriate");
         }
     }
+    if (actionSheet.tag == 2){
+       
+          [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
+    }
 //    [[self.view viewWithTag:1] removeFromSuperview];
 }
 - (void)didReceiveMemoryWarning
@@ -342,5 +364,286 @@
     [refreshControl endRefreshing];
 
 }
+
+- (void) storeData {
+    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    NSDictionary *item = @{ @"text" : @"Awesome item" };
+    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        }
+    }];
+    
+}
+
+- (void) refreshDataOnSuccess:(completionBlock)completion
+{
+    // TODO
+    // Create a predicate that finds items where complete is false
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
+    
+    // TODO
+    // Query the TodoItem table and update the items property with the results from the service
+    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
+     {
+         self.items = [results mutableCopy];
+         completion();
+     }];
+    
+    completion();
+}
+
+-(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+{
+    // TODO
+    // Insert the item into the TodoItem table and add to the items array on completion
+    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
+        NSUInteger index = [items count];
+        [(NSMutableArray *)items insertObject:item atIndex:index];
+        
+        // Let the caller know that we finished
+        completion(index);
+    }];
+    
+    NSUInteger index = [items count];
+    [(NSMutableArray *)items insertObject:item atIndex:index];
+    
+    // Let the caller know that we finished
+    completion(index);
+    
+}
+
+-(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
+{
+    // Cast the public items property to the mutable type (it was created as mutable)
+    NSMutableArray *mutableItems = (NSMutableArray *) items;
+    
+    // Set the item to be complete (we need a mutable copy)
+    NSMutableDictionary *mutable = [item mutableCopy];
+    [mutable setObject:@(YES) forKey:@"complete"];
+    
+    // Replace the original in the items array
+    NSUInteger index = [items indexOfObjectIdenticalTo:item];
+    [mutableItems replaceObjectAtIndex:index withObject:mutable];
+    
+    // TODO
+    // Update the item in the TodoItem table and remove from the items array on completion
+    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
+        
+        // TODO
+        // Get a fresh index in case the list has changed
+        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
+        
+        [mutableItems removeObjectAtIndex:index];
+        
+        // Let the caller know that we have finished
+        completion(index);
+    }];
+    
+    
+    [mutableItems removeObjectAtIndex:index];
+    
+    // Let the caller know that we have finished
+    completion(index);
+    
+}
+
+- (void) logErrorIfNotNil:(NSError *) error
+{
+    if (error) {
+        NSLog(@"ERROR %@", error);
+    }
+}
+- (void) loadResults {
+    MSQuery *query = [self.table query];
+    
+    query.includeTotalCount = YES;
+    query.fetchLimit = 20;
+    query.fetchOffset = self.loadedItems.count;
+    
+    [query readWithCompletion:^(NSArray *itemsDB, NSInteger totalCount, NSError *error) {
+        if(!error) {
+            //add the items to our local copy
+            [self.loadedItems addObjectsFromArray:itemsDB];
+            
+            //set a flag to keep track if there are any additional records we need to load
+            self.moreResults = (self.loadedItems.count < totalCount);
+        }
+    }];
+    
+}
+
+- (void) getData {
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
+    // Retrieve the MSTable's MSQuery instance with the predicate you just created.
+    MSQuery * query = [self.table queryWithPredicate:predicate];
+    
+    
+    
+    query.includeTotalCount = YES; // Request the total item count
+    
+    // Start with the first item, and retrieve only three items
+    query.fetchOffset = 0;
+    query.fetchLimit = 3;
+    
+    [query orderByAscending:@"duration"];  //first order by ascending duration field
+    [query orderByAscending:@"complete"]; // second order by ascending complete field
+    query.parameters = @{
+                         @"myKey1" : @"value1",
+                         @"myKey2" : @"value2",
+                         };
+
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        
+        //here everything is OK(items, error), but totalCount is -1
+    }];
+
+    
+    // Invoke the MSQuery instance directly, rather than using the MSTable helper methods.
+    [query readWithCompletion:^(NSArray *results, NSInteger totalCount, NSError *error) {
+        
+        [self logErrorIfNotNil:error];
+        if(error) {
+            NSLog(@"ERROR %@", error);
+        } else {
+            for(NSDictionary *item in items) {
+                NSLog(@"Todo Item: %@", [item objectForKey:@"text"]);
+            }
+        }
+        if (!error)
+        {
+            // Log total count.
+            NSLog(@"Total item count: %@",[NSString stringWithFormat:@"%zd", (ssize_t) totalCount]);
+            items = [results mutableCopy];
+        }
+        
+        
+        
+        // Let the caller know that we finished
+//        completion();
+    }];
+    id itemId =@"37BBF396-11F0-4B39-85C8-B319C729AF6D";
+    
+    [self.table readWithId:itemId completion:^(NSDictionary *item, NSError *error) {
+        //your code here
+    }];
+}
+
+- (void)TwitterSwitch {
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+    
+    // Create an account type that ensures Twitter accounts are retrieved.
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    
+    
+    // Request access from the user to use their Twitter accounts.
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+//    [accountStore requestAccessToAccountsWithType:accountType withCompletionHandler:^(BOOL granted, NSError *error) {
+        
+        
+        // Get the list of Twitter accounts.
+        NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
+        
+        NSLog(@"%@", accountsArray);
+        [self performSelectorOnMainThread:@selector(populateSheetAndShow:) withObject:accountsArray waitUntilDone:NO];
+    }];
+}
+
+-(void)populateSheetAndShow:(NSArray *) accountsArray {
+    buttonsArray = [NSMutableArray array];
+    [accountsArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        
+        [buttonsArray addObject:((ACAccount*)obj).username];
+    }];
+    
+    
+    NSLog(@"%@", buttonsArray);
+    
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    actionSheet.tag=2;
+    for( NSString *title in buttonsArray){
+        [actionSheet addButtonWithTitle:title];
+    }
+    [actionSheet addButtonWithTitle:@"Cancel"];
+    
+    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
+    [actionSheet showInView:self.view];
+}
+- (void) getTwitterUsername {
+    //get Twitter username and store it
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+    
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+    
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error)
+     
+     {
+         if(granted) {
+             NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
+//             ACAccount *twitterAccount;
+//             if (accountsArray.count!=0) {
+//                twitterAccount = [accountsArray objectAtIndex:0];
+//             }
+//             NSLog(@"%@",accountsArray);
+             if ([accountsArray count] > 0) {
+                 ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
+                 NSLog(@"%@",twitterAccount.username);
+                 NSLog(@"%@",twitterAccount.accountType);
+                 [[NSUserDefaults standardUserDefaults] setValue:twitterAccount.username forKey:@"twitterHandle"];
+             }
+             
+             
+         }}];
+    NSLog(@"twitterHandle is %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]);
+    //get the username later...
+    //        [textField setText:[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]];
+    
+//    NSURL *url = [NSURL URLWithString:@"https://api.twitter.com/1.1/users/show.json"];
+//    NSMutableDictionary *params = [NSMutableDictionary new];
+//    [params setObject:tempUserID forKey:@"user_id"];
+//    [params setObject:@"0" forKey:@"include_rts"]; // don't include retweets
+//    [params setObject:@"1" forKey:@"trim_user"]; // trim the user information
+//    [params setObject:@"1" forKey:@"count"]; // i don't even know what this does but it does something useful
+//    SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodGET URL:url parameters:params];
+//
+//
+//    //  Attach an account to the request
+//    [request setAccount:twitterAccount]; // this can be any Twitter account obtained from the Account store
+//    
+//    [request performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
+//        if (responseData) {
+//            NSDictionary *twitterData = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingAllowFragments error:NULL];
+//            NSLog(@"received Twitter data: %@", twitterData);
+//            
+//            // to do something useful with this data:
+//            NSString *screen_name = [twitterData objectForKey:@"screen_name"]; // the screen name you were after
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                // update your UI in here
+//                twitterScreenNameLabel.text = screen_name;
+//            });
+//            
+            // A handy bonus tip: twitter display picture
+//            NSString *profileImageUrl = [twitterData objectForKey:@"profile_image_url"];
+//            
+//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//                
+//                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profileImageUrl]];
+//                UIImage *image = [UIImage imageWithData:imageData]; // the matching profile image
+//                
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    // assign it to an imageview in your UI here
+//                    twitterProfileImageView.image = image;
+//                });
+//            });
+//        }else{
+//            NSLog(@"Error while downloading Twitter user data: %@", error);
+//        }
+//    }];
+}
+
 
 @end

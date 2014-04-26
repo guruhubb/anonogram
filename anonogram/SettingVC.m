@@ -11,6 +11,7 @@
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
 #import "SettingVC.h"
 #import "Flurry.h"
+#import <Accounts/Accounts.h>
 @implementation SettingVC
 
 
@@ -339,7 +340,29 @@
     [self.settingsTableView reloadData];
 
 }
+- (void) getTwitterUsername {
+    //get Twitter username and store it
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+    
+    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
 
+    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error)
+    
+    {
+        if(granted) {
+            NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
+            
+            ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
+            ;
+            [[NSUserDefaults standardUserDefaults] setValue:twitterAccount.username forKey:@"twitterHandle"];
+            NSLog(@"twitterHandle is %@",twitterAccount.username);
+        }}];
+    
+        //get the username later...
+//        [textField setText:[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]];
+    NSLog(@"twitterHandle is %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]);
+
+}
 
 
 

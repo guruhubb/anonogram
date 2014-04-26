@@ -18,6 +18,8 @@
     UISwitch *watermark;
     NSUserDefaults *defaults;
     BOOL restoreON;
+    NSMutableArray *buttonsArray;
+
 }
 @property (weak, nonatomic) IBOutlet UITableView *settingsTableView;
 

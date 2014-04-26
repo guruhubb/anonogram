@@ -14,7 +14,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
+    self.client = [MSClient clientWithApplicationURLString:@"https://anonogram.azure-mobile.net/"
+                                            applicationKey:@"oAKRURLTEiBfoIJRVwqrKecBxLtMxW68"];
 //    [Flurry setCrashReportingEnabled:YES];
 //    [Flurry startSession:@" KQQ83V4SXWGQ6RMMSZBJ"];
 //    
@@ -26,9 +27,13 @@
     [MKStoreManager sharedManager];
     
  //    [[MKStoreManager sharedManager] removeAllKeychainData];  //test purpose to reset in-app purchase
-
+    
+    
+    
     return YES;
 }
+
+
 #pragma mark - assets
 
 -(void)tjcConnectSuccess:(NSNotification*)notifyObj
@@ -62,18 +67,18 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    NSInteger counter = [[NSUserDefaults standardUserDefaults] integerForKey:@"counter" ];
+    NSInteger counter = [[NSUserDefaults standardUserDefaults] integerForKey:@"counterAnonogram" ];
     counter++;
     NSLog(@"counter is %d",counter);
 
     if (counter>4){
         NSLog(@"counter is %d",counter);
 
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"showSurvey"];
-        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"counter" ];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"showSurveyAnonogram"];
+        [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"counterAnonogram" ];
         counter = 0;
     }
-    [[NSUserDefaults standardUserDefaults] setInteger:counter forKey:@"counter" ];
+    [[NSUserDefaults standardUserDefaults] setInteger:counter forKey:@"counterAnonogram" ];
     
    
 }

@@ -12,6 +12,11 @@
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
 		CC0FD3EA1909E7B5008F4A63 /* NSDate+NVTimeAgo.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0FD3E91909E7B5008F4A63 /* NSDate+NVTimeAgo.m */; };
 		CC0FD3EC190A5419008F4A63 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3EB190A5419008F4A63 /* trash.png */; };
+		CC0FD3EE190A82F2008F4A63 /* WindowsAzureMobileServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3ED190A82F2008F4A63 /* WindowsAzureMobileServices.framework */; };
+		CC0FD3F1190AF513008F4A63 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0FD3F0190AF513008F4A63 /* SSKeychain.m */; };
+		CC0FD3F3190B0111008F4A63 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3F2190B0111008F4A63 /* Accounts.framework */; };
+		CC0FD3F5190B745C008F4A63 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3F4190B745C008F4A63 /* Social.framework */; };
+		CC0FD3F7190B8C51008F4A63 /* glyphicons_411_twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -98,6 +103,12 @@
 		CC0FD3E81909E7B5008F4A63 /* NSDate+NVTimeAgo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+NVTimeAgo.h"; sourceTree = "<group>"; };
 		CC0FD3E91909E7B5008F4A63 /* NSDate+NVTimeAgo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+NVTimeAgo.m"; sourceTree = "<group>"; };
 		CC0FD3EB190A5419008F4A63 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
+		CC0FD3ED190A82F2008F4A63 /* WindowsAzureMobileServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WindowsAzureMobileServices.framework; path = "../../../Downloads/azuresdk-iOS-v1-2/WindowsAzureMobileServices.framework"; sourceTree = "<group>"; };
+		CC0FD3EF190AF513008F4A63 /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSKeychain.h; path = "sskeychain-master/SSKeychain.h"; sourceTree = SOURCE_ROOT; };
+		CC0FD3F0190AF513008F4A63 /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSKeychain.m; path = "sskeychain-master/SSKeychain.m"; sourceTree = SOURCE_ROOT; };
+		CC0FD3F2190B0111008F4A63 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		CC0FD3F4190B745C008F4A63 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_411_twitter.png; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -189,6 +200,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC0FD3F5190B745C008F4A63 /* Social.framework in Frameworks */,
+				CC0FD3F3190B0111008F4A63 /* Accounts.framework in Frameworks */,
 				CCD9550A19074FDE005EFE06 /* MessageUI.framework in Frameworks */,
 				CCD954FA19074F2D005EFE06 /* MapKit.framework in Frameworks */,
 				CCD954FB19074F2D005EFE06 /* MediaPlayer.framework in Frameworks */,
@@ -199,6 +212,7 @@
 				CCD9550719074FC0005EFE06 /* SystemConfiguration.framework in Frameworks */,
 				CCD9550819074FC0005EFE06 /* Twitter.framework in Frameworks */,
 				CCD954EE19074F2D005EFE06 /* AdSupport.framework in Frameworks */,
+				CC0FD3EE190A82F2008F4A63 /* WindowsAzureMobileServices.framework in Frameworks */,
 				CCD954EF19074F2D005EFE06 /* AssetsLibrary.framework in Frameworks */,
 				CCD954F019074F2D005EFE06 /* CFNetwork.framework in Frameworks */,
 				CCD954F119074F2D005EFE06 /* CoreLocation.framework in Frameworks */,
@@ -268,6 +282,9 @@
 		CCD9544C19074298005EFE06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC0FD3F4190B745C008F4A63 /* Social.framework */,
+				CC0FD3F2190B0111008F4A63 /* Accounts.framework */,
+				CC0FD3ED190A82F2008F4A63 /* WindowsAzureMobileServices.framework */,
 				CCD9550919074FDE005EFE06 /* MessageUI.framework */,
 				CCD954FD19074FC0005EFE06 /* OpenGLES.framework */,
 				CCD954FE19074FC0005EFE06 /* QuartzCore.framework */,
@@ -301,6 +318,8 @@
 		CCD9545319074299005EFE06 /* anonogram */ = {
 			isa = PBXGroup;
 			children = (
+				CC0FD3EF190AF513008F4A63 /* SSKeychain.h */,
+				CC0FD3F0190AF513008F4A63 /* SSKeychain.m */,
 				CCD9545C19074299005EFE06 /* AppDelegate.h */,
 				CCD9545D19074299005EFE06 /* AppDelegate.m */,
 				CCD955181908B9ED005EFE06 /* Main.storyboard */,
@@ -364,6 +383,7 @@
 				CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */,
 				CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */,
 				CCD9548B19074BA3005EFE06 /* comments-icon-614x460.png */,
+				CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */,
 				CCD9548D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png */,
 				CCD9548E19074BA3005EFE06 /* glyphicons_003_user.png */,
 				CCD9549019074BA3005EFE06 /* glyphicons_019_heart_empty.png */,
@@ -538,6 +558,7 @@
 				CCD954D419074E2B005EFE06 /* MKStoreKitConfigs.plist in Resources */,
 				CCD954D619074E2B005EFE06 /* README.mdown in Resources */,
 				CCD954A119074BA3005EFE06 /* glyphicons_136_cogwheel.png in Resources */,
+				CC0FD3F7190B8C51008F4A63 /* glyphicons_411_twitter.png in Resources */,
 				CC0FD3EC190A5419008F4A63 /* trash.png in Resources */,
 				CCD954D719074E2B005EFE06 /* AddDevice.html in Resources */,
 				CCD954A619074BA3005EFE06 /* more-512.png in Resources */,
@@ -584,6 +605,7 @@
 				CCD954D219074E2B005EFE06 /* MKSKProduct.m in Sources */,
 				CCD954D319074E2B005EFE06 /* MKSKSubscriptionProduct.m in Sources */,
 				CCD9551F1908B9FE005EFE06 /* Cell.m in Sources */,
+				CC0FD3F1190AF513008F4A63 /* SSKeychain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -713,6 +735,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/saswata_basu/Documents/Developer/anonogram/TapjoySDK_iOS_v10.0-2.0/Libraries/Tapjoy.embeddedframework",
+					"/Users/saswata_basu/Downloads/azuresdk-iOS-v1-2",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "anonogram/anonogram-Prefix.pch";
@@ -734,6 +757,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/saswata_basu/Documents/Developer/anonogram/TapjoySDK_iOS_v10.0-2.0/Libraries/Tapjoy.embeddedframework",
+					"/Users/saswata_basu/Downloads/azuresdk-iOS-v1-2",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "anonogram/anonogram-Prefix.pch";
