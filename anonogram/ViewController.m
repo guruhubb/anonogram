@@ -77,10 +77,11 @@
     label.font = [UIFont systemFontOfSize:16];
     label.text= @"140";
     label.tag =100;
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0,0,320, 30)];
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(20,15,280, 120)];
     label2.textColor=[UIColor lightGrayColor];
     label2.font = [UIFont systemFontOfSize:16];
-    label2.text= @"Blah blah";
+    label2.text= @"Post anonymous messages privately or to the world. No location tracking. No signups. Contribute freely. Write anonymous tips to your CEO.  Or if you are the CEO, write some wacky jokes.";
+    label2.numberOfLines=6;
     label2.tag =105;
     [txtChat addSubview:label];
     [txtChat addSubview:label2];
@@ -425,17 +426,17 @@
     [textView becomeFirstResponder];
 
 }
-- (void)textViewDidEndEditing:(UITextView *)textView{
-    
-    [textView resignFirstResponder];
-//    if(![txtChat.text isEqualToString:@""])
-    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
-    if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
-        [self postComment];
-    txtChat.text = @"";
-    txtChat.hidden=YES;
-
-}
+//- (void)textViewDidEndEditing:(UITextView *)textView{
+//    
+//    [textView resignFirstResponder];
+////    if(![txtChat.text isEqualToString:@""])
+//    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+//    if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
+//        [self postComment];
+//    txtChat.text = @"";
+//    txtChat.hidden=YES;
+//
+//}
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
     NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
     NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
@@ -612,7 +613,7 @@
     
     
     MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@0,@"flags" : @0, @"isPrivate":[NSNumber numberWithBool:isPrivateOn],@"hashtag":hashString, @"atName": atString};
+    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn],@"hashtag":hashString, @"atName": atString};
     MSTable *itemTable = [client tableWithName:@"anonogramTable"];
     [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         if (error) {
@@ -621,6 +622,7 @@
             NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
         }
     }];
+    [self viewControllerAtIndex:index];
     
 //        uuid, text, number of likes, hashtag, is private,atusername ,itemId, timestamp -
 }

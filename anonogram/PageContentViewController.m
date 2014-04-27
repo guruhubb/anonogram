@@ -8,6 +8,7 @@
 
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
+#define kLimit 20
 #import "PageContentViewController.h"
 #import "Cell.h"
 #import "shareViewController.h"
@@ -47,8 +48,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.array = [[NSMutableArray alloc] init];
+    self.theTableView.delegate=self;
+    self.theTableView.dataSource=self;
 //    [self createContentPages];
 //    self.items = [[NSMutableArray alloc] init];
+    self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.busyCount = 0;
     self.table = [self.client tableWithName:@"anonogramTable"];
     self.isLikeTable = [self.client tableWithName:@"isLike"];
@@ -103,16 +108,24 @@
     
     Cell *cell = [tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
-    if (_pageIndex==0 ){
+    NSLog(@"dictionary is %@",dictionary);
+    
+//    if (_pageIndex==0 ){
     cell.pageContent.text = [dictionary objectForKey:@"text"];
-    cell.likeCount.text = [dictionary objectForKey:@"likeCount"];
-    cell.timestamp.text = [dictionary objectForKey:@"timestamp"];
+    cell.likeCount.text = [dictionary objectForKey:@"likes"];
+//    if ([[dictionary objectForKey:@"timestamp"] isEqualToString:@""]) {
+//        cell.timestamp.text = @"";
+//    }
+//    else
+//    cell.timestamp.text = [NSDate mysqlDatetimeFormattedAsTimeAgo:[dictionary objectForKey:@"timestamp"]];
+//     cell.timestamp.text =[NSDate stringForDisplayFromDate: mysqlDatetimeFormattedAsTimeAgo:[dictionary objectForKey:@"timestamp"]];
+
     cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
         
         
-    }
+//    }
 //    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
 //    cell.flag.imageView.image=nil;
     if (_pageIndex==0 )
@@ -204,9 +217,9 @@
     UIButton *btnPressLike = (UIButton*)sender;
     btnPressLike.userInteractionEnabled=NO;
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
-    NSInteger likesCount =[[dictionary objectForKey:@"likes"] integerValue]+1;
-    [dictionary setValue:[NSString stringWithFormat:@"%d",likesCount ] forKey:@"likes"];
-    NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": [NSNumber numberWithInteger:likesCount]};
+    NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"flags"] integerValue]+1 ];
+    [dictionary setValue:likesCount forKey:@"likes"];
+    NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
     [self.table update:item completion:^(NSDictionary *item, NSError *error) {
         //handle errors or any additional logic as needed
          [self logErrorIfNotNil:error];
@@ -214,7 +227,7 @@
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     NSDictionary *item1 =@{@"id" : [dictionary objectForKey:@"id" ], @"userId": userId};
-    [self.isLikeTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+    [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
         //handle errors or any additional logic as needed
         [self logErrorIfNotNil:error];
     }];
@@ -391,9 +404,9 @@
             NSLog(@"flag as inappropriate");
             
             NSDictionary *dictionary=[self.array objectAtIndex:flagButton];
-            NSInteger flagsCount =[[dictionary objectForKey:@"flags"] integerValue]+1;
-            [dictionary setValue:[NSString stringWithFormat:@"%d",flagsCount ] forKey:@"flags"];
-            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"flags": [NSNumber numberWithInteger:flagsCount]};
+            NSString *flagsCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"flags"] integerValue]+1 ];
+            [dictionary setValue:flagsCount forKey:@"flags"];
+            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"flags": flagsCount};
             [self.table update:item completion:^(NSDictionary *item, NSError *error) {
                 //handle errors or any additional logic as needed
                 [self logErrorIfNotNil:error];
@@ -401,7 +414,7 @@
             
             NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
             NSDictionary *item1 =@{@"id" : [dictionary objectForKey:@"id" ], @"userId": userId};
-            [self.isFlagTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+            [self.isFlagTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 //handle errors or any additional logic as needed
                 [self logErrorIfNotNil:error];
             }];
@@ -425,7 +438,7 @@
 
 - (void) refreshView
 {
-    self.array = nil;
+//    self.array = nil;
 //    packagesOriginalImages=nil;
     self.array = [[NSMutableArray alloc] init];
 //    packagesOriginalImages=[[NSMutableArray alloc]init];
@@ -558,6 +571,60 @@
         return;
     }
     NSLog(@"getting data...");
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    MSQuery * query;
+    switch (_pageIndex) {
+        case 0:{ //mypage
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"%K MATCHES %@",@"userId",userId];
+            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+        }
+            break;
+        case 1: { //private
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"isPrivate == YES"];
+//            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"isPrivate == YES", @"atName CONTAINS %@",_pageTitles[_pageIndex]];
+            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+
+        }
+            break;
+        case 2:{  //home
+            query = [[MSQuery alloc] initWithTable:self.table ];
+        }
+            break;
+        case 3:{//popular
+            query = [[MSQuery alloc] initWithTable:self.table ];
+            [query orderByDescending:@"likes"];  //first order by ascending duration field
+
+        }
+            break;
+        case 4: {//search
+//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hashtag CONTAINS %@",_pageTitles[_pageIndex] || @"atName CONTAINS %@",_pageTitles[_pageIndex] || @"text CONTAINS %@",_pageTitles[_pageIndex]];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hashtag CONTAINS %@",_pageTitles[_pageIndex] ];
+            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+        }
+            break;
+        default:{ //home
+            query = [[MSQuery alloc] initWithTable:self.table ];
+        }
+            break;
+    }
+    
+    query.includeTotalCount = YES; // Request the total item count
+    query.fetchLimit = kLimit;
+    query.fetchOffset = self.array.count;
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+        [self logErrorIfNotNil:error];
+        if(!error) {
+            //add the items to our local copy
+            [self.array addObjectsFromArray:items];
+            
+            //set a flag to keep track if there are any additional records we need to load
+            if(self.array.count < totalCount) loadMore=YES;
+            else loadMore=NO;
+            [self.theTableView reloadData];
+            
+        }
+    }];
 //    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
 //    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
 
@@ -567,9 +634,7 @@
 //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@",
 //                              attributeName, attributeValue];
 //    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hashtag == 'new'"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"hashtag CONTAINS 'great'"];
-    
-    MSQuery * query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+
     
 //    NSString *queryString = [NSString stringWithFormat:@"hashtag=%@", attributeValue];
 //    [itemTable readWithQueryString:queryString completion:^(NSArray *results, NSInteger totalCount, NSError *error) {
@@ -596,12 +661,10 @@
 //        NSLog(@"items are %@",items);
 //
 //    }];
-    query.includeTotalCount = YES; // Request the total item count
     
     // Start with the first item, and retrieve only three items
 //    query.fetchOffset = 0;
-    query.fetchLimit = 2;
-    query.fetchOffset = self.array.count;
+
 //    [query orderByDescending:@"hashtag"];  //first order by ascending duration field
 //    [query orderByAscending:@"atName"]; // second order by ascending complete field
 //    query.parameters = @{
@@ -609,18 +672,7 @@
 //                         @"atName" : @"new",
 //                         };
 //    query.selectFields=@[@"hashtag"];
-    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-        NSLog(@"items are %@, totalCount is %d",items,totalCount);
-        [self logErrorIfNotNil:error];
-        if(!error) {
-            //add the items to our local copy
-            [self.array addObjectsFromArray:items];
-            
-            //set a flag to keep track if there are any additional records we need to load
-            if(self.array.count < totalCount) loadMore=YES;
-            else loadMore=NO;
-        }
-    }];
+    
 
     
     // Invoke the MSQuery instance directly, rather than using the MSTable helper methods.
