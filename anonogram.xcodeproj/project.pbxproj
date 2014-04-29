@@ -84,7 +84,7 @@
 		CCD9551019075001005EFE06 /* Tapjoy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9550E19075001005EFE06 /* Tapjoy.framework */; };
 		CCD9551A1908B9ED005EFE06 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCD955181908B9ED005EFE06 /* Main.storyboard */; };
 		CCD9551F1908B9FE005EFE06 /* Cell.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD9551C1908B9FE005EFE06 /* Cell.m */; };
-		CCD955201908B9FE005EFE06 /* PageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD9551E1908B9FE005EFE06 /* PageContentViewController.m */; };
+		CCD955201908B9FE005EFE06 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD9551E1908B9FE005EFE06 /* HomeViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -193,8 +193,8 @@
 		CCD955191908B9ED005EFE06 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CCD9551B1908B9FE005EFE06 /* Cell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cell.h; sourceTree = "<group>"; };
 		CCD9551C1908B9FE005EFE06 /* Cell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Cell.m; sourceTree = "<group>"; };
-		CCD9551D1908B9FE005EFE06 /* PageContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageContentViewController.h; sourceTree = "<group>"; };
-		CCD9551E1908B9FE005EFE06 /* PageContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageContentViewController.m; sourceTree = "<group>"; };
+		CCD9551D1908B9FE005EFE06 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
+		CCD9551E1908B9FE005EFE06 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,8 +329,8 @@
 				CCD955181908B9ED005EFE06 /* Main.storyboard */,
 				CCD9551B1908B9FE005EFE06 /* Cell.h */,
 				CCD9551C1908B9FE005EFE06 /* Cell.m */,
-				CCD9551D1908B9FE005EFE06 /* PageContentViewController.h */,
-				CCD9551E1908B9FE005EFE06 /* PageContentViewController.m */,
+				CCD9551D1908B9FE005EFE06 /* HomeViewController.h */,
+				CCD9551E1908B9FE005EFE06 /* HomeViewController.m */,
 				CCD954AD19074BEA005EFE06 /* SettingVC.h */,
 				CCD954AE19074BEA005EFE06 /* SettingVC.m */,
 				CCD954AF19074BEA005EFE06 /* shareViewController.h */,
@@ -596,7 +596,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCD954B319074BEA005EFE06 /* SettingVC.m in Sources */,
-				CCD955201908B9FE005EFE06 /* PageContentViewController.m in Sources */,
+				CCD955201908B9FE005EFE06 /* HomeViewController.m in Sources */,
 				CCD9546419074299005EFE06 /* ViewController.m in Sources */,
 				CCD954B419074BEA005EFE06 /* shareViewController.m in Sources */,
 				CCD9545E19074299005EFE06 /* AppDelegate.m in Sources */,

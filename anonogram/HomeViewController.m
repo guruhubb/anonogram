@@ -1,5 +1,5 @@
 //
-//  PageContentViewController.m
+//  HomeViewController.m
 //  Anonogram
 //
 //  Created by Saswata Basu on 3/21/14.
@@ -10,7 +10,7 @@
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
 #define kLimit 2
 #define kFlagsAllowed 1
-#import "PageContentViewController.h"
+#import "HomeViewController.h"
 #import "Cell.h"
 #import "shareViewController.h"
 #import "NSDate+NVTimeAgo.h"
@@ -19,15 +19,18 @@
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 
-@interface PageContentViewController (){
-    UITextField        *txtChat;
+@interface HomeViewController (){
+//    UITextField        *txtChat;
     NSUserDefaults *defaults;
     NSString *token;
-    BOOL loadMore;
+    BOOL isPrivateOn;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
     NSInteger flagButton;
+
+    UITextView        *txtChat;
+    UIToolbar *_inputAccessoryView;
 }
 @property (nonatomic)           NSInteger busyCount;
 @property (nonatomic, strong)   MSTable *table;
@@ -36,26 +39,12 @@
 
 @end
 
-@implementation PageContentViewController
-//@synthesize items;
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self getData];
-
-
-}
+@implementation HomeViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.array = [[NSMutableArray alloc] init];
-    self.theTableView.delegate=self;
-    self.theTableView.dataSource=self;
-//    [self createContentPages];
-//    self.items = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.busyCount = 0;
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -69,33 +58,71 @@
 //    NSString *mysqlDatetime = <Get from the database>
 //    NSString *timeAgoFormattedDate = [NSDate mysqlDatetimeFormattedAsTimeAgo:mysqlDatetime];
     defaults = [NSUserDefaults standardUserDefaults];
-//    token = [defaults objectForKey:@"booklyAccessToken"];
     refreshControl = [[UIRefreshControl alloc]init];
     [self.theTableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
-    [[NSNotificationCenter defaultCenter]  addObserver:self
-                                              selector:@selector(refreshView) name:@"searchNow" object:nil];
-    // Create the todoService - this creates the Mobile Service client inside the wrapped service
-//    self.todoService = [[TodoService alloc]init];
+    [self setup];
+    [self getUUID];
+    [self getData];
     
-//    [self refreshDataOnSuccess:^{
-//        [self.theTableView reloadData];
-//    }];
-//    if (_pageIndex==2) [self getTwitterUsername];
-//    loadMore=YES;
+}
+-(void) setup {
+    txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
+    txtChat.delegate=self;
+    txtChat.hidden=YES;
+    txtChat.font=[UIFont systemFontOfSize:16];
+    txtChat.text=@"placeholder";
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
+    label.textColor=[UIColor lightGrayColor];
+    label.font = [UIFont systemFontOfSize:16];
+    label.text= @"140";
+    label.tag =100;
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(20,15,280, 190)];
+    label2.textColor=[UIColor lightGrayColor];
+    label2.font = [UIFont systemFontOfSize:18];
+    label2.textAlignment=NSTextAlignmentCenter;
+    label2.text= @"\nPost Anonymously. \n\nUse @IsPrivate button for direct messages - all @usernames become . \n\nNo location tracking. No signups. ";
+    label2.numberOfLines=14;
+    label2.tag =105;
+    [txtChat addSubview:label];
+    [txtChat addSubview:label2];
+    [self createInputAccessoryView];
+//    [self createInputAccessoryViewForSearch];
+    [self.view.window addSubview:txtChat];
+    [self.view.window addSubview:_inputAccessoryView];
+    _inputAccessoryView.hidden=YES;
+//    _searchBarButton.hidden=YES;
+//    _searchBarButton.placeholder = @"Search #hashtag, @username";
+//    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
+    [txtChat setKeyboardType:UIKeyboardTypeTwitter];
+
+}
+- (void) getUUID {
+    
+    NSString *retrieveuuid = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    if (retrieveuuid ==NULL) {
+        CFUUIDRef theUUID = CFUUIDCreate(NULL);
+        CFStringRef string = CFUUIDCreateString(NULL, theUUID);
+        CFRelease(theUUID);
+        NSString *UUID = (__bridge NSString *)string;
+        [SSKeychain setPassword:UUID forService:@"com.anonogram.guruhubb" account:@"user"];
+        retrieveuuid=UUID;
+        NSLog(@"UUID is %@",retrieveuuid);
+        
+        
+    }
+    NSLog(@"UUID is %@",retrieveuuid);
 }
 
-- (void) createContentPages
-{
-//    NSMutableArray *pageStrings = [[NSMutableArray alloc] init];
-//    for (int i = 1; i < 10; i++)
-//    {
-//        NSString *contentString = [[NSString alloc]initWithFormat:@"Chapter %d \nThis is the page %d of content displayed using UIPageViewController in iOS 5.", i, i];
-//        [pageStrings addObject:contentString];
-//    }
-//    _pageContent = [[NSMutableArray alloc] initWithArray:pageStrings];
-//    NSLog(@"pageContent is %@",_pageContent);
++ (NSString *)GetUUID {
+    CFUUIDRef theUUID = CFUUIDCreate(NULL);
+    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
+    CFRelease(theUUID);
+    return (__bridge NSString *)(string);
 }
+
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -195,33 +222,25 @@
 //}
 - (void) deleteText  {
     [self.theTableView beginUpdates];
-//    UITableViewCellEditingStyle editingStyle=1;
-//    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
-        [Flurry logEvent:@"Delete"];
-        //add code here for when you hit delete
-        
-//        NSString *postId=[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id"];
 
-//        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    [Flurry logEvent:@"Delete"];
 
-//        NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
-    
-//        NSLog(@"final url is %@",urlString1);
-    
-//        NSURL *url = [[NSURL alloc]initWithString:urlString1];
-//        NSLog(@"url is%@",url);
-//        [NSData dataWithContentsOfURL:url];
     NSLog(@"delete id is %@",[[self.array objectAtIndex:flagButton] objectForKey:@"id" ]);
-//    [self.table delete:[[self.array objectAtIndex:flagButton] objectForKey:@"id" ] completion:^(id itemId, NSError *error) {
-//        //handle errors or any additional logic as needed
-//    }];
+
     [self.table deleteWithId:[[self.array objectAtIndex:flagButton] objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
         [self logErrorIfNotNil:error];
     }];
+    NSDictionary *item =@{@"postId" : [[self.array objectAtIndex:flagButton] objectForKey:@"id" ]};
+    [self.isLikeTable delete:item completion:^(NSDictionary *item, NSError *error) {
+        [self logErrorIfNotNil:error];
+    }];
+    [self.isFlagTable delete:item completion:^(NSDictionary *item, NSError *error) {
+        [self logErrorIfNotNil:error];
+    }];
     
-        [self.array removeObjectAtIndex:flagButton];
-        [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
-//    }
+    [self.array removeObjectAtIndex:flagButton];
+    [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
+
     [self.theTableView endUpdates];
     [self.theTableView reloadData];
 }
@@ -498,21 +517,9 @@
 
 - (void) refreshView
 {
-//    self.array = nil;
-//    packagesOriginalImages=nil;
     self.array = [[NSMutableArray alloc] init];
-//    packagesOriginalImages=[[NSMutableArray alloc]init];
     [self getData];
-//    loadMore=1;
-//    
-//    dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-//    dispatch_barrier_async(queue, ^{
-////        [self loadxmlparsing];
-//    });
-//    //   dispatch_release(queue);
-//    [self.theTableView reloadData];
     [refreshControl endRefreshing];
-
 }
 
 - (void) storeData {
@@ -601,12 +608,12 @@
 //    
 //}
 
-- (void) logErrorIfNotNil:(NSError *) error
-{
-    if (error) {
-        NSLog(@"ERROR %@", error);
-    }
-}
+//- (void) logErrorIfNotNil:(NSError *) error
+//{
+//    if (error) {
+//        NSLog(@"ERROR %@", error);
+//    }
+//}
 //- (void) loadResults {
 //    MSQuery *query = [self.table query];
 //    
@@ -626,51 +633,86 @@
 //    
 //}
 
-- (void) getData {
-//    if (!loadMore) {
-//        return;
-//    }
-
-    NSLog(@"getting data...");
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    MSQuery * query;
-    switch (_pageIndex) {
-//        case 0:{ //mypage
-//            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId == %@",userId];
-//            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+//- (void) getData {
+////    if (!loadMore) {
+////        return;
+////    }
+//
+//    NSLog(@"getting data...");
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    MSQuery * query;
+//    switch (_pageIndex) {
+////        case 0:{ //mypage
+////            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId == %@",userId];
+////            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+////
+////        }
+////            break;
+//        case 0: { //private
+//            if(![defaults boolForKey:@"myAnons"]) {
+//                NSPredicate * predicate = [NSPredicate predicateWithFormat:@"(isPrivate == YES)  &&  (text contains[cd] %@)",[defaults objectForKey:@"twitterHandle"]];
+//                query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+//            }
+//            else {
+//                NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId == %@",userId];
+//                query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+//            }
+//        }
+//            break;
+//        case 1:{  //home
+//            
+//            query = [[MSQuery alloc] initWithTable:self.table ];
+//            [query orderByDescending:@"timestamp"];  //first order by ascending duration field
 //
 //        }
 //            break;
-        case 0: { //private
-            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"(isPrivate == YES)  &&  (text contains[cd] %@)",[defaults objectForKey:@"twitterHandle"]];
-            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
-        }
-            break;
-        case 2:{  //home
-            
-            query = [[MSQuery alloc] initWithTable:self.table ];
-            [query orderByDescending:@"timestamp"];  //first order by ascending duration field
-
-        }
-            break;
-        case 3:{//popular
-            query = [[MSQuery alloc] initWithTable:self.table ];
-            [query orderByDescending:@"likes"];  //first order by ascending duration field
-            [query orderByDescending:@"timestamp"];  //first order by ascending duration field
-
-        }
-            break;
-//        case 4: {//search
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",[defaults objectForKey:@"search"] ];
-//            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+//        case 2:{//popular
+//            NSLog(@"popular or search %d",[defaults boolForKey:@"search"]);
+//            if(![defaults boolForKey:@"searchOn"]) {
+//
+//                query = [[MSQuery alloc] initWithTable:self.table ];
+//                [query orderByDescending:@"likes"];  //first order by ascending duration field
+//                [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+//            } else {
+//                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",[defaults objectForKey:@"search"] ];
+//                query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+//            }
+//
 //        }
-            break;
-        default:{ //home
-            query = [[MSQuery alloc] initWithTable:self.table ];
-        }
-            break;
-    }
-    
+//            break;
+////        case 4: {//search
+////            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",[defaults objectForKey:@"search"] ];
+////            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
+////        }
+//            break;
+//        default:{ //home
+//            query = [[MSQuery alloc] initWithTable:self.table ];
+//        }
+//            break;
+//    }
+//    
+//    query.includeTotalCount = YES; // Request the total item count
+//    query.fetchLimit = kLimit;
+//    query.fetchOffset = self.array.count;
+//    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+//        [self logErrorIfNotNil:error];
+//        if(!error) {
+//            //add the items to our local copy
+//            [self.array addObjectsFromArray:items];
+//            
+//            //set a flag to keep track if there are any additional records we need to load
+//            if(self.array.count < totalCount) loadMore=YES;
+//            else loadMore=NO;
+//            [self.theTableView reloadData];
+//
+//        }
+//    }];
+//}
+- (void) getData {
+    NSLog(@"getting data...");
+    MSQuery * query = [[MSQuery alloc] initWithTable:self.table ];
+    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
@@ -680,16 +722,10 @@
         if(!error) {
             //add the items to our local copy
             [self.array addObjectsFromArray:items];
-            
-            //set a flag to keep track if there are any additional records we need to load
-            if(self.array.count < totalCount) loadMore=YES;
-            else loadMore=NO;
             [self.theTableView reloadData];
-
         }
     }];
 }
-
 - (void)TwitterSwitch {
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
     
@@ -733,75 +769,171 @@
 - (void) getTwitterUsername {
     //get Twitter username and store it
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
-    
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
-    
     [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error)
-     
      {
          if(granted) {
              NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
-//             ACAccount *twitterAccount;
-//             if (accountsArray.count!=0) {
-//                twitterAccount = [accountsArray objectAtIndex:0];
-//             }
-//             NSLog(@"%@",accountsArray);
              if ([accountsArray count] > 0) {
                  ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
                  NSLog(@"%@",twitterAccount.username);
                  NSLog(@"%@",twitterAccount.accountType);
                  [[NSUserDefaults standardUserDefaults] setValue:twitterAccount.username forKey:@"twitterHandle"];
              }
-             
-             
          }}];
     NSLog(@"twitterHandle is %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]);
-    //get the username later...
-    //        [textField setText:[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]];
-    
-//    NSURL *url = [NSURL URLWithString:@"https://api.twitter.com/1.1/users/show.json"];
-//    NSMutableDictionary *params = [NSMutableDictionary new];
-//    [params setObject:tempUserID forKey:@"user_id"];
-//    [params setObject:@"0" forKey:@"include_rts"]; // don't include retweets
-//    [params setObject:@"1" forKey:@"trim_user"]; // trim the user information
-//    [params setObject:@"1" forKey:@"count"]; // i don't even know what this does but it does something useful
-//    SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodGET URL:url parameters:params];
-//
-//
-//    //  Attach an account to the request
-//    [request setAccount:twitterAccount]; // this can be any Twitter account obtained from the Account store
-//    
-//    [request performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-//        if (responseData) {
-//            NSDictionary *twitterData = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingAllowFragments error:NULL];
-//            NSLog(@"received Twitter data: %@", twitterData);
-//            
-//            // to do something useful with this data:
-//            NSString *screen_name = [twitterData objectForKey:@"screen_name"]; // the screen name you were after
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                // update your UI in here
-//                twitterScreenNameLabel.text = screen_name;
-//            });
-//            
-            // A handy bonus tip: twitter display picture
-//            NSString *profileImageUrl = [twitterData objectForKey:@"profile_image_url"];
-//            
-//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//                
-//                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profileImageUrl]];
-//                UIImage *image = [UIImage imageWithData:imageData]; // the matching profile image
-//                
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    // assign it to an imageview in your UI here
-//                    twitterProfileImageView.image = image;
-//                });
-//            });
-//        }else{
-//            NSLog(@"Error while downloading Twitter user data: %@", error);
-//        }
-//    }];
 }
 
+#pragma mark - textView delegated methods
+
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    textView.text = @"";
+    [textView becomeFirstResponder];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
+    NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
+    NSUInteger location = replacementTextRange.location;
+    
+    if (textView.text.length + text.length > 140){
+        if (location != NSNotFound){
+            [textView resignFirstResponder];
+        }
+        return NO;
+    }
+    else if (location != NSNotFound){
+        [textView resignFirstResponder];
+        return NO;
+    }
+    return YES;
+}
+- (void)textViewDidChange:(UITextView *)textView{
+    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
+    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+    label2.hidden=YES;
+    
+}
+
+-(void)createInputAccessoryView {
+    
+    UIToolbar *inputAccessoryView1 = [[UIToolbar alloc] init];
+    inputAccessoryView1.barTintColor=[UIColor lightGrayColor];
+    [inputAccessoryView1 sizeToFit];
+    
+    inputAccessoryView1.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+                                                                   style:UIBarButtonItemStyleBordered
+                                                                  target:self action:@selector(cancelKeyboard)];
+    //Use this to put space in between your toolbox buttons
+    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                              target:nil
+                                                                              action:nil];
+    UIBarButtonItem *isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"@IsPrivate"
+                                                                      style:UIBarButtonItemStyleBordered
+                                                                     target:self action:@selector(addText)];
+    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Send"
+                                                                 style:UIBarButtonItemStyleBordered
+                                                                target:self action:@selector(doneKeyboard)];
+    
+    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
+    [inputAccessoryView1 setItems:itemsView animated:NO];
+    [txtChat addSubview:inputAccessoryView1];
+}
+-(void) addText {
+    [Flurry logEvent:@"isPrivate Tapped"];
+    
+    txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
+    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+    label2.hidden=YES;
+}
+//-(void)createInputAccessoryViewForSearch {
+//    
+//    _inputAccessoryView = [[UIToolbar alloc] init];
+//    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
+//    [_inputAccessoryView sizeToFit];
+//    
+//    _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
+//    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+//                                                                   style:UIBarButtonItemStyleBordered
+//                                                                  target:self action:@selector(searchBarCancel)];
+//    //Use this to put space in between your toolbox buttons
+//    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+//                                                                              target:nil
+//                                                                              action:nil];
+//    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Search"
+//                                                                 style:UIBarButtonItemStyleBordered
+//                                                                target:self action:@selector(searchBarClicked)];
+//    
+//    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
+//    [_inputAccessoryView setItems:itemsView animated:NO];
+//}
+-(void)doneKeyboard{
+    [txtChat resignFirstResponder];
+    txtChat.hidden=YES;
+    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.text = @"140";
+    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+    if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
+        //    {
+        //    if(![txtChat.text isEqualToString:@""])
+        [self postComment];
+    
+    txtChat.text = @"";
+}
+-(void)cancelKeyboard{
+    [txtChat resignFirstResponder];
+    txtChat.text=@"";
+    txtChat.hidden=YES;
+    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.text = @"140";
+    
+}
+- (IBAction)composeAction:(id)sender {
+    
+    NSLog(@"compose");
+    txtChat.hidden=NO;
+    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+    label2.hidden=NO;
+    [self.view bringSubviewToFront:txtChat];
+    [txtChat becomeFirstResponder];
+}
+
+-(void)postComment
+{
+    [Flurry logEvent:@"Post"];
+    
+//    if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
+//        isPrivateOn = YES;
+//    else
+//        isPrivateOn = NO;
+//    
+//    txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])] ;
+    
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    
+    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    //    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn],@"hashtag":hashString, @"atName": atString};
+    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
+    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+            [self logErrorIfNotNil:error];
+        } else {
+            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        }
+    }];
+}
+
+
+- (void) logErrorIfNotNil:(NSError *) error
+{
+    if (error) {
+        NSLog(@"ERROR %@", error);
+    }
+}
 
 @end

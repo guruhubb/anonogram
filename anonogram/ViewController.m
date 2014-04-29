@@ -35,32 +35,27 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//    self.items = [[NSMutableArray alloc] init];
-//    self.busyCount = 0;
-//    self.table = [self.client tableWithName:@"anonogramTable"];
-//    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
-//        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
-//    }
-	// Create the data model
-    _pageTitles = [NSMutableArray arrayWithObjects:@"Private", @"ANONOGRAM",@"Popular", nil];
-//    [@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace"];
-//    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
-    
-    // Create page view controller
-    self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageViewController"];
-    self.pageViewController.dataSource = self;
-    
-    PageContentViewController *startingViewController = [self viewControllerAtIndex:1];
-    startingViewController.pageTitles=_pageTitles;
-    NSArray *viewControllers = @[startingViewController];
-    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
-    
-    // Change the size of page view controller
-    self.pageViewController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height );
-    
-    [self addChildViewController:_pageViewController];
-    [self.view addSubview:_pageViewController.view];
-    [self.pageViewController didMoveToParentViewController:self];
+
+//	// Create the data model
+//    _pageTitles = [NSMutableArray arrayWithObjects:@"Private", @"ANONOGRAM",@"Popular", nil];
+////    [@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace"];
+////    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
+//    
+//    // Create page view controller
+//    self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageViewController"];
+//    self.pageViewController.dataSource = self;
+//    
+//    PageContentViewController *startingViewController = [self viewControllerAtIndex:1];
+//    startingViewController.pageTitles=_pageTitles;
+//    NSArray *viewControllers = @[startingViewController];
+//    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+//    
+//    // Change the size of page view controller
+//    self.pageViewController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height );
+//    
+//    [self addChildViewController:_pageViewController];
+//    [self.view addSubview:_pageViewController.view];
+//    [self.pageViewController didMoveToParentViewController:self];
     
     NSLog(@"showSurvey is %d and rateDone is %d",[defaults boolForKey:@"showSurvey"],[defaults boolForKey:@"rateDone"]);
     if ([defaults boolForKey:@"showSurvey"]&&![defaults boolForKey:@"rateDone"])
@@ -71,7 +66,7 @@
     txtChat.hidden=YES;
     txtChat.font=[UIFont systemFontOfSize:16];
     txtChat.text=@"placeholder";
-//    txtChat.textColor = [UIColor lightGrayColor];
+
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
     label.textColor=[UIColor lightGrayColor];
     label.font = [UIFont systemFontOfSize:16];
@@ -96,21 +91,9 @@
     [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [txtChat setKeyboardType:UIKeyboardTypeTwitter];
 
-    
-//    if (currentIndex==5 || currentIndex == 6){
-//        searchBar.userInteractionEnabled=YES;
-//        _searchButton.hidden=NO;
-//    }
-//    else {
-//        _searchButton.hidden=YES;
-//        searchBar.userInteractionEnabled=NO;
-//    }
-    
-//    [searchBar setFrame:CGRectMake(0, screenSpecificSetting(200+64+44, 114+64+44), 320, 44)];
-//    searchBar.delegate=self;
-//    [self.view addSubview:searchBar];
     [self getUUID];
-    
+    [[NSNotificationCenter defaultCenter]  addObserver:self
+                                              selector:@selector(changeNavTitle) name:@"changeNavTitle" object:nil];
 }
 - (void) getUUID {
     
@@ -153,30 +136,75 @@
 //    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionReverse animated:NO completion:nil];
 //}
 
-- (PageContentViewController *)viewControllerAtIndex:(NSUInteger)index
-{
-
-    if (([self.pageTitles count] == 0) || (index >= [self.pageTitles count])) {
-        return nil;
-    }
-    if (!(currentIndex==2)){
-        _searchBarButton.hidden=YES;
-        _inputAccessoryView.hidden=YES;
-        [_searchBarButton resignFirstResponder];
-    }
-    // Create a new view controller and pass suitable data.
-    PageContentViewController *pageContentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageContentViewController"];
-//    pageContentViewController.imageFile = self.pageImages[index];
-//    pageContentViewController.titleText = self.pageTitles[index];
-    pageContentViewController.pageIndex = index;
-    
-    return pageContentViewController;
-}
-
-#pragma mark - Page View Controller Data Source
-
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
-{
+//- (PageContentViewController *)viewControllerAtIndex:(NSUInteger)index
+//{
+//
+//    if (([self.pageTitles count] == 0) || (index >= [self.pageTitles count])) {
+//        return nil;
+//    }
+//    if (!(currentIndex==2)){
+//        _searchBarButton.hidden=YES;
+//        _inputAccessoryView.hidden=YES;
+//        [_searchBarButton resignFirstResponder];
+//    }
+//    // Create a new view controller and pass suitable data.
+//    PageContentViewController *pageContentViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageContentViewController"];
+////    pageContentViewController.imageFile = self.pageImages[index];
+////    pageContentViewController.titleText = self.pageTitles[index];
+//    pageContentViewController.pageIndex = index;
+//    
+//    return pageContentViewController;
+//}
+//
+//#pragma mark - Page View Controller Data Source
+//
+//- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
+//{
+////    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
+////    UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
+////    UIBarButtonItem *barButton3 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_411_twitter.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(TwitterSwitch)];
+////    barButton1.tintColor=[UIColor whiteColor];
+////    barButton2.tintColor=[UIColor whiteColor];
+////    barButton3.tintColor=[UIColor whiteColor];
+////    _searchBarButton.hidden=YES;
+////    _inputAccessoryView.hidden=YES;
+////    txtChat.hidden=YES;
+////    [_searchBarButton resignFirstResponder];
+////    [txtChat resignFirstResponder];
+//    NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
+//    NSLog(@"index in beforeviewcontroller method is %d",index);
+//
+////    currentIndex = index;
+//////    if (index==0)
+//////        self.navigationItem.title= @"ANONOGRAM";
+//////    else
+////        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
+////    if (index==1)
+////        self.navigationItem.leftBarButtonItem = barButton1;
+////    else if (index==0)
+////        self.navigationItem.leftBarButtonItem=barButton3;
+//////    else
+//////        self.navigationItem.leftBarButtonItem = barButton2;
+////    if (index==2)
+////        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
+////    else if (index == 1)
+////        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
+//////    else 
+//////        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
+////    [[NSNotificationCenter defaultCenter] postNotificationName:@"changeNavTitle" object:nil];
+//    [self changeNavTitle];
+//
+//    if ((index == 0) || (index == NSNotFound)) {
+//        return nil;
+//    }
+//    
+//    index--;
+//    [defaults setInteger:index forKey:@"index"];
+//
+//    return [self viewControllerAtIndex:index];
+//}
+- (void) changeNavTitle {
+    NSLog(@"hello");
     UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
     UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
     UIBarButtonItem *barButton3 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_411_twitter.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(TwitterSwitch)];
@@ -188,53 +216,47 @@
     txtChat.hidden=YES;
     [_searchBarButton resignFirstResponder];
     [txtChat resignFirstResponder];
-    NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
+//    PageContentViewController *viewController=[[PageContentViewController alloc] init];
+    NSUInteger index = [defaults boolForKey:@"index"];
+    NSLog(@"index is %d",index);
     currentIndex = index;
-//    if (index==0)
-//        self.navigationItem.title= @"ANONOGRAM";
-//    else
-        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
+    //    if (index==0)
+    //        self.navigationItem.title= @"ANONOGRAM";
+    //    else
+    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
     if (index==1)
         self.navigationItem.leftBarButtonItem = barButton1;
     else if (index==0)
         self.navigationItem.leftBarButtonItem=barButton3;
-//    else
-//        self.navigationItem.leftBarButtonItem = barButton2;
+    //    else
+    //        self.navigationItem.leftBarButtonItem = barButton2;
     if (index==2)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
     else if (index == 1)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
-//    else 
+    //    else
+    //        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
+}
+//- (void) goHome {
+//    [Flurry logEvent:@"goHome"];
+//
+//    [txtChat resignFirstResponder];
+//    txtChat.hidden=YES;
+//    PageContentViewController *targetPageViewController = [self viewControllerAtIndex:2 ];
+//    currentIndex = 2;
+//    NSArray *theViewControllers = nil;
+//    theViewControllers = [NSArray arrayWithObjects:targetPageViewController, nil];
+//
+//    [self.pageViewController setViewControllers:theViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:NULL];  //NO animation is important to prevent false rendering of navigation buttons
+//    
+//    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
+//    barButton1.tintColor=[UIColor whiteColor];
+//    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[2]];
+//    self.navigationItem.leftBarButtonItem = barButton1;
+//
 //        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
-
-    if ((index == 0) || (index == NSNotFound)) {
-        return nil;
-    }
-    
-    index--;
-    return [self viewControllerAtIndex:index];
-}
-
-- (void) goHome {
-    [Flurry logEvent:@"goHome"];
-
-    [txtChat resignFirstResponder];
-    txtChat.hidden=YES;
-    PageContentViewController *targetPageViewController = [self viewControllerAtIndex:2 ];
-    currentIndex = 2;
-    NSArray *theViewControllers = nil;
-    theViewControllers = [NSArray arrayWithObjects:targetPageViewController, nil];
-
-    [self.pageViewController setViewControllers:theViewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:NULL];  //NO animation is important to prevent false rendering of navigation buttons
-    
-    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
-    barButton1.tintColor=[UIColor whiteColor];
-    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[2]];
-    self.navigationItem.leftBarButtonItem = barButton1;
-
-        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
-    
-}
+//    
+//}
 - (void) goToSettings{
     NSLog(@"settings");
     [txtChat resignFirstResponder];
@@ -267,41 +289,45 @@
 //        //        NSLog(@"image size is %d",[UIImageJPEGRepresentation(image, 1.0) length]);
 //    }
 //}
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
-{
-    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
-    UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
-    UIBarButtonItem *barButton3 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_411_twitter.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(TwitterSwitch)];
-    barButton3.tintColor=[UIColor whiteColor];
-
-    barButton1.tintColor=[UIColor whiteColor];
-    barButton2.tintColor=[UIColor whiteColor];
-    _searchBarButton.hidden=YES;
-    _inputAccessoryView.hidden=YES;
-    txtChat.hidden=YES;
-    [_searchBarButton resignFirstResponder];
-    [txtChat resignFirstResponder];
-    NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
-    currentIndex = index;
-    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
-    if (index==1) self.navigationItem.leftBarButtonItem = barButton1;
-    else if (index==0)
-        self.navigationItem.leftBarButtonItem=barButton3;
-    else self.navigationItem.leftBarButtonItem = barButton2;
-    if (index==2)
-        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
-    else if (index==1)
-        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
-    if (index == NSNotFound) {
-        return nil;
-    }
-    
-    index++;
-    if (index == [self.pageTitles count]) {
-        return nil;
-    }
-    return [self viewControllerAtIndex:index];
-}
+//- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+//{
+////    UIBarButtonItem *barButton1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_136_cogwheel.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goToSettings)];
+////    UIBarButtonItem *barButton2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_020_home.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(goHome)];
+////    UIBarButtonItem *barButton3 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_411_twitter.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(TwitterSwitch)];
+////    barButton3.tintColor=[UIColor whiteColor];
+////
+////    barButton1.tintColor=[UIColor whiteColor];
+////    barButton2.tintColor=[UIColor whiteColor];
+////    _searchBarButton.hidden=YES;
+////    _inputAccessoryView.hidden=YES;
+////    txtChat.hidden=YES;
+////    [_searchBarButton resignFirstResponder];
+////    [txtChat resignFirstResponder];
+//    NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
+//    NSLog(@"index in afterviewcontroller method is %d",index);
+////    currentIndex = index;
+////    self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
+////    if (index==1) self.navigationItem.leftBarButtonItem = barButton1;
+////    else if (index==0)
+////        self.navigationItem.leftBarButtonItem=barButton3;
+////    else self.navigationItem.leftBarButtonItem = barButton2;
+////    if (index==2)
+////        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
+////    else if (index==1)
+////        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
+////    if (index == NSNotFound) {
+////        return nil;
+////    }
+////    [[NSNotificationCenter defaultCenter] postNotificationName:@"changeNavTitle" object:nil];
+//    [self changeNavTitle];
+//    index++;
+//    if (index == [self.pageTitles count]) {
+//        return nil;
+//    }
+//    [defaults setInteger:index forKey:@"index"];
+//
+//    return [self viewControllerAtIndex:index];
+//}
 
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
 {
@@ -344,12 +370,11 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=866641636&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
 }
 - (IBAction)searchAction:(id)sender {
+    self.navigationItem.title= [NSString stringWithFormat:@"Search"];
     _searchBarButton.hidden=NO;
     _inputAccessoryView.hidden=NO;
     [self.view bringSubviewToFront:_searchBarButton];
     [_searchBarButton becomeFirstResponder];
-    
-
 }
 //- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar{
 //    if(![searchBar.text isEqualToString:@""]){
@@ -397,6 +422,7 @@
 - (void)searchBarClicked
 {
     [Flurry logEvent:@"Search"];
+    [defaults setBool:YES forKey:@"searchOn"];
 
     [_searchBarButton resignFirstResponder];
     _searchBarButton.hidden=YES;
@@ -407,7 +433,7 @@
           NSLog(@"_searchBarButton.text whitespace length again is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
         NSString *string  =[NSString stringWithFormat:@"%@", _searchBarButton.text ];
 //        _pageTitles[currentIndex]= string;
-        self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
+        self.navigationItem.title= [NSString stringWithFormat:@"%@",string];
         //        [self openSearch];
         [defaults setObject:string forKey:@"search"];
     }
@@ -559,64 +585,14 @@
 {
     [Flurry logEvent:@"Post"];
 
-    
-
-//    NSString *hashString=@"";  //find recurrence of #strings and space them apart in a string
-//    NSString *atString=@"";  //find recurrence of @strings and space them apart in a string
-    
     if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
         isPrivateOn = YES;
     else
         isPrivateOn = NO;
     
     txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])] ;
-    
-//    NSString * aString = [NSString stringWithString:txtChat.text];
-//    NSString * bString = [NSString stringWithString:txtChat.text];
-//    
-//    NSMutableArray *substrings = [NSMutableArray new];
-//    NSScanner *scanner = [NSScanner scannerWithString:aString];
-//    [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before #
-//    while(![scanner isAtEnd]) {
-//        NSString *substring = nil;
-//        [scanner scanString:@"#" intoString:nil]; // Scan the # character
-//        if([scanner scanUpToString:@" " intoString:&substring]) {
-//            // If the space immediately followed the #, this will be skipped
-//            [substrings addObject:substring];
-//        }
-//        [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before next #
-//    }
-//    for (NSString *string in substrings){
-//        hashString = [hashString stringByAppendingString:string];
-//        hashString = [hashString stringByAppendingString:@" "];
-//
-//    }
-//    NSLog(@"hashString = %@",hashString);
-//    
-//    NSMutableArray *substrings2 = [NSMutableArray new];
-//    NSScanner *scanner2 = [NSScanner scannerWithString:bString];
-//    [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before #
-//    while(![scanner2 isAtEnd]) {
-//        NSString *substring2 = nil;
-//        [scanner2 scanString:@"@" intoString:nil]; // Scan the # character
-//        if([scanner2 scanUpToString:@" " intoString:&substring2]) {
-//            // If the space immediately followed the #, this will be skipped
-//            [substrings2 addObject:substring2];
-//        }
-//        [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before next #
-//    }
-//    for (NSString *string in substrings2){
-//        atString = [atString stringByAppendingString:string];
-//        atString = [atString stringByAppendingString:@" "];
-//    }
-//    NSLog(@"atString = %@",atString);
-//
-
-    
-    NSLog(@"txtChat = %@",txtChat.text);
 
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    
     
     MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
 //    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn],@"hashtag":hashString, @"atName": atString};
@@ -629,154 +605,8 @@
             NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
         }
     }];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"searchNow" object:nil];
-
-//    [self viewControllerAtIndex:currentIndex];
-    
-//        uuid, text, number of likes, hashtag, is private,atusername ,itemId, timestamp -
 }
-//-(void)postComment
-//{
-//    //    iscomment=TRUE;
-//    
-//    [txtChat resignFirstResponder];
-//    [Flurry logEvent:@"Comment: Post"];
-//    NSString *id1=[self.array objectForKey:@"id"];
-//    
-//    NSString *strid= [id1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//    
-//    NSString *tagid=[self.dicUserData objectForKey:@"tagId"];
-//    NSString *strtagid=[tagid stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//    NSString *randomNumber=@"arc4random()";
-//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    NSString *token = [defaults objectForKey:@"booklyAccessToken"];
-//    NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postComment&mediaId=%@&tagId=%@&comment=%@&authtoken=%@&rand=%@",strid,strtagid,[txtChat.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],token,randomNumber];
-//    
-//    //  http://m.omentos.com/backend/api.php?method=postComment&mediaId=78&tagId=32&comment=Nice!!&auth token=//f7177163c833dff4b38fc8d2872f1ec6_4fd081e00cdb0U2FyYXZhbmFuVVNFUg==4fd081e00d19a
-//    
-//    
-//    NSLog(@"final url is %@",urlString1);
-//    
-//    NSURL *url = [[NSURL alloc]initWithString:urlString1];
-//    NSLog(@"url is%@",url);
-//    NSData *Data = [NSData dataWithContentsOfURL:url];
-//    url=nil;
-//    
-//    if (!Data) {
-//        //        downloadBusy = NO;
-//        NSLog(@" No Internet Connection");
-//        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-//        
-//        return;
-//    }
-//    //    NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-//    self.array = nil;
-//    self.arrayImages = nil;
-//    arrayImages = [[NSMutableArray alloc] init ];
-//    array = [[NSMutableArray alloc] init ];
-//    loadMore=1;
-//    [self updateData];
-//}
-//-(void)updateData
-//{
-//    array = nil;
-//    arrayImages=nil;
-//    array = [[NSMutableArray alloc] init];
-//    arrayImages = [[NSMutableArray alloc] init];
-//    imageCounter=0;
-//    [self loadxmlparsing];
-//
-//}
 
-//- (void) storeData {
-//    
-//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//    
-//    
-//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-//    NSDictionary *item = @{@"userId" : userId, @"text" : @"Awesome item" };
-//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-//    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-//        if (error) {
-//            NSLog(@"Error: %@", error);
-//        } else {
-//            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-//        }
-//    }];
-//
-//}
-
-//- (void) refreshDataOnSuccess:(completionBlock)completion
-//{
-//    // TODO
-//    // Create a predicate that finds items where complete is false
-//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
-//    
-//    // TODO
-//    // Query the TodoItem table and update the items property with the results from the service
-//    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
-//    {
-//        self.items = [results mutableCopy];
-//        completion();
-//    }];
-//    
-//    completion();
-//}
-//
-//-(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-//{
-//    // TODO
-//    // Insert the item into the TodoItem table and add to the items array on completion
-//    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
-//        NSUInteger index = [items count];
-//        [(NSMutableArray *)items insertObject:item atIndex:index];
-//        
-//        // Let the caller know that we finished
-//        completion(index);
-//    }];
-//    
-//    NSUInteger index = [items count];
-//    [(NSMutableArray *)items insertObject:item atIndex:index];
-//    
-//    // Let the caller know that we finished
-//    completion(index);
-//    
-//}
-//
-//-(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-//{
-//    // Cast the public items property to the mutable type (it was created as mutable)
-//    NSMutableArray *mutableItems = (NSMutableArray *) items;
-//    
-//    // Set the item to be complete (we need a mutable copy)
-//    NSMutableDictionary *mutable = [item mutableCopy];
-//    [mutable setObject:@(YES) forKey:@"complete"];
-//    
-//    // Replace the original in the items array
-//    NSUInteger index = [items indexOfObjectIdenticalTo:item];
-//    [mutableItems replaceObjectAtIndex:index withObject:mutable];
-//    
-//    // TODO
-//    // Update the item in the TodoItem table and remove from the items array on completion
-//    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
-//        
-//        // TODO
-//        // Get a fresh index in case the list has changed
-//        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
-//        
-//        [mutableItems removeObjectAtIndex:index];
-//        
-//        // Let the caller know that we have finished
-//        completion(index);
-//    }];
-//    
-//    
-//    [mutableItems removeObjectAtIndex:index];
-//    
-//    // Let the caller know that we have finished
-//    completion(index);
-//    
-//}
 
 - (void) logErrorIfNotNil:(NSError *) error
 {
