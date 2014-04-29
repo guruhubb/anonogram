@@ -89,8 +89,8 @@
     [txtChat addSubview:label2];
     [self createInputAccessoryView];
 //    [self createInputAccessoryViewForSearch];
-    [self.view.window addSubview:txtChat];
-    [self.view.window addSubview:_inputAccessoryView];
+    [self.view addSubview:txtChat];
+    [self.view addSubview:_inputAccessoryView];
     _inputAccessoryView.hidden=YES;
 //    _searchBarButton.hidden=YES;
 //    _searchBarButton.placeholder = @"Search #hashtag, @username";
@@ -144,6 +144,7 @@
 //    if (_pageIndex==0 ){
     cell.pageContent.text = [dictionary objectForKey:@"text"];
     cell.likeCount.text = [dictionary objectForKey:@"likes"];
+    
 //    if ([[dictionary objectForKey:@"timestamp"] isEqualToString:@""]) {
 //        cell.timestamp.text = @"";
 //    }
@@ -155,12 +156,14 @@
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
         
-        
 //    }
 //    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
 //    cell.flag.imageView.image=nil;
-    if (_pageIndex==0 )
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+
+    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
         [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
+    }
     else {
         [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -176,9 +179,6 @@
 //    [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
 //        if (items.count) cell.like.userInteractionEnabled=NO;
 //    }];
- 
-    
-    
 
     indexPathRow=indexPath;
     
@@ -244,10 +244,10 @@
     [self.theTableView endUpdates];
     [self.theTableView reloadData];
 }
+
 - (IBAction)likeAction:(id)sender {
     [Flurry logEvent:@"Like"];
     UIButton *btnPressLike = (UIButton*)sender;
-//    btnPressLike.userInteractionEnabled=NO;
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
 
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -260,12 +260,7 @@
             NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
             [self.table update:item completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
-            }];
-//            NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//            NSDictionary *item1 =@{@"postId" :[dictionary  objectForKey:@"id" ], @"userId": userId};
-//            NSLog (@"items are %@",items[0]);
-//            NSMutableDictionary *dic = items[0];
-            
+            }]; 
             [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
@@ -289,103 +284,14 @@
             [self.theTableView reloadData];
         }
     }];
-
-//    NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
-//    NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
-//    [dictionary setValue:likesCount forKey:@"likes"];
-//    NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-//    [self.table update:item completion:^(NSDictionary *item, NSError *error) {
-//        //handle errors or any additional logic as needed
-//         [self logErrorIfNotNil:error];
-//    }];
-//    
-//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//    NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
-//    [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
-//        //handle errors or any additional logic as needed
-//        [self logErrorIfNotNil:error];
-//    }];
-//    [self.theTableView reloadData];
-
-
-//    NSInteger tagLikeBtn = btnPressLike.tag;
-//    BOOL isLikeValue = [[dictionary objectForKey:@"islike"] boolValue];  // 0 for UnLike, 1 for Like
-//    if (!isLikeValue) {
-////        [self facebookUpdateNewLikeActivity];
-//        [dictionary setValue:@"1" forKey:@"islike"];
-//        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
-//        count++;
-//        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
-//        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
-//        //  btnPressLike.userInteractionEnabled=FALSE;
-//        [self.theTableView reloadData];
-//        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-//        
-//        dispatch_barrier_async(queue, ^{
-//            
-//            
-//            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
-//            NSString *strMediaId=[dicMedia objectForKey:@"id"];
-//            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//            NSLog(@"media id is%@",strWithOutSpaceMediaId);
-//            
-//            NSString *strTagId=[dicMedia objectForKey:@"tagId"];
-//            NSString *strWithOutSpaceTagId = [strTagId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//            
-//            NSLog(@"tag id IS %@",strWithOutSpaceTagId);
-//            
-//            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postLike&mediaId=%@&tagId=%@&authtoken=%@",strWithOutSpaceMediaId,strWithOutSpaceTagId,token];
-//            
-//            
-//            NSLog(@"final url is %@",urlString);
-//            
-//            NSURL *url = [[NSURL alloc] initWithString:urlString];
-//            NSLog(@"url is%@",url);
-//            //    IsLikeUnlikeTag=TRUE;
-//            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-//            url=nil;
-//            xmlParser=nil;
-//            //        [xmlParser setDelegate:self];
-//        });
-//        //   dispatch_release(queue);
-//    }
-//    else {
-//        [dictionary setValue:@"0" forKey:@"islike"];
-//        count--;
-//        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
-//        [self.theTableView reloadData];
-//        
-//        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-//        
-//        dispatch_barrier_async(queue, ^{
-//            
-//            
-//            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
-//            NSString *strMediaId=[dicMedia objectForKey:@"id"];
-//            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//            NSLog(@"media id is%@",strWithOutSpaceMediaId);
-//            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=disLike&mediaId=%@&authtoken=%@",strWithOutSpaceMediaId,token];
-//            
-//            
-//            NSLog(@"final url is %@",urlString);
-//            
-//            NSURL *url = [[NSURL alloc] initWithString:urlString];
-//            NSLog(@"url is%@",url);
-//            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-//            //        [NSData dataWithContentsOfURL:url];
-//            url=nil;
-//            xmlParser=nil;
-//        });
-//        //   dispatch_release(queue);
-//    }
-    
-
 }
 
 - (IBAction)flagAction:(id)sender {
    UIButton *btn = (UIButton *)sender;
     flagButton = btn.tag;
-    if (_pageIndex==0 ){
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    
+    if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userId"]] ){
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:nil];
         actionSheet.tag=0;
         [actionSheet showInView:sender];
@@ -396,9 +302,8 @@
     actionSheet.tag=1;
     [actionSheet showInView:sender];
     }
-    
-    
 }
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     UIButton * btn = (UIButton *) sender;
@@ -429,7 +334,7 @@
     label.textAlignment=NSTextAlignmentCenter;
     label.numberOfLines=6;
     label.font = [UIFont fontWithName:@"GillSans-Light" size:20.0];
-    label.text = [self.array[index] objectForKey:@"text"];
+    label.text = [self.array[indexPathRow.row] objectForKey:@"text"];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"white"])
         label.textColor = [UIColor blackColor];
     else
@@ -841,14 +746,18 @@
     NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
     [inputAccessoryView1 setItems:itemsView animated:NO];
     [txtChat addSubview:inputAccessoryView1];
+    
 }
+
 -(void) addText {
     [Flurry logEvent:@"isPrivate Tapped"];
     
     txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=YES;
+    
 }
+
 //-(void)createInputAccessoryViewForSearch {
 //    
 //    _inputAccessoryView = [[UIToolbar alloc] init];
@@ -870,6 +779,7 @@
 //    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
 //    [_inputAccessoryView setItems:itemsView animated:NO];
 //}
+
 -(void)doneKeyboard{
     [txtChat resignFirstResponder];
     txtChat.hidden=YES;
@@ -926,6 +836,7 @@
             NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
         }
     }];
+    [self refreshView];
 }
 
 
