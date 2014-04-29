@@ -39,4 +39,6 @@ typedef void (^busyUpdateBlock) (BOOL busy);
 //- (void) completeItem: (NSDictionary *) item
 //           completion:(completionWithIndexBlock) completion;
 //- (void)TwitterSwitch;
+
+- (void) refreshView;
 @end

@@ -17,6 +17,7 @@
 		CC0FD3F3190B0111008F4A63 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3F2190B0111008F4A63 /* Accounts.framework */; };
 		CC0FD3F5190B745C008F4A63 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3F4190B745C008F4A63 /* Social.framework */; };
 		CC0FD3F7190B8C51008F4A63 /* glyphicons_411_twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */; };
+		CC0FD3FD190CA0A9008F4A63 /* NewRelicAgent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -109,6 +110,7 @@
 		CC0FD3F2190B0111008F4A63 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		CC0FD3F4190B745C008F4A63 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_411_twitter.png; sourceTree = "<group>"; };
+		CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewRelicAgent.framework; path = NewRelic_iOS_Agent_3.289/NewRelicAgent.framework; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -225,6 +227,7 @@
 				CCD954F819074F2D005EFE06 /* libxml2.dylib in Frameworks */,
 				CCD954F919074F2D005EFE06 /* libz.dylib in Frameworks */,
 				CCD954FC19074F2D005EFE06 /* MobileCoreServices.framework in Frameworks */,
+				CC0FD3FD190CA0A9008F4A63 /* NewRelicAgent.framework in Frameworks */,
 				CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */,
 				CCD9551019075001005EFE06 /* Tapjoy.framework in Frameworks */,
 				CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */,
@@ -282,6 +285,7 @@
 		CCD9544C19074298005EFE06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */,
 				CC0FD3F4190B745C008F4A63 /* Social.framework */,
 				CC0FD3F2190B0111008F4A63 /* Accounts.framework */,
 				CC0FD3ED190A82F2008F4A63 /* WindowsAzureMobileServices.framework */,
@@ -738,6 +742,8 @@
 					"$(inherited)",
 					"/Users/saswata_basu/Documents/Developer/anonogram/TapjoySDK_iOS_v10.0-2.0/Libraries/Tapjoy.embeddedframework",
 					"/Users/saswata_basu/Downloads/azuresdk-iOS-v1-2",
+					/Users/saswata_basu/Downloads/NewRelic_iOS_Agent_3.289,
+					/Users/saswata_basu/Documents/Developer/anonogram/NewRelic_iOS_Agent_3.289,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "anonogram/anonogram-Prefix.pch";
@@ -762,6 +768,8 @@
 					"$(inherited)",
 					"/Users/saswata_basu/Documents/Developer/anonogram/TapjoySDK_iOS_v10.0-2.0/Libraries/Tapjoy.embeddedframework",
 					"/Users/saswata_basu/Downloads/azuresdk-iOS-v1-2",
+					/Users/saswata_basu/Downloads/NewRelic_iOS_Agent_3.289,
+					/Users/saswata_basu/Documents/Developer/anonogram/NewRelic_iOS_Agent_3.289,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "anonogram/anonogram-Prefix.pch";

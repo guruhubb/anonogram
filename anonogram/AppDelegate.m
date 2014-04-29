@@ -16,6 +16,8 @@
 {
     self.client = [MSClient clientWithApplicationURLString:@"https://anonogram.azure-mobile.net/"
                                             applicationKey:@"oAKRURLTEiBfoIJRVwqrKecBxLtMxW68"];
+    [NewRelicAgent startWithApplicationToken:@"AA5805ad45b0b2260a17ed011dfb4e831a13b79eea"];
+    
 //    [Flurry setCrashReportingEnabled:YES];
 //    [Flurry startSession:@"QVX85GQB3X9V2SVHGVJH"];
 //    

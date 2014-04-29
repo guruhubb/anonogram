@@ -35,11 +35,11 @@
     defaults = [NSUserDefaults standardUserDefaults];
 
     editArr = [[NSArray alloc]initWithObjects:
-               @"Share Background Color",@"Share Watermark",
+               @"Background Color for Share",@"Add Watermark for Share",
                @"Follow us on Instagram", @"Like us on Facebook",@"Follow us on Twitter",
                @"Rate App",@"Feedback",@"Restore Purchases",nil];
     [self.settingsTableView reloadData];
-//    [defaults setBool:YES forKey:kFeature2];  //test
+    [defaults setBool:YES forKey:kFeature2];  //test
 
     
 }

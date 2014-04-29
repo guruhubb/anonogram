@@ -13,7 +13,7 @@
 #import "Flurry.h"
 #import <WindowsAzureMobileServices/WindowsAzureMobileServices.h>
 #import "SSKeychain.h"
-
+#import <NewRelicAgent/NewRelic.h>
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;

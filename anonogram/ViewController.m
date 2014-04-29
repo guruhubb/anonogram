@@ -42,7 +42,7 @@
 //        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
 //    }
 	// Create the data model
-    _pageTitles = [NSMutableArray arrayWithObjects:@"myAnonograms",  @"Private", @"ANONOGRAM",@"Popular",@"Search", nil];
+    _pageTitles = [NSMutableArray arrayWithObjects:@"Private", @"ANONOGRAM",@"Popular", nil];
 //    [@"myAnonograms", @"Favorites", @"Private", @"ANONOGRAM",@"Popular",@"#Event",@"@WorkPlace"];
 //    _pageImages = @[@"page1.png", @"page2.png", @"page3.png", @"page4.png"];
     
@@ -50,7 +50,7 @@
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageViewController"];
     self.pageViewController.dataSource = self;
     
-    PageContentViewController *startingViewController = [self viewControllerAtIndex:3];
+    PageContentViewController *startingViewController = [self viewControllerAtIndex:1];
     startingViewController.pageTitles=_pageTitles;
     NSArray *viewControllers = @[startingViewController];
     [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
@@ -77,11 +77,12 @@
     label.font = [UIFont systemFontOfSize:16];
     label.text= @"140";
     label.tag =100;
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(20,15,280, 120)];
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(20,15,280, 190)];
     label2.textColor=[UIColor lightGrayColor];
-    label2.font = [UIFont systemFontOfSize:16];
-    label2.text= @"Post anonymous messages privately or to the world. No location tracking. No signups. Contribute freely. Write anonymous tips to your CEO.  Or if you are the CEO, write some wacky jokes.";
-    label2.numberOfLines=6;
+    label2.font = [UIFont systemFontOfSize:18];
+    label2.textAlignment=NSTextAlignmentCenter;
+    label2.text= @"\nPost Anonymously. \n\nUse @IsPrivate button for direct messages - all @usernames become . \n\nNo location tracking. No signups. ";
+    label2.numberOfLines=14;
     label2.tag =105;
     [txtChat addSubview:label];
     [txtChat addSubview:label2];
@@ -95,6 +96,7 @@
     [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [txtChat setKeyboardType:UIKeyboardTypeTwitter];
 
+    
 //    if (currentIndex==5 || currentIndex == 6){
 //        searchBar.userInteractionEnabled=YES;
 //        _searchButton.hidden=NO;
@@ -157,7 +159,7 @@
     if (([self.pageTitles count] == 0) || (index >= [self.pageTitles count])) {
         return nil;
     }
-    if (!(currentIndex==4)){
+    if (!(currentIndex==2)){
         _searchBarButton.hidden=YES;
         _inputAccessoryView.hidden=YES;
         [_searchBarButton resignFirstResponder];
@@ -192,16 +194,18 @@
 //        self.navigationItem.title= @"ANONOGRAM";
 //    else
         self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
-    if (index==2)
+    if (index==1)
         self.navigationItem.leftBarButtonItem = barButton1;
-    else if (index==1)
+    else if (index==0)
         self.navigationItem.leftBarButtonItem=barButton3;
-    else
-        self.navigationItem.leftBarButtonItem = barButton2;
-    if (index==4)
+//    else
+//        self.navigationItem.leftBarButtonItem = barButton2;
+    if (index==2)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
-    else
+    else if (index == 1)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
+//    else 
+//        self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
 
     if ((index == 0) || (index == NSNotFound)) {
         return nil;
@@ -280,13 +284,13 @@
     NSUInteger index = ((PageContentViewController*) viewController).pageIndex;
     currentIndex = index;
     self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[index]];
-    if (index==2) self.navigationItem.leftBarButtonItem = barButton1;
-    else if (index==1)
+    if (index==1) self.navigationItem.leftBarButtonItem = barButton1;
+    else if (index==0)
         self.navigationItem.leftBarButtonItem=barButton3;
     else self.navigationItem.leftBarButtonItem = barButton2;
-    if (index==4)
+    if (index==2)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchAction:)];
-    else
+    else if (index==1)
         self.navigationItem.rightBarButtonItem= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(composeAction:)];
     if (index == NSNotFound) {
         return nil;
@@ -402,11 +406,12 @@
     {
           NSLog(@"_searchBarButton.text whitespace length again is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
         NSString *string  =[NSString stringWithFormat:@"%@", _searchBarButton.text ];
-        _pageTitles[currentIndex]= string;
+//        _pageTitles[currentIndex]= string;
         self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[currentIndex]];
         //        [self openSearch];
+        [defaults setObject:string forKey:@"search"];
     }
-    
+     [[NSNotificationCenter defaultCenter] postNotificationName:@"searchNow" object:nil];
 }
 
 #pragma mark - textfield delegated methods
@@ -549,14 +554,15 @@
     [txtChat becomeFirstResponder];
     
 }
+
 -(void)postComment
 {
     [Flurry logEvent:@"Post"];
 
     
 
-    NSString *hashString=@"";  //find recurrence of #strings and space them apart in a string
-    NSString *atString=@"";  //find recurrence of @strings and space them apart in a string
+//    NSString *hashString=@"";  //find recurrence of #strings and space them apart in a string
+//    NSString *atString=@"";  //find recurrence of @strings and space them apart in a string
     
     if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
         isPrivateOn = YES;
@@ -565,46 +571,46 @@
     
     txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])] ;
     
-    NSString * aString = [NSString stringWithString:txtChat.text];
-    NSString * bString = [NSString stringWithString:txtChat.text];
-    
-    NSMutableArray *substrings = [NSMutableArray new];
-    NSScanner *scanner = [NSScanner scannerWithString:aString];
-    [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before #
-    while(![scanner isAtEnd]) {
-        NSString *substring = nil;
-        [scanner scanString:@"#" intoString:nil]; // Scan the # character
-        if([scanner scanUpToString:@" " intoString:&substring]) {
-            // If the space immediately followed the #, this will be skipped
-            [substrings addObject:substring];
-        }
-        [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before next #
-    }
-    for (NSString *string in substrings){
-        hashString = [hashString stringByAppendingString:string];
-        hashString = [hashString stringByAppendingString:@","];
-
-    }
-    NSLog(@"hashString = %@",hashString);
-    
-    NSMutableArray *substrings2 = [NSMutableArray new];
-    NSScanner *scanner2 = [NSScanner scannerWithString:bString];
-    [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before #
-    while(![scanner2 isAtEnd]) {
-        NSString *substring2 = nil;
-        [scanner2 scanString:@"@" intoString:nil]; // Scan the # character
-        if([scanner2 scanUpToString:@" " intoString:&substring2]) {
-            // If the space immediately followed the #, this will be skipped
-            [substrings2 addObject:substring2];
-        }
-        [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before next #
-    }
-    for (NSString *string in substrings2){
-        atString = [atString stringByAppendingString:string];
-        atString = [atString stringByAppendingString:@","];
-    }
-    NSLog(@"atString = %@",atString);
-
+//    NSString * aString = [NSString stringWithString:txtChat.text];
+//    NSString * bString = [NSString stringWithString:txtChat.text];
+//    
+//    NSMutableArray *substrings = [NSMutableArray new];
+//    NSScanner *scanner = [NSScanner scannerWithString:aString];
+//    [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before #
+//    while(![scanner isAtEnd]) {
+//        NSString *substring = nil;
+//        [scanner scanString:@"#" intoString:nil]; // Scan the # character
+//        if([scanner scanUpToString:@" " intoString:&substring]) {
+//            // If the space immediately followed the #, this will be skipped
+//            [substrings addObject:substring];
+//        }
+//        [scanner scanUpToString:@"#" intoString:nil]; // Scan all characters before next #
+//    }
+//    for (NSString *string in substrings){
+//        hashString = [hashString stringByAppendingString:string];
+//        hashString = [hashString stringByAppendingString:@" "];
+//
+//    }
+//    NSLog(@"hashString = %@",hashString);
+//    
+//    NSMutableArray *substrings2 = [NSMutableArray new];
+//    NSScanner *scanner2 = [NSScanner scannerWithString:bString];
+//    [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before #
+//    while(![scanner2 isAtEnd]) {
+//        NSString *substring2 = nil;
+//        [scanner2 scanString:@"@" intoString:nil]; // Scan the # character
+//        if([scanner2 scanUpToString:@" " intoString:&substring2]) {
+//            // If the space immediately followed the #, this will be skipped
+//            [substrings2 addObject:substring2];
+//        }
+//        [scanner2 scanUpToString:@"@" intoString:nil]; // Scan all characters before next #
+//    }
+//    for (NSString *string in substrings2){
+//        atString = [atString stringByAppendingString:string];
+//        atString = [atString stringByAppendingString:@" "];
+//    }
+//    NSLog(@"atString = %@",atString);
+//
 
     
     NSLog(@"txtChat = %@",txtChat.text);
@@ -613,7 +619,8 @@
     
     
     MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn],@"hashtag":hashString, @"atName": atString};
+//    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn],@"hashtag":hashString, @"atName": atString};
+    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
     MSTable *itemTable = [client tableWithName:@"anonogramTable"];
     [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         if (error) {
@@ -622,7 +629,9 @@
             NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
         }
     }];
-    [self viewControllerAtIndex:index];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"searchNow" object:nil];
+
+//    [self viewControllerAtIndex:currentIndex];
     
 //        uuid, text, number of likes, hashtag, is private,atusername ,itemId, timestamp -
 }
@@ -831,6 +840,7 @@
     if (actionSheet.tag == 2){
         if (buttonIndex!=actionSheet.numberOfButtons-1){
         [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
+            
         _pageTitles[1]= buttonsArray[buttonIndex];
         self.navigationItem.title= [NSString stringWithFormat:@"%@",_pageTitles[1]];
         }
