@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CC03F8E119115FBB00ED4C5D /* PrivateMyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC03F8E019115FBB00ED4C5D /* PrivateMyVC.m */; };
 		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
@@ -99,6 +100,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CC03F8DF19115FBB00ED4C5D /* PrivateMyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateMyVC.h; sourceTree = "<group>"; };
+		CC03F8E019115FBB00ED4C5D /* PrivateMyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivateMyVC.m; sourceTree = "<group>"; };
 		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
 		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
@@ -327,6 +330,8 @@
 			children = (
 				CC2766D31910592100D132A1 /* PopularSearchVC.h */,
 				CC2766D41910592100D132A1 /* PopularSearchVC.m */,
+				CC03F8DF19115FBB00ED4C5D /* PrivateMyVC.h */,
+				CC03F8E019115FBB00ED4C5D /* PrivateMyVC.m */,
 				CC0FD3EF190AF513008F4A63 /* SSKeychain.h */,
 				CC0FD3F0190AF513008F4A63 /* SSKeychain.m */,
 				CCD9545C19074299005EFE06 /* AppDelegate.h */,
@@ -608,6 +613,7 @@
 				CCD954D119074E2B005EFE06 /* SFHFKeychainUtils.m in Sources */,
 				CCD954D519074E2B005EFE06 /* MKStoreManager.m in Sources */,
 				CC0FD3EA1909E7B5008F4A63 /* NSDate+NVTimeAgo.m in Sources */,
+				CC03F8E119115FBB00ED4C5D /* PrivateMyVC.m in Sources */,
 				CCD9545A19074299005EFE06 /* main.m in Sources */,
 				CCD954DC19074E2B005EFE06 /* VerificationController.m in Sources */,
 				CCD954D019074E2B005EFE06 /* NSData+MKBase64.m in Sources */,

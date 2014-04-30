@@ -253,10 +253,10 @@
             </objects>
             <point key="canvasLocation" x="366" y="880"/>
         </scene>
-        <!--View Controller - PRIVATE-->
+        <!--Private MyVC - PRIVATE-->
         <scene sceneID="B7g-hL-Cpz">
             <objects>
-                <viewController id="QPS-zS-iNn" sceneMemberID="viewController">
+                <viewController id="QPS-zS-iNn" customClass="PrivateMyVC" sceneMemberID="viewController">
                     <view key="view" clipsSubviews="YES" contentMode="scaleToFill" id="a5O-VJ-ocZ">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -295,7 +295,7 @@
                                                     <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
                                                     <connections>
                                                         <action selector="flagAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="1r5-cl-5W2"/>
-                                                        <segue destination="8di-gF-XD9" kind="modal" id="uYh-pV-Acm"/>
+                                                        <action selector="flagAction:" destination="QPS-zS-iNn" eventType="touchUpInside" id="a1c-Uw-5nw"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7g7-vT-IT7">
@@ -308,6 +308,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
+                                                        <action selector="likeAction:" destination="QPS-zS-iNn" eventType="touchUpInside" id="9Sb-Vs-Mqz"/>
                                                         <action selector="likeAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="lBT-zs-aRA"/>
                                                     </connections>
                                                 </button>
@@ -325,6 +326,9 @@
                                                     <state key="normal" title="Share" image="glyphicons_222_share.png">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
+                                                    <connections>
+                                                        <segue destination="8di-gF-XD9" kind="modal" id="s9Z-HM-DcV"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -339,15 +343,24 @@
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
-                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="JHr-Tj-o32"/>
-                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="fEE-A7-YEz"/>
+                                    <outlet property="dataSource" destination="QPS-zS-iNn" id="KGz-c6-0uP"/>
+                                    <outlet property="delegate" destination="QPS-zS-iNn" id="kbK-Wj-Yrl"/>
                                 </connections>
                             </tableView>
                         </subviews>
                     </view>
                     <navigationItem key="navigationItem" title="PRIVATE" id="qMR-s9-hcQ">
                         <barButtonItem key="backBarButtonItem" title="  " id="3pH-Ij-c32"/>
+                        <barButtonItem key="rightBarButtonItem" image="glyphicons_003_user.png" id="AA4-yI-Wx0">
+                            <connections>
+                                <action selector="myAction:" destination="QPS-zS-iNn" id="u0P-gk-HUS"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="TableView" destination="Y7d-lr-5Wh" id="obS-aW-dTa"/>
+                        <outlet property="myButton" destination="AA4-yI-Wx0" id="YU7-7V-eBW"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZHy-5M-KeM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -629,6 +642,7 @@
     <resources>
         <image name="comments-icon-614x460.png" width="614" height="460"/>
         <image name="facebook-70251b04a4be865178ab592bc9586c83.png" width="500" height="500"/>
+        <image name="glyphicons_003_user.png" width="23" height="22"/>
         <image name="glyphicons_020_home.png" width="27" height="26"/>
         <image name="glyphicons_136_cogwheel.png" width="24" height="24"/>
         <image name="glyphicons_222_share.png" width="24" height="18"/>
@@ -645,6 +659,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ob9-Xa-DCc"/>
+        <segue reference="s9Z-HM-DcV"/>
     </inferredMetricsTieBreakers>
 </document>

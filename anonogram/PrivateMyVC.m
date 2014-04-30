@@ -1,5 +1,5 @@
 //
-//  HomeViewController.m
+//  PrivateMyVC.m
 //  Anonogram
 //
 //  Created by Saswata Basu on 3/21/14.
@@ -10,8 +10,7 @@
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
 #define kLimit 2
 #define kFlagsAllowed 0
-
-#import "HomeViewController.h"
+#import "PrivateMyVC.h"
 #import "Cell.h"
 #import "shareViewController.h"
 #import "NSDate+NVTimeAgo.h"
@@ -20,7 +19,7 @@
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 
-@interface HomeViewController (){
+@interface PrivateMyVC (){
     NSUserDefaults *defaults;
     NSString *token;
     BOOL isPrivateOn;
@@ -38,7 +37,7 @@
 
 @end
 
-@implementation HomeViewController
+@implementation PrivateMyVC
 
 - (void)viewDidLoad
 {
@@ -50,50 +49,37 @@
     self.isFlagTable = [self.client tableWithName:@"isFlag"];
 
     if (!IS_TALL_SCREEN) {
-        self.theTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
+        self.TableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
 
     defaults = [NSUserDefaults standardUserDefaults];
     refreshControl = [[UIRefreshControl alloc]init];
-    [self.theTableView addSubview:refreshControl];
+    [self.TableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
-    [self setup];
-    [self getUUID];
+//    [self setup];
+//    [self getUUID];
     [self getData];
     
 }
--(void) setup {
-    txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
-    txtChat.delegate=self;
-    txtChat.hidden=YES;
-    txtChat.font=[UIFont systemFontOfSize:16];
-    txtChat.text=@"placeholder";
+- (IBAction)myAction:(id)sender {
+    self.navigationItem.title= [NSString stringWithFormat:@"My Anonograms"];
+    UIBarButtonItem *popularButton = [[UIBarButtonItem alloc]
+                                      initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+                                      target:self action:@selector(privateAction)] ;
+    self.navigationItem.rightBarButtonItem = popularButton;
+    [self getDataMyAnonograms];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
-    label.textColor=[UIColor lightGrayColor];
-    label.font = [UIFont systemFontOfSize:16];
-    label.text= @"140";
-    label.tag =100;
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(20,15,280, 190)];
-    label2.textColor=[UIColor lightGrayColor];
-    label2.font = [UIFont systemFontOfSize:18];
-    label2.textAlignment=NSTextAlignmentCenter;
-    label2.text= @"\nPost Anonymously. \n\nUse @IsPrivate button for direct messages - all @usernames become . \n\nNo location tracking. No signups. ";
-    label2.numberOfLines=14;
-    label2.tag =105;
-    [txtChat addSubview:label];
-    [txtChat addSubview:label2];
-    [self createInputAccessoryView];
-//    [self createInputAccessoryViewForSearch];
-    [self.view addSubview:txtChat];
-    [self.view addSubview:_inputAccessoryView];
-    _inputAccessoryView.hidden=YES;
-//    _searchBarButton.hidden=YES;
-//    _searchBarButton.placeholder = @"Search #hashtag, @username";
-//    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
-    [txtChat setKeyboardType:UIKeyboardTypeTwitter];
-
 }
+- (void)privateAction {
+    self.navigationItem.title= [NSString stringWithFormat:@"PRIVATE"];
+    
+    UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
+    self.navigationItem.rightBarButtonItem = privateButton;
+    [self getData];
+}
+
+
+
 - (void) getUUID {
     
     NSString *retrieveuuid = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -167,7 +153,7 @@
     }
 }
 - (void) deleteText  {
-    [self.theTableView beginUpdates];
+    [self.TableView beginUpdates];
 
     [Flurry logEvent:@"Delete"];
 
@@ -185,10 +171,10 @@
     }];
     
     [self.array removeObjectAtIndex:flagButton];
-    [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
+    [self.TableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
 
-    [self.theTableView endUpdates];
-    [self.theTableView reloadData];
+    [self.TableView endUpdates];
+    [self.TableView reloadData];
 }
 
 - (IBAction)likeAction:(id)sender {
@@ -210,8 +196,7 @@
             [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
-            [self.theTableView reloadData];
-
+            [self.TableView reloadData];
         }
         else {
             NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
@@ -227,7 +212,7 @@
             [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
-            [self.theTableView reloadData];
+            [self.TableView reloadData];
         }
     }];
 }
@@ -347,7 +332,7 @@
                 //handle errors or any additional logic as needed
                 [self logErrorIfNotNil:error];
             }];
-            [self.theTableView reloadData];
+            [self.TableView reloadData];
 
         }
     }
@@ -400,7 +385,24 @@
         if(!error) {
             //add the items to our local copy
             [self.array addObjectsFromArray:items];
-            [self.theTableView reloadData];
+            [self.TableView reloadData];
+        }
+    }];
+}
+- (void) getDataMyAnonograms {
+    NSLog(@"getting data...");
+    MSQuery * query = [[MSQuery alloc] initWithTable:self.table ];
+    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+    query.includeTotalCount = YES; // Request the total item count
+    query.fetchLimit = kLimit;
+    query.fetchOffset = self.array.count;
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+        [self logErrorIfNotNil:error];
+        if(!error) {
+            //add the items to our local copy
+            [self.array addObjectsFromArray:items];
+            [self.TableView reloadData];
         }
     }];
 }
@@ -531,27 +533,27 @@
     
 }
 
-//-(void)createInputAccessoryViewForSearch {
-//    
-//    _inputAccessoryView = [[UIToolbar alloc] init];
-//    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
-//    [_inputAccessoryView sizeToFit];
-//    
-//    _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
-//    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-//                                                                   style:UIBarButtonItemStyleBordered
-//                                                                  target:self action:@selector(searchBarCancel)];
-//    //Use this to put space in between your toolbox buttons
-//    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-//                                                                              target:nil
-//                                                                              action:nil];
-//    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Search"
-//                                                                 style:UIBarButtonItemStyleBordered
-//                                                                target:self action:@selector(searchBarClicked)];
-//    
-//    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
-//    [_inputAccessoryView setItems:itemsView animated:NO];
-//}
+-(void)createInputAccessoryViewForSearch {
+    
+    _inputAccessoryView = [[UIToolbar alloc] init];
+    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
+    [_inputAccessoryView sizeToFit];
+    
+    _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+                                                                   style:UIBarButtonItemStyleBordered
+                                                                  target:self action:@selector(searchBarCancel)];
+    //Use this to put space in between your toolbox buttons
+    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                              target:nil
+                                                                              action:nil];
+    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Search"
+                                                                 style:UIBarButtonItemStyleBordered
+                                                                target:self action:@selector(searchBarClicked)];
+    
+    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
+    [_inputAccessoryView setItems:itemsView animated:NO];
+}
 
 -(void)doneKeyboard{
     [txtChat resignFirstResponder];
@@ -587,12 +589,6 @@
 -(void)postComment
 {
     [Flurry logEvent:@"Post"];
-    if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
-        isPrivateOn = YES;
-    else
-        isPrivateOn = NO;
-    
-    txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])];
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
