@@ -22,7 +22,7 @@
 @interface PopularSearchVC (){
     NSUserDefaults *defaults;
     NSString *token;
-    BOOL isPrivateOn;
+    BOOL isSearchOn;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
@@ -51,6 +51,7 @@
     if (!IS_TALL_SCREEN) {
         self.popularTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
+    
 
     defaults = [NSUserDefaults standardUserDefaults];
     refreshControl = [[UIRefreshControl alloc]init];
@@ -62,18 +63,27 @@
     
 }
 - (IBAction)searchAction:(id)sender {
+    isSearchOn=YES;
     self.navigationItem.title= [NSString stringWithFormat:@"Search"];
     _searchBarButton.hidden=NO;
     _inputAccessoryView.hidden=NO;
     [self.view bringSubviewToFront:_searchBarButton];
     [_searchBarButton becomeFirstResponder];
+    UIBarButtonItem *stopButton = [[UIBarButtonItem alloc]
+                                   initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+                                   target:self action:@selector(stopAction)] ;
+    self.navigationItem.rightBarButtonItem = stopButton;
 }
 - (void)searchBarCancel
 {
+    isSearchOn=NO;
+
     [_searchBarButton resignFirstResponder];
     _searchBarButton.hidden=YES;
     _inputAccessoryView.hidden=YES;
     _searchButton.image=nil;
+    self.navigationItem.title= @"POPULAR";
+
     UIBarButtonItem *popularButton = [[UIBarButtonItem alloc]
                                        initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                        target:self action:@selector(searchAction:)] ;
@@ -82,15 +92,18 @@
 }
 - (void)searchBarClicked
 {
+    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+
+    if(!([[_searchBarButton.text stringByTrimmingCharactersInSet: set] length] == 0) )
+    {
     [Flurry logEvent:@"Search"];
     [defaults setBool:YES forKey:@"searchOn"];
-    
+    self.array = [[NSMutableArray alloc] init];
+
     [_searchBarButton resignFirstResponder];
     _searchBarButton.hidden=YES;
     _inputAccessoryView.hidden=YES;
-    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
-    if(!([[_searchBarButton.text stringByTrimmingCharactersInSet: set] length] == 0) )
-    {
+    
         NSLog(@"_searchBarButton.text whitespace length again is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
         NSString *string  =[NSString stringWithFormat:@"%@", _searchBarButton.text ];
         //        _pageTitles[currentIndex]= string;
@@ -100,12 +113,13 @@
         [self getDataSearch];
     }
 //    [[NSNotificationCenter defaultCenter] postNotificationName:@"searchNow" object:nil];
-    UIBarButtonItem *stopButton = [[UIBarButtonItem alloc]
-                                      initWithBarButtonSystemItem:UIBarButtonSystemItemStop
-                                      target:self action:@selector(stopAction)] ;
-    self.navigationItem.rightBarButtonItem = stopButton;
+
 }
 -(void) stopAction {
+    isSearchOn=NO;
+    [_searchBarButton resignFirstResponder];
+    _searchBarButton.hidden=YES;
+    _inputAccessoryView.hidden=YES;
     self.navigationItem.title= @"POPULAR";
     UIBarButtonItem *popularButton = [[UIBarButtonItem alloc]
                                       initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
@@ -193,7 +207,11 @@
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
     if (bottomEdge >= scrollView.contentSize.height) {
-        [self getData];
+        if (!isSearchOn) {
+            [self getData];
+        }
+        else
+            [self getDataSearch];
     }
 }
 - (void) deleteText  {
@@ -398,7 +416,10 @@
 - (void) refreshView
 {
     self.array = [[NSMutableArray alloc] init];
-    [self getData];
+    if(!isSearchOn)
+        [self getData];
+    else
+        [self getDataSearch];
     [refreshControl endRefreshing];
 }
 
@@ -612,8 +633,7 @@
     if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
         //    {
         //    if(![txtChat.text isEqualToString:@""])
-        [self postComment];
-    
+//        [self postComment];
     txtChat.text = @"";
 }
 -(void)cancelKeyboard{
@@ -634,25 +654,25 @@
     [txtChat becomeFirstResponder];
 }
 
--(void)postComment
-{
-    [Flurry logEvent:@"Post"];
-    
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
-    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-            [self logErrorIfNotNil:error];
-        } else {
-            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
-        [self refreshView];
-
-    }];
-}
+//-(void)postComment
+//{
+//    [Flurry logEvent:@"Post"];
+//    
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+//    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isSearchOn]};
+//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+//    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+//        if (error) {
+//            NSLog(@"Error: %@", error);
+//            [self logErrorIfNotNil:error];
+//        } else {
+//            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+//        }
+//        [self refreshView];
+//
+//    }];
+//}
 
 
 - (void) logErrorIfNotNil:(NSError *) error

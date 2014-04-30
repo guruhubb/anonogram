@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		CC03F8E119115FBB00ED4C5D /* PrivateMyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC03F8E019115FBB00ED4C5D /* PrivateMyVC.m */; };
+		CC03F8E319119C7800ED4C5D /* glyphicons_048_dislikes.png in Resources */ = {isa = PBXBuildFile; fileRef = CC03F8E219119C7800ED4C5D /* glyphicons_048_dislikes.png */; };
+		CC03F8E51911A65400ED4C5D /* glyphicons_203_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = CC03F8E41911A65400ED4C5D /* glyphicons_203_lock.png */; };
+		CC03F8E71911A71600ED4C5D /* glyphicons_128_message_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */; };
 		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
@@ -102,6 +105,9 @@
 /* Begin PBXFileReference section */
 		CC03F8DF19115FBB00ED4C5D /* PrivateMyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateMyVC.h; sourceTree = "<group>"; };
 		CC03F8E019115FBB00ED4C5D /* PrivateMyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivateMyVC.m; sourceTree = "<group>"; };
+		CC03F8E219119C7800ED4C5D /* glyphicons_048_dislikes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_048_dislikes.png; sourceTree = "<group>"; };
+		CC03F8E41911A65400ED4C5D /* glyphicons_203_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_203_lock.png; sourceTree = "<group>"; };
+		CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_128_message_lock.png; sourceTree = "<group>"; };
 		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
 		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
@@ -399,6 +405,7 @@
 				CCD9548B19074BA3005EFE06 /* comments-icon-614x460.png */,
 				CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */,
 				CCD9548D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png */,
+				CC03F8E219119C7800ED4C5D /* glyphicons_048_dislikes.png */,
 				CCD9548E19074BA3005EFE06 /* glyphicons_003_user.png */,
 				CCD9549019074BA3005EFE06 /* glyphicons_019_heart_empty.png */,
 				CC0FD3EB190A5419008F4A63 /* trash.png */,
@@ -406,6 +413,8 @@
 				CCD9549319074BA3005EFE06 /* icon-letter-mail-hi.png */,
 				CCD9549419074BA3005EFE06 /* instagram-512-2.png */,
 				CCD9549519074BA3005EFE06 /* lockImage.png */,
+				CC03F8E41911A65400ED4C5D /* glyphicons_203_lock.png */,
+				CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */,
 				CCD9549619074BA3005EFE06 /* more-512.png */,
 				CCD9549719074BA3005EFE06 /* square.png */,
 				CCD9549819074BA3005EFE06 /* twitter_logo_white.png */,
@@ -560,6 +569,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC03F8E71911A71600ED4C5D /* glyphicons_128_message_lock.png in Resources */,
 				CCD954A819074BA3005EFE06 /* twitter_logo_white.png in Resources */,
 				CCD954A419074BA3005EFE06 /* instagram-512-2.png in Resources */,
 				CCD9546619074299005EFE06 /* Images.xcassets in Resources */,
@@ -576,6 +586,8 @@
 				CC0FD3EC190A5419008F4A63 /* trash.png in Resources */,
 				CCD954D719074E2B005EFE06 /* AddDevice.html in Resources */,
 				CCD954A619074BA3005EFE06 /* more-512.png in Resources */,
+				CC03F8E319119C7800ED4C5D /* glyphicons_048_dislikes.png in Resources */,
+				CC03F8E51911A65400ED4C5D /* glyphicons_203_lock.png in Resources */,
 				CCD954A019074BA3005EFE06 /* glyphicons_019_heart_empty.png in Resources */,
 				CCD954D819074E2B005EFE06 /* DBSetup.sql in Resources */,
 				CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */,

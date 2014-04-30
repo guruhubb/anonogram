@@ -47,7 +47,7 @@
     self.table = [self.client tableWithName:@"anonogramTable"];
     self.isLikeTable = [self.client tableWithName:@"isLike"];
     self.isFlagTable = [self.client tableWithName:@"isFlag"];
-
+    isPrivateOn=YES;
     if (!IS_TALL_SCREEN) {
         self.TableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
@@ -62,12 +62,28 @@
     
 }
 - (IBAction)myAction:(id)sender {
-    self.navigationItem.title= [NSString stringWithFormat:@"My Anonograms"];
-    UIBarButtonItem *popularButton = [[UIBarButtonItem alloc]
+    if (isPrivateOn){
+        isPrivateOn = NO;
+        self.navigationItem.title= [NSString stringWithFormat:@"My Anonograms"];
+        UIBarButtonItem *popularButton = [[UIBarButtonItem alloc]
                                       initWithBarButtonSystemItem:UIBarButtonSystemItemStop
-                                      target:self action:@selector(privateAction)] ;
-    self.navigationItem.rightBarButtonItem = popularButton;
-    [self getDataMyAnonograms];
+                                      target:self action:@selector(myAction:)] ;
+        self.navigationItem.rightBarButtonItem = popularButton;
+        self.array = [[NSMutableArray alloc] init];
+        [self getDataMyAnonograms];
+    }
+    else {
+        isPrivateOn=YES;
+        self.navigationItem.title= [NSString stringWithFormat:@"PRIVATE"];
+        UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
+        self.navigationItem.rightBarButtonItem = privateButton;
+        self.array = [[NSMutableArray alloc] init];
+        [self getData];
+
+        
+    }
+
+    
     
 }
 - (void)privateAction {
@@ -149,7 +165,10 @@
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
     if (bottomEdge >= scrollView.contentSize.height) {
-        [self getData];
+        if(isPrivateOn)
+            [self getData];
+        else
+            [self getDataMyAnonograms];
     }
 }
 - (void) deleteText  {
@@ -354,8 +373,13 @@
 - (void) refreshView
 {
     self.array = [[NSMutableArray alloc] init];
-    [self getData];
+
+    if(isPrivateOn)
+        [self getData];
+    else
+        [self getDataMyAnonograms];
     [refreshControl endRefreshing];
+
 }
 
 - (void) storeData {
@@ -410,7 +434,10 @@
         }
     }];
 }
-- (void)TwitterSwitch {
+- (IBAction)twitterSwitch:(id)sender {
+//}
+//- (IBAction)TwitterSwitch:(id)sender {
+//- (void)TwitterSwitch {
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
     
     // Create an account type that ensures Twitter accounts are retrieved.

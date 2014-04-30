@@ -40,7 +40,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bdQ-0J-0VF">
-                                                    <rect key="frame" x="176" y="171" width="50" height="30"/>
+                                                    <rect key="frame" x="180" y="171" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="19" minY="8" maxX="19" maxY="8"/>
                                                     <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
@@ -174,7 +174,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="cKt-LL-AAe">
-                                                    <rect key="frame" x="176" y="171" width="50" height="30"/>
+                                                    <rect key="frame" x="180" y="171" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="19" minY="8" maxX="19" maxY="8"/>
                                                     <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
@@ -289,7 +289,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="9Ja-Am-vuO">
-                                                    <rect key="frame" x="176" y="171" width="50" height="30"/>
+                                                    <rect key="frame" x="180" y="171" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="19" minY="8" maxX="19" maxY="8"/>
                                                     <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
@@ -351,6 +351,11 @@
                     </view>
                     <navigationItem key="navigationItem" title="PRIVATE" id="qMR-s9-hcQ">
                         <barButtonItem key="backBarButtonItem" title="  " id="3pH-Ij-c32"/>
+                        <barButtonItem key="leftBarButtonItem" image="glyphicons_411_twitter.png" id="LQF-KM-ilc">
+                            <connections>
+                                <action selector="twitterSwitch:" destination="QPS-zS-iNn" id="IeZ-gr-XaQ"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="glyphicons_003_user.png" id="AA4-yI-Wx0">
                             <connections>
                                 <action selector="myAction:" destination="QPS-zS-iNn" id="u0P-gk-HUS"/>
@@ -399,7 +404,7 @@
                         <rect key="frame" x="129" y="330" width="163" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <color key="selectedImageTintColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="Ccb-Xq-nYj" kind="relationship" relationship="viewControllers" id="yxz-oQ-9qk"/>
@@ -590,11 +595,11 @@
             </objects>
             <point key="canvasLocation" x="909" y="880"/>
         </scene>
-        <!--Navigation Controller - Item-->
+        <!--Navigation Controller-->
         <scene sceneID="4JZ-cC-bvx">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="VUP-PQ-end" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="36N-uj-8ew"/>
+                    <tabBarItem key="tabBarItem" image="glyphicons_048_dislikes.png" id="36N-uj-8ew"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="lLf-TK-L9x">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -614,11 +619,11 @@
             </objects>
             <point key="canvasLocation" x="-146" y="880"/>
         </scene>
-        <!--Navigation Controller - Item-->
+        <!--Navigation Controller-->
         <scene sceneID="dxr-DX-WE8">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1UW-Tl-HeK" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="y3n-Kt-Yoj"/>
+                    <tabBarItem key="tabBarItem" title="" image="glyphicons_128_message_lock.png" id="y3n-Kt-Yoj"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Q2e-hV-9GI">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -644,9 +649,12 @@
         <image name="facebook-70251b04a4be865178ab592bc9586c83.png" width="500" height="500"/>
         <image name="glyphicons_003_user.png" width="23" height="22"/>
         <image name="glyphicons_020_home.png" width="27" height="26"/>
+        <image name="glyphicons_048_dislikes.png" width="25" height="24"/>
+        <image name="glyphicons_128_message_lock.png" width="28" height="24"/>
         <image name="glyphicons_136_cogwheel.png" width="24" height="24"/>
         <image name="glyphicons_222_share.png" width="24" height="18"/>
         <image name="glyphicons_266_flag.png" width="21" height="26"/>
+        <image name="glyphicons_411_twitter.png" width="24" height="24"/>
         <image name="icon-letter-mail-hi.png" width="600" height="429"/>
         <image name="instagram-512-2.png" width="512" height="512"/>
         <image name="more-512.png" width="512" height="512"/>
@@ -659,6 +667,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="s9Z-HM-DcV"/>
+        <segue reference="WHK-7k-d2X"/>
     </inferredMetricsTieBreakers>
 </document>
