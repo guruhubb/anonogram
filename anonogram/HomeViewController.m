@@ -40,9 +40,17 @@
 
 @implementation HomeViewController
 
+-(void)viewDidAppear:(BOOL)animated {
+    if ([defaults boolForKey:@"showSurveyAnonogram"]&&![defaults boolForKey:@"rateDoneAnonogram"])
+        [self performSelector:@selector(showSurvey) withObject:nil afterDelay:0.1];
+
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.edgesForExtendedLayout = UIRectEdgeAll;
+    self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -57,10 +65,41 @@
     refreshControl = [[UIRefreshControl alloc]init];
     [self.theTableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
-    [self setup];
+    
+        [self setup];
     [self getUUID];
     [self getData];
     
+}
+- (void) showSurvey {
+    NSLog(@"showSurvey");
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Like Anonogram? Please Rate" message:nil
+                                                   delegate:self cancelButtonTitle:@"Remind me later" otherButtonTitles:@"Yes, I will rate now", @"Don't ask me again", nil];
+    [alert show];
+    
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSLog(@"buttonIndex is %ld",(long)buttonIndex);
+    if (buttonIndex == 1) {
+        [self rateApp];
+    }
+    else if (buttonIndex == 2 ){
+        [defaults setBool:YES forKey:@"rateDoneAnonogram"];
+        NSLog(@"rateDone is %d",[defaults boolForKey:@"rateDoneAnonogram"]);
+    }
+    else {
+        [defaults setBool:NO forKey:@"showSurveyAnonogram"];
+        [defaults setInteger:0 forKey:@"counterAnonogram" ];
+        NSLog(@"showSurvey is %d and counter is %ld",[defaults boolForKey:@"showSurveyAnonogram"],(long)[defaults integerForKey:@"counterAnonogram"]);
+    }
+    [defaults synchronize];
+}
+- (void)rateApp {
+    
+    [Flurry logEvent:@"Rate App" ];
+    [defaults setBool:YES forKey:@"rateDoneAnonogram"];
+    //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/850204569"]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=869802697&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
 }
 -(void) setup {
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];

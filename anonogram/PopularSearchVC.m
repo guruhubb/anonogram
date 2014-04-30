@@ -42,6 +42,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.edgesForExtendedLayout = UIRectEdgeAll;
+    self.popularTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -527,10 +529,10 @@
                  ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
                  NSLog(@"%@",twitterAccount.username);
                  NSLog(@"%@",twitterAccount.accountType);
-                 [[NSUserDefaults standardUserDefaults] setValue:twitterAccount.username forKey:@"twitterHandle"];
+                 [defaults setValue:twitterAccount.username forKey:@"twitterHandle"];
              }
          }}];
-    NSLog(@"twitterHandle is %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]);
+    NSLog(@"twitterHandle is %@",[defaults valueForKey:@"twitterHandle"]);
 }
 
 #pragma mark - textView delegated methods

@@ -42,6 +42,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.edgesForExtendedLayout = UIRectEdgeAll;
+    self.TableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -453,11 +455,19 @@
         NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
         
         NSLog(@"%@", accountsArray);
-        [self performSelectorOnMainThread:@selector(populateSheetAndShow:) withObject:accountsArray waitUntilDone:NO];
-    }];
+            [self performSelectorOnMainThread:@selector(populateSheetAndShow:) withObject:accountsArray waitUntilDone:NO];
+           }];
 }
 
 -(void)populateSheetAndShow:(NSArray *) accountsArray {
+    if(accountsArray.count==0){
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You need to have a Twitter account to receive private messages" message:nil
+                                                       delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        return;
+        
+    }
     buttonsArray = [NSMutableArray array];
     [accountsArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         
