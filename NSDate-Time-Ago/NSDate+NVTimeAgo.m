@@ -231,7 +231,8 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
     //Format
-    [dateFormatter setDateFormat:@"mm/dd/yy"];
+//    [dateFormatter setDateFormat:@"mm/dd/yy"];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
     return [dateFormatter stringFromDate:self];
 }
 
@@ -243,7 +244,9 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
     //Format
-    [dateFormatter setDateFormat:@"mm/dd/yy"];
+//    [dateFormatter setDateFormat:@"mm/dd/yy"];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+
     return [dateFormatter stringFromDate:self];
 }
 
@@ -255,7 +258,9 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
     //Format
-    [dateFormatter setDateFormat:@"mm/dd/yy"];
+//    [dateFormatter setDateFormat:@"mm/dd/yy"];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+
     return [dateFormatter stringFromDate:self];
 }
 
@@ -267,7 +272,9 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
     //Format  [dateFormat setDateFormat:@"mm/dd/yy"]
-    [dateFormatter setDateFormat:@"mm/dd/yy"];
+//    [dateFormatter setDateFormat:@"mm/dd/yy"];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+
     return [dateFormatter stringFromDate:self];
 }
 

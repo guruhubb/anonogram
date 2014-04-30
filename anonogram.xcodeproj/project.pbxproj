@@ -18,6 +18,7 @@
 		CC0FD3F5190B745C008F4A63 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3F4190B745C008F4A63 /* Social.framework */; };
 		CC0FD3F7190B8C51008F4A63 /* glyphicons_411_twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */; };
 		CC0FD3FD190CA0A9008F4A63 /* NewRelicAgent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */; };
+		CC2766D51910592100D132A1 /* PopularSearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC2766D41910592100D132A1 /* PopularSearchVC.m */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -111,6 +112,8 @@
 		CC0FD3F4190B745C008F4A63 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_411_twitter.png; sourceTree = "<group>"; };
 		CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewRelicAgent.framework; path = NewRelic_iOS_Agent_3.289/NewRelicAgent.framework; sourceTree = "<group>"; };
+		CC2766D31910592100D132A1 /* PopularSearchVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopularSearchVC.h; sourceTree = "<group>"; };
+		CC2766D41910592100D132A1 /* PopularSearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopularSearchVC.m; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -322,6 +325,8 @@
 		CCD9545319074299005EFE06 /* anonogram */ = {
 			isa = PBXGroup;
 			children = (
+				CC2766D31910592100D132A1 /* PopularSearchVC.h */,
+				CC2766D41910592100D132A1 /* PopularSearchVC.m */,
 				CC0FD3EF190AF513008F4A63 /* SSKeychain.h */,
 				CC0FD3F0190AF513008F4A63 /* SSKeychain.m */,
 				CCD9545C19074299005EFE06 /* AppDelegate.h */,
@@ -609,6 +614,7 @@
 				CCD954D219074E2B005EFE06 /* MKSKProduct.m in Sources */,
 				CCD954D319074E2B005EFE06 /* MKSKSubscriptionProduct.m in Sources */,
 				CCD9551F1908B9FE005EFE06 /* Cell.m in Sources */,
+				CC2766D51910592100D132A1 /* PopularSearchVC.m in Sources */,
 				CC0FD3F1190AF513008F4A63 /* SSKeychain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
