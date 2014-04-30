@@ -97,6 +97,7 @@
         self.navigationItem.title= [NSString stringWithFormat:@"%@",string];
         //        [self openSearch];
         [defaults setObject:string forKey:@"search"];
+        [self getDataSearch];
     }
 //    [[NSNotificationCenter defaultCenter] postNotificationName:@"searchNow" object:nil];
     UIBarButtonItem *stopButton = [[UIBarButtonItem alloc]
@@ -417,7 +418,28 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    MSQuery * query = [[MSQuery alloc] initWithTable:self.table ];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPrivate == NO"];
+    MSQuery *query = [self.table queryWithPredicate:predicate];
+    [query orderByDescending:@"likes"];
+    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+    query.includeTotalCount = YES; // Request the total item count
+    query.fetchLimit = kLimit;
+    query.fetchOffset = self.array.count;
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+        [self logErrorIfNotNil:error];
+        if(!error) {
+            //add the items to our local copy
+            [self.array addObjectsFromArray:items];
+            [self.popularTableView reloadData];
+        }
+    }];
+}
+- (void) getDataSearch {
+    NSLog(@"getting data...");
+    NSString *search = [defaults objectForKey:@"search"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@  && isPrivate == NO",search];
+    MSQuery *query = [self.table queryWithPredicate:predicate];
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;

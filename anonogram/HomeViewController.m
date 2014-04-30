@@ -389,8 +389,9 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    MSQuery * query = [[MSQuery alloc] initWithTable:self.table ];
-    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPrivate == NO || userId == %@",userId];
+    MSQuery *query = [self.table queryWithPredicate:predicate];    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;

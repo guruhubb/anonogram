@@ -339,7 +339,7 @@
     if (actionSheet.tag == 2){
         [Flurry logEvent:@"TwitterSwitch"];
 
-          [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
+          [defaults setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
         [self refreshView];
     }
 //    [[self.view viewWithTag:1] removeFromSuperview];
@@ -374,7 +374,9 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    MSQuery * query = [[MSQuery alloc] initWithTable:self.table ];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPrivate==YES  && text contains[cd] %@",[defaults valueForKey:@"twitterHandle"]];
+    MSQuery *query = [self.table queryWithPredicate:predicate];
+
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
@@ -390,8 +392,10 @@
     }];
 }
 - (void) getDataMyAnonograms {
-    NSLog(@"getting data...");
-    MSQuery * query = [[MSQuery alloc] initWithTable:self.table ];
+    NSLog(@"getting data my anons...");
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@",userId];
+    MSQuery *query = [self.table queryWithPredicate:predicate];
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
@@ -533,27 +537,27 @@
     
 }
 
--(void)createInputAccessoryViewForSearch {
-    
-    _inputAccessoryView = [[UIToolbar alloc] init];
-    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
-    [_inputAccessoryView sizeToFit];
-    
-    _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
-    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-                                                                   style:UIBarButtonItemStyleBordered
-                                                                  target:self action:@selector(searchBarCancel)];
-    //Use this to put space in between your toolbox buttons
-    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                                              target:nil
-                                                                              action:nil];
-    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Search"
-                                                                 style:UIBarButtonItemStyleBordered
-                                                                target:self action:@selector(searchBarClicked)];
-    
-    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
-    [_inputAccessoryView setItems:itemsView animated:NO];
-}
+//-(void)createInputAccessoryViewForSearch {
+//    
+//    _inputAccessoryView = [[UIToolbar alloc] init];
+//    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
+//    [_inputAccessoryView sizeToFit];
+//    
+//    _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
+//    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+//                                                                   style:UIBarButtonItemStyleBordered
+//                                                                  target:self action:@selector(searchBarCancel)];
+//    //Use this to put space in between your toolbox buttons
+//    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+//                                                                              target:nil
+//                                                                              action:nil];
+//    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Search"
+//                                                                 style:UIBarButtonItemStyleBordered
+//                                                                target:self action:@selector(searchBarClicked)];
+//    
+//    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
+//    [_inputAccessoryView setItems:itemsView animated:NO];
+//}
 
 -(void)doneKeyboard{
     [txtChat resignFirstResponder];
