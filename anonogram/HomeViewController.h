@@ -14,8 +14,5 @@
 @interface HomeViewController : UIViewController < UITableViewDataSource, UITableViewDelegate,UITextViewDelegate, UIActionSheetDelegate>
 
 
-@property (strong, nonatomic) IBOutlet UITableView *theTableView;
-@property (strong, nonatomic) NSMutableArray *array;
-@property (nonatomic, strong)   MSClient *client;
 
 @end

@@ -33,10 +33,16 @@
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
     NSTimeInterval startTime ;
+    UIBarButtonItem *isPrivateItem;
 }
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
+
+
+@property (strong, nonatomic) IBOutlet UITableView *theTableView;
+@property (strong, nonatomic) NSMutableArray *array;
+@property (nonatomic, strong)   MSClient *client;
 
 @end
 
@@ -116,11 +122,11 @@
     label.font = [UIFont systemFontOfSize:16];
     label.text= @"140";
     label.tag =100;
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(20,15,280, 190)];
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
     label2.textColor=[UIColor lightGrayColor];
-    label2.font = [UIFont systemFontOfSize:18];
+    label2.font = [UIFont systemFontOfSize:16];
     label2.textAlignment=NSTextAlignmentCenter;
-    label2.text= @"\nPost Anonymously. \n\nUse @IsPrivate button for direct messages - all @usernames become . \n\nNo location tracking. No signups. ";
+    label2.text= @"To post privately to someone -\ntap Private On, mention the person's Twitter username (@ is optional) in the message";
     label2.numberOfLines=14;
     label2.tag =105;
     [txtChat addSubview:label];
@@ -200,10 +206,11 @@
 //    }
     return cell;
 }
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {      float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
     if (bottomEdge >= scrollView.contentSize.height) {
         [self getData];
+    }
     }
 }
 - (void) deleteText  {
@@ -422,12 +429,12 @@
 - (void) refreshView
 {
 
-    nowTime =[[NSDate date] timeIntervalSince1970];
-    if ((nowTime-startTime)> 5 ){
-        startTime =[[NSDate date] timeIntervalSince1970];
+//    nowTime =[[NSDate date] timeIntervalSince1970];
+//    if ((nowTime-startTime)> 5 ){
+//        startTime =[[NSDate date] timeIntervalSince1970];
     self.array = [[NSMutableArray alloc] init];
     [self getData];
-    }
+//    }
     [refreshControl endRefreshing];
 }
 
@@ -568,10 +575,10 @@
     UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                                                               target:nil
                                                                               action:nil];
-    UIBarButtonItem *isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"Private Off"
+    isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"Private Off"
                                                                       style:UIBarButtonItemStyleBordered
                                                                      target:self action:@selector(addText)];
-    isPrivateItem.tag=200;
+//    isPrivateItem.tag=200;
     UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Send"
                                                                  style:UIBarButtonItemStyleBordered
                                                                 target:self action:@selector(doneKeyboard)];
@@ -588,15 +595,17 @@
 //    txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
 //    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
 //    label2.hidden=YES;
-    UIBarButtonItem *btn = (UIBarButtonItem *)[self.view viewWithTag:200];
-    
+//    UIBarButtonItem *btn = (UIBarButtonItem *)[self.view viewWithTag:200];
+    NSLog(@"isPrivateItem title is %@",isPrivateItem.title);
     if (isPrivateOn){
         isPrivateOn=NO;
-        btn.title=@"Private Off";
+        isPrivateItem.title=@"Private Off";
+        isPrivateItem.tintColor=[UIColor whiteColor];
     }
     else {
         isPrivateOn=YES;
-        btn.title=@"Private On";
+        isPrivateItem.title=@"Private On";
+        isPrivateItem.tintColor=[UIColor redColor];
 
     }
     
@@ -633,6 +642,7 @@
     if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
         //    {
         //    if(![txtChat.text isEqualToString:@""])
+        txtChat.text = [NSString stringWithFormat:@" %@ ",txtChat.text];
         [self postComment];
     
     txtChat.text = @"";

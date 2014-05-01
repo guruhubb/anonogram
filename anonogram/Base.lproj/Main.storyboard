@@ -69,7 +69,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="0nh-NS-Flr">
-                                                    <rect key="frame" x="97" y="170" width="50" height="30"/>
+                                                    <rect key="frame" x="95" y="170" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
                                                     <state key="normal" title="Share" image="glyphicons_222_share.png">
@@ -205,7 +205,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ruE-EM-nZM">
-                                                    <rect key="frame" x="97" y="170" width="50" height="30"/>
+                                                    <rect key="frame" x="95" y="170" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
                                                     <state key="normal" title="Share" image="glyphicons_222_share.png">
@@ -253,7 +253,7 @@
             </objects>
             <point key="canvasLocation" x="366" y="880"/>
         </scene>
-        <!--Private MyVC - PRIVATE-->
+        <!--Private MyVC - NOTIFICATIONS-->
         <scene sceneID="B7g-hL-Cpz">
             <objects>
                 <viewController id="QPS-zS-iNn" customClass="PrivateMyVC" sceneMemberID="viewController">
@@ -273,16 +273,22 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="199"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="79h-68-tsH">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write something, anything ..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="79h-68-tsH">
                                                     <rect key="frame" x="15" y="3" width="290" height="180"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <string key="text">How many characters can I write ?  That is the question for us right now?  I think we are good with 140 characters.  What do you think?  There are 35 characters in each line </string>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="20"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2m ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZUK-lS-LBm">
                                                     <rect key="frame" x="255" y="174" width="50" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Private post" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="t8h-sb-7CM">
+                                                    <rect key="frame" x="230" y="24" width="75" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -312,7 +318,7 @@
                                                         <action selector="likeAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="lBT-zs-aRA"/>
                                                     </connections>
                                                 </button>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="340k" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="som-xO-c9y" userLabel="Label - #likes">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1637" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="som-xO-c9y" userLabel="Label - #likes">
                                                     <rect key="frame" x="32" y="175" width="50" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
@@ -320,7 +326,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="QGP-tW-6DC">
-                                                    <rect key="frame" x="97" y="170" width="50" height="30"/>
+                                                    <rect key="frame" x="95" y="170" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
                                                     <state key="normal" title="Share" image="glyphicons_222_share.png">
@@ -330,13 +336,26 @@
                                                         <segue destination="8di-gF-XD9" kind="modal" id="s9Z-HM-DcV"/>
                                                     </connections>
                                                 </button>
+                                                <button hidden="YES" opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2JO-bf-KHp" userLabel="Button - Lock">
+                                                    <rect key="frame" x="278" y="-10" width="42" height="52"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <inset key="contentEdgeInsets" minX="15" minY="18" maxX="15" maxY="18"/>
+                                                    <state key="normal" image="glyphicons_203_lock.png">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="lockAction:" destination="QPS-zS-iNn" eventType="touchUpInside" id="OU8-7B-dU2"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="flag" destination="9Ja-Am-vuO" id="0U2-Wi-ewS"/>
                                             <outlet property="like" destination="7g7-vT-IT7" id="ArO-q0-wtV"/>
                                             <outlet property="likeCount" destination="som-xO-c9y" id="GGJ-G7-COa"/>
+                                            <outlet property="lock" destination="2JO-bf-KHp" id="Ic5-fB-Ir1"/>
                                             <outlet property="pageContent" destination="79h-68-tsH" id="hQM-PU-ThJ"/>
+                                            <outlet property="private" destination="t8h-sb-7CM" id="muL-tB-oty"/>
                                             <outlet property="share" destination="QGP-tW-6DC" id="fvk-gM-CDj"/>
                                             <outlet property="timestamp" destination="ZUK-lS-LBm" id="nve-vj-wns"/>
                                         </connections>
@@ -349,7 +368,7 @@
                             </tableView>
                         </subviews>
                     </view>
-                    <navigationItem key="navigationItem" title="PRIVATE" id="qMR-s9-hcQ">
+                    <navigationItem key="navigationItem" title="NOTIFICATIONS" id="qMR-s9-hcQ">
                         <barButtonItem key="backBarButtonItem" title="  " id="3pH-Ij-c32"/>
                         <barButtonItem key="leftBarButtonItem" image="glyphicons_411_twitter.png" id="LQF-KM-ilc">
                             <connections>
@@ -584,6 +603,7 @@
                         <color key="barTintColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="24"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -652,6 +672,7 @@
         <image name="glyphicons_048_dislikes.png" width="25" height="24"/>
         <image name="glyphicons_128_message_lock.png" width="28" height="24"/>
         <image name="glyphicons_136_cogwheel.png" width="24" height="24"/>
+        <image name="glyphicons_203_lock.png" width="21" height="26"/>
         <image name="glyphicons_222_share.png" width="24" height="18"/>
         <image name="glyphicons_266_flag.png" width="21" height="26"/>
         <image name="glyphicons_411_twitter.png" width="24" height="24"/>
@@ -667,6 +688,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="WHK-7k-d2X"/>
+        <segue reference="s9Z-HM-DcV"/>
     </inferredMetricsTieBreakers>
 </document>

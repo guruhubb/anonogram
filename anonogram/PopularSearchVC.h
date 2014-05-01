@@ -14,11 +14,7 @@
 @interface PopularSearchVC : UIViewController < UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
 
-@property (strong, nonatomic) IBOutlet UITableView *popularTableView;
-@property (strong, nonatomic) NSMutableArray *array;
-@property (nonatomic, strong)   MSClient *client;
-@property (weak, nonatomic) IBOutlet UISearchBar *searchBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *searchButton;
+
 
 
 @end

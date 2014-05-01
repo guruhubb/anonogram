@@ -14,10 +14,5 @@
 @interface PrivateMyVC : UIViewController < UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
 
-@property (strong, nonatomic) IBOutlet UITableView *TableView;
-@property (strong, nonatomic) NSMutableArray *array;
-@property (nonatomic, strong)   MSClient *client;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *myButton;
-
 
 @end

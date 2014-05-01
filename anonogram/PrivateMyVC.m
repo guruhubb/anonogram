@@ -37,6 +37,12 @@
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
 
+
+@property (strong, nonatomic) IBOutlet UITableView *TableView;
+@property (strong, nonatomic) NSMutableArray *array;
+@property (nonatomic, strong)   MSClient *client;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *myButton;
+
 @end
 
 @implementation PrivateMyVC
@@ -63,7 +69,7 @@
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
 //    [self setup];
 //    [self getUUID];
-    [self getData];
+    [self twitterSwitch:nil];
     
 }
 - (IBAction)myAction:(id)sender {
@@ -79,7 +85,13 @@
     }
     else {
         isPrivateOn=YES;
-        self.navigationItem.title= [NSString stringWithFormat:@"PRIVATE"];
+        NSString *string = [defaults valueForKey:@"twitterHandle"];
+        NSLog(@"STRING is %@",string);
+
+        if (![string isEqualToString:@""])
+            self.navigationItem.title = string;
+        else
+            self.navigationItem.title = [NSString stringWithFormat:@"NOTIFICATIONS"];
         UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
         self.navigationItem.rightBarButtonItem = privateButton;
         self.array = [[NSMutableArray alloc] init];
@@ -92,7 +104,13 @@
     
 }
 - (void)privateAction {
-    self.navigationItem.title= [NSString stringWithFormat:@"PRIVATE"];
+    NSString *string = [defaults valueForKey:@"twitterHandle"];
+    NSLog(@"STRING is %@",string);
+    if (![string isEqualToString:@""])
+        self.navigationItem.title = string;
+    else
+        self.navigationItem.title = [NSString stringWithFormat:@"NOTIFICATIONS"];
+//    self.navigationItem.title= [NSString stringWithFormat:@"PRIVATE"];
     
     UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
     self.navigationItem.rightBarButtonItem = privateButton;
@@ -147,10 +165,17 @@
     cell.pageContent.text = [dictionary objectForKey:@"text"];
     cell.likeCount.text = [dictionary objectForKey:@"likes"];
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
-
+    
+    if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
+        cell.lock.hidden=NO;
+    }
+    else
+        cell.lock.hidden=YES;
     cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
+    cell.private.tag=indexPath.row;
+    cell.lock.tag=indexPath.row;
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 
@@ -168,13 +193,34 @@
     indexPathRow=indexPath;
     return cell;
 }
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+- (IBAction)lockAction:(id)sender {
+    UIButton *btn = (UIButton*)sender;
+    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag];
+    NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
+
+//    label.alpha=1;
+    label.hidden=NO;
+    [UIView animateWithDuration:3
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                         label.alpha=0.0; }
+                     completion:^(BOOL finished){
+                         label.alpha=1.0;
+                         label.hidden=YES;
+                     }];
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
     if (bottomEdge >= scrollView.contentSize.height) {
-        if(isPrivateOn)
+        if(isPrivateOn){
+            NSLog(@"scrolling up for more");
             [self getData];
+        }
         else
             [self getDataMyAnonograms];
+    }
     }
 }
 - (void) deleteText  {
@@ -378,8 +424,9 @@
     if (actionSheet.tag == 2){
         if(buttonIndex!=buttonsArray.count){
         [Flurry logEvent:@"TwitterSwitch"];
-
-          [defaults setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
+            NSString *string = buttonsArray[buttonIndex];
+          [defaults setValue:string forKey:@"twitterHandle"];
+            self.navigationItem.title= string;
         [self refreshView];
         }
     }
@@ -395,16 +442,20 @@
 - (void) refreshView
 {
   
-    nowTime =[[NSDate date] timeIntervalSince1970];
-    if ((nowTime-startTime)> 5 ){
-        startTime =[[NSDate date] timeIntervalSince1970];
+//    nowTime =[[NSDate date] timeIntervalSince1970];
+//    if ((nowTime-startTime)> 5 ){
+//        startTime =[[NSDate date] timeIntervalSince1970];
+//        NSLog(@"refresh start time is %f",startTime);
+//        NSLog(@"refresh now time is %f",nowTime-startTime);
+
+//        self.array=nil;
     self.array = [[NSMutableArray alloc] init];
 
     if(isPrivateOn)
         [self getData];
     else
         [self getDataMyAnonograms];
-    }
+//    }
     [refreshControl endRefreshing];
 
 }
@@ -425,19 +476,26 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",[defaults valueForKey:@"twitterHandle"]];
+    NSString *string1 =[NSString stringWithFormat:@" %@ ",[defaults valueForKey:@"twitterHandle"]];
+    NSString *string2 =[NSString stringWithFormat:@" @%@ ",[defaults valueForKey:@"twitterHandle"]];
+     NSString *string3 =[NSString stringWithFormat:@" #%@ ",[defaults valueForKey:@"twitterHandle"]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@",string1,string2,string3];
     MSQuery *query = [self.table queryWithPredicate:predicate];
 
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
+    NSLog(@"array count is %d",self.array.count);
+
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {
             //add the items to our local copy
             [self.array addObjectsFromArray:items];
+            NSLog(@"array is %@",self.array);
+
             [self.TableView reloadData];
         }
     }];
@@ -470,7 +528,11 @@
     // Create an account type that ensures Twitter accounts are retrieved.
     ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
     
-    
+//    NSDictionary *options = @{
+//                              @"ACFacebookAppIdKey" : @"1467245410178277",
+////                              @"ACFacebookPermissionsKey" : @[@"publish_stream"],
+////                              @"ACFacebookAudienceKey" : ACFacebookAudienceEveryone
+//                              }; // Needed only when write permissions are requested
     // Request access from the user to use their Twitter accounts.
     [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
 //    [accountStore requestAccessToAccountsWithType:accountType withCompletionHandler:^(BOOL granted, NSError *error) {
@@ -487,7 +549,7 @@
 -(void)populateSheetAndShow:(NSArray *) accountsArray {
     if(accountsArray.count==0){
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You need to have a Twitter account to receive private messages" message:nil
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"You need to grant access to your Twitter account(s) to receive private messages\nGo to Settings->Twitter\nScroll down and turn Anonogram switch on"
                                                        delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alert show];
         return;

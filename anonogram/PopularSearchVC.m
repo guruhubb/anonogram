@@ -33,6 +33,11 @@
     NSTimeInterval nowTime;
     NSTimeInterval startTime ;
 }
+@property (strong, nonatomic) IBOutlet UITableView *popularTableView;
+@property (strong, nonatomic) NSMutableArray *array;
+@property (nonatomic, strong)   MSClient *client;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBarButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *searchButton;
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
@@ -212,14 +217,15 @@
     
     return cell;
 }
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
-    if (bottomEdge >= scrollView.contentSize.height) {
-        if (!isSearchOn) {
-            [self getData];
-        }
-        else
-            [self getDataSearch];
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {
+        float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+        if (bottomEdge >= scrollView.contentSize.height) {
+            if (!isSearchOn)
+                [self getData];
+            else
+                [self getDataSearch];
+    }
     }
 }
 - (void) deleteText  {
@@ -438,15 +444,15 @@
 - (void) refreshView
 {
 
-    nowTime =[[NSDate date] timeIntervalSince1970];
-    if ((nowTime-startTime)> 5 ){
-        startTime =[[NSDate date] timeIntervalSince1970];
+//    nowTime =[[NSDate date] timeIntervalSince1970];
+//    if ((nowTime-startTime)> 5 ){
+//        startTime =[[NSDate date] timeIntervalSince1970];
     self.array = [[NSMutableArray alloc] init];
     if(!isSearchOn)
         [self getData];
     else
         [self getDataSearch];
-    }
+//    }
     [refreshControl endRefreshing];
 }
 
