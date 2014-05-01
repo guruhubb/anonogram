@@ -9,7 +9,7 @@
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
 #define kLimit 2
-#define kFlagsAllowed 0
+#define kFlagsAllowed 1
 #import "PopularSearchVC.h"
 #import "Cell.h"
 #import "shareViewController.h"
@@ -30,6 +30,8 @@
 
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
+    NSTimeInterval nowTime;
+    NSTimeInterval startTime ;
 }
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
@@ -42,6 +44,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    startTime=0;
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.popularTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     self.array = [[NSMutableArray alloc] init];
@@ -127,6 +130,7 @@
                                       initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                       target:self action:@selector(searchAction:)] ;
     self.navigationItem.rightBarButtonItem = popularButton;
+    self.array = [[NSMutableArray alloc] init];
     [self getData];
 
 }
@@ -134,7 +138,7 @@
 
     [self createInputAccessoryViewForSearch];
     _searchBarButton.hidden=YES;
-    _searchBarButton.placeholder = @"Search #hashtag, @username";
+    _searchBarButton.placeholder = @"Type any word";
     [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [self.view addSubview:_inputAccessoryView];
     _inputAccessoryView.hidden=YES;
@@ -177,7 +181,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
     
-    Cell *cell = [tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
+    Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
+   
     if (self.array.count <= indexPath.row)
         return cell;
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
@@ -197,13 +202,14 @@
     }
     else {
         [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
-        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
-        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-            if (items.count) cell.flag.userInteractionEnabled=NO;
-        }];
+//        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+//        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//            if (items.count) cell.flag.userInteractionEnabled=NO;
+//        }];
     }
     indexPathRow=indexPath;
+    
     return cell;
 }
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -293,9 +299,23 @@
     }
     
     else {
-            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
-    actionSheet.tag=1;
-    [actionSheet showInView:sender];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
+        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            if (!items.count) {
+                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+                actionSheet.tag=1;
+                [actionSheet showInView:sender];
+                
+            }
+            else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You have already flagged this post!" message:nil
+                                                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [alert show];
+            }
+        }];
+//            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+//    actionSheet.tag=1;
+//    [actionSheet showInView:sender];
     }
 }
 
@@ -417,11 +437,16 @@
 
 - (void) refreshView
 {
+
+    nowTime =[[NSDate date] timeIntervalSince1970];
+    if ((nowTime-startTime)> 5 ){
+        startTime =[[NSDate date] timeIntervalSince1970];
     self.array = [[NSMutableArray alloc] init];
     if(!isSearchOn)
         [self getData];
     else
         [self getDataSearch];
+    }
     [refreshControl endRefreshing];
 }
 

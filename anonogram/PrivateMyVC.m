@@ -9,7 +9,7 @@
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
 #define kLimit 2
-#define kFlagsAllowed 0
+#define kFlagsAllowed 1
 #import "PrivateMyVC.h"
 #import "Cell.h"
 #import "shareViewController.h"
@@ -30,6 +30,8 @@
 
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
+    NSTimeInterval nowTime;
+    NSTimeInterval startTime ;
 }
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
@@ -42,6 +44,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    startTime=0;
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.TableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     self.array = [[NSMutableArray alloc] init];
@@ -93,6 +96,7 @@
     
     UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
     self.navigationItem.rightBarButtonItem = privateButton;
+    self.array = [[NSMutableArray alloc] init];
     [self getData];
 }
 
@@ -135,7 +139,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
     
-    Cell *cell = [tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
+    Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
     if (self.array.count <= indexPath.row)
         return cell;
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
@@ -155,11 +159,11 @@
     }
     else {
         [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
-        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
-        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-            if (items.count) cell.flag.userInteractionEnabled=NO;
-        }];
+//        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+//        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//            if (items.count) cell.flag.userInteractionEnabled=NO;
+//        }];
     }
     indexPathRow=indexPath;
     return cell;
@@ -250,9 +254,23 @@
     }
     
     else {
-            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
-    actionSheet.tag=1;
-    [actionSheet showInView:sender];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
+        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            if (!items.count) {
+                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+                actionSheet.tag=1;
+                [actionSheet showInView:sender];
+                
+            }
+            else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You have already flagged this post!" message:nil
+                                                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                [alert show];
+            }
+        }];
+//            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+//    actionSheet.tag=1;
+//    [actionSheet showInView:sender];
     }
 }
 
@@ -330,8 +348,8 @@
     if (actionSheet.tag == 1) {
         if (buttonIndex==0){
             [Flurry logEvent:@"Flag"];
-            UIButton *btn = (UIButton *)[self.view viewWithTag:flagButton];
-            btn.userInteractionEnabled=NO;
+//            UIButton *btn = (UIButton *)[self.view viewWithTag:flagButton];
+//            btn.userInteractionEnabled=NO;
             NSLog(@"flag as inappropriate");
             
             NSDictionary *dictionary=[self.array objectAtIndex:flagButton];
@@ -358,10 +376,12 @@
         }
     }
     if (actionSheet.tag == 2){
+        if(buttonIndex!=buttonsArray.count){
         [Flurry logEvent:@"TwitterSwitch"];
 
           [defaults setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
         [self refreshView];
+        }
     }
 //    [[self.view viewWithTag:1] removeFromSuperview];
 }
@@ -374,12 +394,17 @@
 
 - (void) refreshView
 {
+  
+    nowTime =[[NSDate date] timeIntervalSince1970];
+    if ((nowTime-startTime)> 5 ){
+        startTime =[[NSDate date] timeIntervalSince1970];
     self.array = [[NSMutableArray alloc] init];
 
     if(isPrivateOn)
         [self getData];
     else
         [self getDataMyAnonograms];
+    }
     [refreshControl endRefreshing];
 
 }
@@ -400,7 +425,7 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPrivate==YES  && text contains[cd] %@",[defaults valueForKey:@"twitterHandle"]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",[defaults valueForKey:@"twitterHandle"]];
     MSQuery *query = [self.table queryWithPredicate:predicate];
 
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
