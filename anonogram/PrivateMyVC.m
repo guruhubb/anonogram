@@ -8,8 +8,8 @@
 
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
-#define kLimit 2
-#define kFlagsAllowed 1
+#define kLimit 20
+#define kFlagsAllowed 10
 #import "PrivateMyVC.h"
 #import "Cell.h"
 #import "shareViewController.h"
@@ -478,8 +478,8 @@
     NSLog(@"getting data...");
     NSString *string1 =[NSString stringWithFormat:@" %@ ",[defaults valueForKey:@"twitterHandle"]];
     NSString *string2 =[NSString stringWithFormat:@" @%@ ",[defaults valueForKey:@"twitterHandle"]];
-     NSString *string3 =[NSString stringWithFormat:@" #%@ ",[defaults valueForKey:@"twitterHandle"]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@",string1,string2,string3];
+//     NSString *string3 =[NSString stringWithFormat:@" #%@ ",[defaults valueForKey:@"twitterHandle"]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@",string1,string2];
     MSQuery *query = [self.table queryWithPredicate:predicate];
 
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field

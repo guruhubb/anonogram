@@ -8,8 +8,8 @@
 
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
-#define kLimit 2
-#define kFlagsAllowed 1
+#define kLimit 20
+#define kFlagsAllowed 10
 #import "PopularSearchVC.h"
 #import "Cell.h"
 #import "shareViewController.h"
@@ -143,7 +143,7 @@
 
     [self createInputAccessoryViewForSearch];
     _searchBarButton.hidden=YES;
-    _searchBarButton.placeholder = @"Type any word";
+    _searchBarButton.placeholder = @"Type anything";
     [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [self.view addSubview:_inputAccessoryView];
     _inputAccessoryView.hidden=YES;

@@ -35,11 +35,10 @@
     defaults = [NSUserDefaults standardUserDefaults];
 
     editArr = [[NSArray alloc]initWithObjects:
-               @"Background Color for Share",@"Add Watermark for Share",
-               @"Follow us on Instagram", @"Like us on Facebook",@"Follow us on Twitter",
+               @"Background Color for Share",@"Add Watermark for Share", @"Like us on Facebook",@"Follow us on Twitter",
                @"Rate App",@"Feedback",@"Restore Purchases",nil];
     [self.settingsTableView reloadData];
-    [defaults setBool:YES forKey:kFeature2];  //test
+//    [defaults setBool:YES forKey:kFeature2];  //test
 
     
 }
@@ -53,7 +52,7 @@
     
     [Flurry logEvent:@"Rate App" ];
 //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/app/850204569"]];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=866641636&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=869802697&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
 
 }
 
@@ -66,7 +65,7 @@
     pickerMail.mailComposeDelegate = self;
     
     [pickerMail setSubject:@"Customer Feedback"];
-    [pickerMail setToRecipients:[NSArray arrayWithObject:@"oneframeapp@yahoo.com"]];
+    [pickerMail setToRecipients:[NSArray arrayWithObject:@"anonogram@yahoo.com"]];
     // Fill out the email body text
     NSString *emailBody = @"Hi, I have the following feedback on Anonogram...";
     [pickerMail setMessageBody:emailBody isHTML:NO];
@@ -169,22 +168,22 @@
                 [cell.textLabel setText:[editArr objectAtIndex:3]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
-            if (indexPath.row==2) {
-                [cell.textLabel setText:[editArr objectAtIndex:4]];
-                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-            }
+//            if (indexPath.row==2) {
+//                [cell.textLabel setText:[editArr objectAtIndex:4]];
+//                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+//            }
         }
         if (indexPath.section == 2) {
             if(indexPath.row==0){
-                [cell.textLabel setText:[editArr objectAtIndex:5]];
+                [cell.textLabel setText:[editArr objectAtIndex:4]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             if(indexPath.row==1){
-                [cell.textLabel setText:[editArr objectAtIndex:6]];
+                [cell.textLabel setText:[editArr objectAtIndex:5]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             if(indexPath.row==2){
-                [cell.textLabel setText:[editArr objectAtIndex:7]];
+                [cell.textLabel setText:[editArr objectAtIndex:6]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             
@@ -213,20 +212,20 @@
         }
     }
     if (indexPath.section == 1) {
+//        if (indexPath.row==0) {
+//            NSURL *instagramURL = [NSURL URLWithString:@"instagram://user?username=oneframeapp"];
+//            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//                [[UIApplication sharedApplication] openURL:instagramURL];
+//            }
+//        }
         if (indexPath.row==0) {
-            NSURL *instagramURL = [NSURL URLWithString:@"instagram://user?username=oneframeapp"];
-            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-                [[UIApplication sharedApplication] openURL:instagramURL];
-            }
-        }
-        if (indexPath.row==1) {
-            NSURL *fbURL = [NSURL URLWithString:@"fb://profile/1440695526169043"];
+            NSURL *fbURL = [NSURL URLWithString:@"fb://profile/264820483689403"];
             if ([[UIApplication sharedApplication] canOpenURL:fbURL]) {
                 [[UIApplication sharedApplication] openURL:fbURL];
             }
         }
-        if (indexPath.row==2) {
-            NSURL *twitterURL = [NSURL URLWithString:@"twitter://user?screen_name=oneframeapp"];
+        if (indexPath.row==1) {
+            NSURL *twitterURL = [NSURL URLWithString:@"twitter://user?screen_name=anonogram"];
             if ([[UIApplication sharedApplication] canOpenURL:twitterURL]) {
                 [[UIApplication sharedApplication] openURL:twitterURL];
             }

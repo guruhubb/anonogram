@@ -38,7 +38,7 @@
 	// Do any additional setup after loading the view.
     NSData* imageData = [[NSUserDefaults standardUserDefaults] objectForKey:@"image"];
     self.image = [UIImage imageWithData:imageData];
-//    NSLog(@"self.image is %@",self.image);
+//    NSLog(@"self.image is %d",[UIImagePNGRepresentation( self.image) length]);
     [self setupCircles];
 
 }

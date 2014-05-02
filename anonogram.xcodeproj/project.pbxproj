@@ -11,6 +11,7 @@
 		CC03F8E319119C7800ED4C5D /* glyphicons_048_dislikes.png in Resources */ = {isa = PBXBuildFile; fileRef = CC03F8E219119C7800ED4C5D /* glyphicons_048_dislikes.png */; };
 		CC03F8E51911A65400ED4C5D /* glyphicons_203_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = CC03F8E41911A65400ED4C5D /* glyphicons_203_lock.png */; };
 		CC03F8E71911A71600ED4C5D /* glyphicons_128_message_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */; };
+		CC03F8ED19130EB600ED4C5D /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC03F8EC19130EB600ED4C5D /* CoreData.framework */; };
 		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
@@ -108,6 +109,7 @@
 		CC03F8E219119C7800ED4C5D /* glyphicons_048_dislikes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_048_dislikes.png; sourceTree = "<group>"; };
 		CC03F8E41911A65400ED4C5D /* glyphicons_203_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_203_lock.png; sourceTree = "<group>"; };
 		CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_128_message_lock.png; sourceTree = "<group>"; };
+		CC03F8EC19130EB600ED4C5D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
 		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC03F8ED19130EB600ED4C5D /* CoreData.framework in Frameworks */,
 				CC0FD3F5190B745C008F4A63 /* Social.framework in Frameworks */,
 				CC0FD3F3190B0111008F4A63 /* Accounts.framework in Frameworks */,
 				CCD9550A19074FDE005EFE06 /* MessageUI.framework in Frameworks */,
@@ -297,6 +300,7 @@
 		CCD9544C19074298005EFE06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC03F8EC19130EB600ED4C5D /* CoreData.framework */,
 				CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */,
 				CC0FD3F4190B745C008F4A63 /* Social.framework */,
 				CC0FD3F2190B0111008F4A63 /* Accounts.framework */,

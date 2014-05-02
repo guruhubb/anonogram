@@ -8,8 +8,8 @@
 
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
-#define kLimit 2
-#define kFlagsAllowed 1
+#define kLimit 20
+#define kFlagsAllowed 10
 
 #import "HomeViewController.h"
 #import "Cell.h"
@@ -123,10 +123,10 @@
     label.text= @"140";
     label.tag =100;
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
-    label2.textColor=[UIColor lightGrayColor];
+    label2.textColor=[UIColor darkTextColor];
     label2.font = [UIFont systemFontOfSize:16];
     label2.textAlignment=NSTextAlignmentCenter;
-    label2.text= @"To post privately to someone -\ntap Private On, mention the person's Twitter username (@ is optional) in the message";
+    label2.text= @"To post privately, tap Private Off, mention Twitter username in the message";
     label2.numberOfLines=14;
     label2.tag =105;
     [txtChat addSubview:label];
@@ -455,7 +455,18 @@
 - (void) getData {
     NSLog(@"getting data...");
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(isPrivate == false) || (userId == %@)",userId];
+//    NSString *word1 = [defaults objectForKey:@"filterWord1"];
+//    NSString *word2 = [defaults objectForKey:@"filterWord2"];
+//    NSString *word3 = [defaults objectForKey:@"filterWord3"];
+
+    NSPredicate *predicate;
+//    if (![defaults boolForKey:@"filter"])
+        predicate = [NSPredicate predicateWithFormat:@"isPrivate == false || userId == %@ ",userId];
+//    else {
+//        
+//        predicate = [NSPredicate predicateWithFormat:@"((text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@) && isPrivate == false)|| userId == %@",word1,word2,word3,userId];
+//    }
+ 
     MSQuery *query = [self.table queryWithPredicate:predicate];    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
@@ -537,18 +548,24 @@
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+//    if([text isEqualToString:@"\n"]) {
+//        [textView resignFirstResponder];
+//        return YES;
+//    }
     NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
     NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
     NSUInteger location = replacementTextRange.location;
     
     if (textView.text.length + text.length > 140){
         if (location != NSNotFound){
-            [textView resignFirstResponder];
+            [txtChat resignFirstResponder];
+             txtChat.hidden=YES;
         }
         return NO;
     }
     else if (location != NSNotFound){
-        [textView resignFirstResponder];
+        [txtChat resignFirstResponder];
+         txtChat.hidden=YES;
         return NO;
     }
     return YES;
@@ -558,8 +575,9 @@
     label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=YES;
-    
 }
+
+
 
 -(void)createInputAccessoryView {
     
