@@ -125,9 +125,14 @@
     theTable.layer.borderColor=[UIColor darkGrayColor].CGColor;
     
     filterHashTagArray=[[NSMutableArray alloc] init];
-    hashTagArray=[[NSMutableArray alloc]initWithObjects:
-                  @"#Background", @"#Like",@"#Followr",
-                  @"#Rate",@"#Feedback",@"#Restore",nil];
+    if ([defaults objectForKey:@"hashtags"]) {
+        hashTagArray=[defaults objectForKey:@"hashtags"];
+    }
+    else {
+        hashTagArray=[[NSMutableArray alloc]initWithObjects:
+                      @"#Background", @"#Like",@"#Followr",
+                      @"#Rate",@"#Feedback",@"#Restore",nil];
+    }
     
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
     txtChat.delegate=self;
@@ -841,6 +846,7 @@
         if([parameter hasPrefix:@"#"] && ![hashTagArray containsObject: parameter]){
             NSLog(@"parameter is %@",parameter);
             [hashTagArray insertObject:parameter atIndex:0];
+            [defaults setObject:hashTagArray forKey:@"hashtags"];
         }
     }
      NSLog(@"hashtagarray is %@",hashTagArray);
