@@ -24,21 +24,25 @@
     NSUserDefaults *defaults;
     NSString *token;
     BOOL isPrivateOn;
+    BOOL recordingHashTag;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
+    NSMutableArray *filterHashTagArray;
+    NSMutableArray *hashTagArray;
     NSInteger flagButton;
+    NSInteger startParse;
 
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
     NSTimeInterval startTime ;
     UIBarButtonItem *isPrivateItem;
+    UITableView *theTable;
 }
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
-
 
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
 @property (strong, nonatomic) NSMutableArray *array;
@@ -57,7 +61,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    startTime=0;
+
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     self.array = [[NSMutableArray alloc] init];
@@ -75,7 +79,7 @@
     [self.theTableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
     
-        [self setup];
+    [self setup];
     [self getUUID];
     [self getData];
     
@@ -111,26 +115,42 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=869802697&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
 }
 -(void) setup {
+    startTime=0;
+    theTable = [[UITableView alloc] initWithFrame:CGRectMake(0,60 ,320, screenSpecificSetting(183, 95))];
+    theTable.delegate=self;
+    theTable.dataSource=self;
+    theTable.hidden=YES;
+    theTable.layer.frame=CGRectMake(-2, 60, 324, screenSpecificSetting(186, 98));
+    theTable.layer.borderWidth=2.0;
+    theTable.layer.borderColor=[UIColor darkGrayColor].CGColor;
+    
+    filterHashTagArray=[[NSMutableArray alloc] init];
+    hashTagArray=[[NSMutableArray alloc]initWithObjects:
+                  @"#Background", @"#Like",@"#Followr",
+                  @"#Rate",@"#Feedback",@"#Restore",nil];
+    
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
     txtChat.delegate=self;
     txtChat.hidden=YES;
-    txtChat.font=[UIFont systemFontOfSize:16];
+    txtChat.font=[UIFont systemFontOfSize:14];
     txtChat.text=@"placeholder";
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
     label.textColor=[UIColor lightGrayColor];
-    label.font = [UIFont systemFontOfSize:16];
+    label.font = [UIFont systemFontOfSize:14];
     label.text= @"140";
     label.tag =100;
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
-    label2.textColor=[UIColor darkTextColor];
-    label2.font = [UIFont systemFontOfSize:16];
+    label2.textColor=[UIColor lightGrayColor];
+    label2.font = [UIFont systemFontOfSize:14];
     label2.textAlignment=NSTextAlignmentCenter;
-    label2.text= @"To post privately, tap Private Off, mention Twitter username in the message";
+    label2.text= @"To post privately, tap Private Off, mention Twitter username(s) in the message";
     label2.numberOfLines=14;
     label2.tag =105;
     [txtChat addSubview:label];
     [txtChat addSubview:label2];
+//    [self.view addSubview:theTable];
+    [txtChat addSubview:theTable];
     [self createInputAccessoryView];
 //    [self createInputAccessoryViewForSearch];
     [self.view addSubview:txtChat];
@@ -159,28 +179,32 @@
     NSLog(@"UUID is %@",retrieveuuid);
 }
 
-+ (NSString *)GetUUID {
-    CFUUIDRef theUUID = CFUUIDCreate(NULL);
-    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
-    CFRelease(theUUID);
-    return (__bridge NSString *)(string);
-}
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(tableView== theTable)
+        return 30;
+    else
+        return 200;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection: (NSInteger)section
 {
-    return _array.count;
+    if (tableView==self.theTableView)
+        return _array.count;
+    else
+        return filterHashTagArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
-    
+    [tableView setSeparatorInset:UIEdgeInsetsZero];
+    if (tableView==_theTableView){
     Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
-//    if (cell==nil){
     if (self.array.count <= indexPath.row)
         return cell;
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
@@ -203,8 +227,34 @@
        
     }
     indexPathRow=indexPath;
-//    }
-    return cell;
+        return cell;}
+    else {
+        
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"List"];
+        
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"List"];
+        }
+        
+        cell.textLabel.text = [filterHashTagArray objectAtIndex:indexPath.row];
+        cell.textLabel.font = [UIFont fontWithName:@"GillSans-Light" size:16];
+        cell.textLabel.textColor = [UIColor darkGrayColor];
+        
+
+        
+        return cell;
+    }
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView==theTable) {
+        
+        UITableViewCell *cell = (UITableViewCell*)[self tableView:theTable cellForRowAtIndexPath:indexPath];
+        
+        NSString *newString = [txtChat.text stringByReplacingCharactersInRange:NSMakeRange(startParse, [txtChat.text length] - startParse) withString:cell.textLabel.text];
+        txtChat.text = newString;
+        theTable.hidden=YES;
+    }
+    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {      float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
@@ -555,7 +605,7 @@
     NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
     NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
     NSUInteger location = replacementTextRange.location;
-    
+    static NSString *suffix = @"#";
     if (textView.text.length + text.length > 140){
         if (location != NSNotFound){
             [txtChat resignFirstResponder];
@@ -568,16 +618,96 @@
          txtChat.hidden=YES;
         return NO;
     }
-    return YES;
+    
+//    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+//    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
+//    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+//    label2.hidden=YES;
+    
+    if ([text isEqualToString:@"#"]) {
+        NSLog(@"recordingHasTag");
+        recordingHashTag = YES;
+        startParse = range.location;
+        NSLog(@"startParse is %d",startParse);
+        theTable.hidden = NO;
+        
+    }else if ([text isEqualToString:@" "]) {
+//        currentHashTag = nil;
+        recordingHashTag = NO;
+        theTable.hidden = YES;
+        
+    }
+    
+    
+    if (range.length == 1 && [text length] == 0) {
+        // The user presses the Delete key.
+        NSLog(@"delete");
+
+        NSString *currentText = [textView.text substringToIndex:range.location+1];
+//        NSString *appendingText = [textView.text substringFromIndex:range.location+1];
+        
+        if ([currentText hasSuffix:suffix]) {
+            NSLog(@"recordingHasTag=NO");
+            theTable.hidden = YES;
+
+            recordingHashTag = NO;
+        }
+    }
+    
+       return YES;
 }
 - (void)textViewDidChange:(UITextView *)textView{
+    if (recordingHashTag == YES) {
+        NSString *value;
+        NSLog(@"recordingHasTag1");
+        NSLog(@"textView.text length = %d",textView.text.length);
+        if (startParse < [textView.text length] ) {
+            value = [textView.text substringWithRange:NSMakeRange(startParse, [textView.text length] - startParse)];
+            [self filterHashTagTableWithHash:value];
+            NSLog(@"recordingHasTag2, value = %@",value);
+        }
+    }
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=YES;
 }
 
+-(void)filterHashTagTableWithHash:(NSString *)hash{
+    
+    [filterHashTagArray removeAllObjects];
 
+    for (NSString *hashTag in hashTagArray ){
+        if ([hashTag rangeOfString:hash options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            [filterHashTagArray addObject:hashTag];
+        }
+    }
+//    NSString *param = nil;
+//    NSRange start = [hash rangeOfString:@"#"];
+//    if (start.location != NSNotFound)
+//    {
+//        param = [txtChat.text substringFromIndex:start.location + start.length];
+//        NSRange end = [param rangeOfString:@" "];
+//        if (end.location != NSNotFound)
+//        {
+//            param = [param substringToIndex:end.location];
+//        }
+//    }
+
+    if (!filterHashTagArray.count && [hash length]<1) {
+        filterHashTagArray = [NSMutableArray arrayWithArray:hashTagArray];
+    }
+//    else {
+//        theTable.hidden=YES;
+//    }
+
+    if (!filterHashTagArray.count)
+        theTable.hidden=YES;
+    NSLog(@"filterhashtagarray is %@",filterHashTagArray);
+
+    
+    [theTable reloadData];
+}
 
 -(void)createInputAccessoryView {
     
@@ -669,6 +799,7 @@
     [txtChat resignFirstResponder];
     txtChat.text=@"";
     txtChat.hidden=YES;
+    theTable.hidden=YES;
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.text = @"140";
     
@@ -677,6 +808,7 @@
     
     NSLog(@"compose");
     txtChat.hidden=NO;
+    
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=NO;
     [self.view bringSubviewToFront:txtChat];
@@ -690,7 +822,48 @@
         [Flurry logEvent:@"Private Post"];
     else
         [Flurry logEvent:@"Post"];
-//    if ([txtChat.text rangeOfString:@"@isprivate " options:NSCaseInsensitiveSearch].length)
+    
+    NSArray *parameters = [txtChat.text componentsSeparatedByString:@" "];
+    NSLog(@"parameters are %@",parameters);
+    for (NSString *parameter in parameters)
+    {
+//        NSString *param = nil;
+//        NSRange start = [txtChat.text rangeOfString:@"#"];
+//        if (start.location != NSNotFound)
+//        {
+//            param = [txtChat.text substringFromIndex:start.location + start.length];
+//            NSRange end = [param rangeOfString:@" "];
+//            if (end.location != NSNotFound)
+//            {
+//                param = [param substringToIndex:end.location];
+//            }
+//        }
+        if([parameter hasPrefix:@"#"] && ![hashTagArray containsObject: parameter]){
+            NSLog(@"parameter is %@",parameter);
+            [hashTagArray insertObject:parameter atIndex:0];
+        }
+    }
+     NSLog(@"hashtagarray is %@",hashTagArray);
+//    NSString *param = nil;
+//    NSRange start = [txtChat.text rangeOfString:@"#"];
+//    if (start.location != NSNotFound)
+//    {
+//        param = [txtChat.text substringFromIndex:start.location + start.length];
+//        NSRange end = [param rangeOfString:@" "];
+//        if (end.location != NSNotFound)
+//        {
+//            param = [param substringToIndex:end.location];
+//        }
+//    }
+//    
+//    for (NSString *hashTag in hashTagArray ){
+//        if ([hashTag rangeOfString:hash options:NSCaseInsensitiveSearch].location != NSNotFound) {
+//            [filterHashTagArray addObject:hashTag];
+//        }
+//    }
+    
+//    [hashTagArray addObject:param];
+//    if ([txtChat.text rangeOfString:@"@" options:NSCaseInsensitiveSearch].length)
 //        isPrivateOn = YES;
 //    else
 //        isPrivateOn = NO;
@@ -709,7 +882,6 @@
             NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
         }
         [self refreshView];
-
     }];
 }
 

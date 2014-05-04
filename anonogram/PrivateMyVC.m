@@ -88,7 +88,7 @@
         NSString *string = [defaults valueForKey:@"twitterHandle"];
         NSLog(@"STRING is %@",string);
 
-        if (![string isEqualToString:@""])
+        if (string !=NULL)
             self.navigationItem.title = string;
         else
             self.navigationItem.title = [NSString stringWithFormat:@"NOTIFICATIONS"];
@@ -549,7 +549,7 @@
 -(void)populateSheetAndShow:(NSArray *) accountsArray {
     if(accountsArray.count==0){
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"You need to grant access to your Twitter account(s) to receive private messages\nGo to Settings->Twitter\nScroll down and turn Anonogram switch on"
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"You need to grant access to receive private messages\nGo to Settings->Twitter. Scroll down and turn Anonogram on"
                                                        delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alert show];
         return;
