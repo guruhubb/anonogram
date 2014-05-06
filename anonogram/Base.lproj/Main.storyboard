@@ -210,7 +210,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="8di-gF-XD9" kind="modal" id="ob9-Xa-DCc"/>
+                                                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" id="ob9-Xa-DCc"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -279,7 +279,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2m ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZUK-lS-LBm">
-                                                    <rect key="frame" x="255" y="174" width="50" height="21"/>
+                                                    <rect key="frame" x="6" y="5" width="50" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -293,7 +293,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="9Ja-Am-vuO">
-                                                    <rect key="frame" x="180" y="171" width="50" height="30"/>
+                                                    <rect key="frame" x="273" y="171" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="19" minY="8" maxX="19" maxY="8"/>
                                                     <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
@@ -303,7 +303,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7g7-vT-IT7">
-                                                    <rect key="frame" x="-13" y="170" width="58" height="30"/>
+                                                    <rect key="frame" x="-18" y="170" width="58" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="15" maxY="0.0"/>
@@ -317,21 +317,39 @@
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1637" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="som-xO-c9y" userLabel="Label - #likes">
-                                                    <rect key="frame" x="32" y="175" width="50" height="21"/>
+                                                    <rect key="frame" x="28" y="175" width="50" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1637" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MPa-pL-e2g" userLabel="Label - #replies">
+                                                    <rect key="frame" x="125" y="175" width="50" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="QGP-tW-6DC">
-                                                    <rect key="frame" x="95" y="170" width="50" height="30"/>
+                                                    <rect key="frame" x="185" y="170" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
                                                     <state key="normal" title="Share" image="glyphicons_222_share.png">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="8di-gF-XD9" kind="modal" id="s9Z-HM-DcV"/>
+                                                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" id="s9Z-HM-DcV"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Vre-EA-0LS" userLabel="Button - Reply">
+                                                    <rect key="frame" x="87" y="170" width="50" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
+                                                    <state key="normal" title="Share" image="glyphicons_221_unshare.png">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <segue destination="dYf-rc-FNx" kind="modal" modalTransitionStyle="crossDissolve" id="8lB-T6-BcC"/>
                                                     </connections>
                                                 </button>
                                                 <button hidden="YES" opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2JO-bf-KHp" userLabel="Button - Lock">
@@ -388,6 +406,57 @@
             </objects>
             <point key="canvasLocation" x="366" y="1596"/>
         </scene>
+        <!--CommentVC - COMMENTS-->
+        <scene sceneID="rsO-Mk-uTn">
+            <objects>
+                <viewController id="Cic-4v-u7C" customClass="CommentVC" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="F7d-bk-ILl">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <toolbar clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="wrA-24-JBg">
+                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <items>
+                                    <barButtonItem title="Item" style="plain" id="PET-hq-Qpc">
+                                        <textField key="customView" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add your comments ..." clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" id="ngt-zI-uks">
+                                            <rect key="frame" x="16" y="7" width="300" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                            <connections>
+                                                <outlet property="delegate" destination="Cic-4v-u7C" id="u0Y-O2-K4G"/>
+                                            </connections>
+                                        </textField>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                        <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                        <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="COMMENTS" id="8Zg-Yf-LUv">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="eAX-GR-J3X">
+                            <connections>
+                                <action selector="cancel:" destination="Cic-4v-u7C" id="qQF-Ui-oXE"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="textToolBar" destination="wrA-24-JBg" id="P9z-Fq-3Hh"/>
+                        <outlet property="txtChat" destination="ngt-zI-uks" id="59m-ue-4eJ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="n7e-2E-lfb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1435" y="1596"/>
+        </scene>
         <!--Navigation Controller -  -->
         <scene sceneID="bPt-FT-HLk">
             <objects>
@@ -416,7 +485,7 @@
         <scene sceneID="SzY-MP-EIy">
             <objects>
                 <tabBarController definesPresentationContext="YES" id="CRN-Ck-Ibu" sceneMemberID="viewController">
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="h2b-10-s7A">
                         <rect key="frame" x="129" y="330" width="163" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -661,6 +730,30 @@
             </objects>
             <point key="canvasLocation" x="-146" y="1596"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="iVU-Jy-CmN">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="dYf-rc-FNx" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="AFf-LJ-MLU"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ELE-Fx-1xT">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="24"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Cic-4v-u7C" kind="relationship" relationship="rootViewController" id="LD8-On-XlB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VpT-Mv-LnU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="909" y="1596"/>
+        </scene>
     </scenes>
     <resources>
         <image name="comments-icon-614x460.png" width="614" height="460"/>
@@ -671,6 +764,7 @@
         <image name="glyphicons_128_message_lock.png" width="28" height="24"/>
         <image name="glyphicons_136_cogwheel.png" width="24" height="24"/>
         <image name="glyphicons_203_lock.png" width="21" height="26"/>
+        <image name="glyphicons_221_unshare.png" width="24" height="18"/>
         <image name="glyphicons_222_share.png" width="24" height="18"/>
         <image name="glyphicons_266_flag.png" width="21" height="26"/>
         <image name="glyphicons_411_twitter.png" width="24" height="24"/>

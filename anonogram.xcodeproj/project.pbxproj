@@ -24,6 +24,8 @@
 		CC0FD3F7190B8C51008F4A63 /* glyphicons_411_twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */; };
 		CC0FD3FD190CA0A9008F4A63 /* NewRelicAgent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */; };
 		CC2766D51910592100D132A1 /* PopularSearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC2766D41910592100D132A1 /* PopularSearchVC.m */; };
+		CC94A1B91918C41F00C0F140 /* CommentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC94A1B81918C41F00C0F140 /* CommentVC.m */; };
+		CC94A1BC19191CB000C0F140 /* glyphicons_221_unshare.png in Resources */ = {isa = PBXBuildFile; fileRef = CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -125,6 +127,9 @@
 		CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewRelicAgent.framework; path = NewRelic_iOS_Agent_3.289/NewRelicAgent.framework; sourceTree = "<group>"; };
 		CC2766D31910592100D132A1 /* PopularSearchVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopularSearchVC.h; sourceTree = "<group>"; };
 		CC2766D41910592100D132A1 /* PopularSearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopularSearchVC.m; sourceTree = "<group>"; };
+		CC94A1B71918C41F00C0F140 /* CommentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentVC.h; sourceTree = "<group>"; };
+		CC94A1B81918C41F00C0F140 /* CommentVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentVC.m; sourceTree = "<group>"; };
+		CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_221_unshare.png; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -338,6 +343,8 @@
 		CCD9545319074299005EFE06 /* anonogram */ = {
 			isa = PBXGroup;
 			children = (
+				CC94A1B71918C41F00C0F140 /* CommentVC.h */,
+				CC94A1B81918C41F00C0F140 /* CommentVC.m */,
 				CC2766D31910592100D132A1 /* PopularSearchVC.h */,
 				CC2766D41910592100D132A1 /* PopularSearchVC.m */,
 				CC03F8DF19115FBB00ED4C5D /* PrivateMyVC.h */,
@@ -404,6 +411,7 @@
 			isa = PBXGroup;
 			children = (
 				CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */,
+				CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */,
 				CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */,
 				CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */,
 				CCD9548B19074BA3005EFE06 /* comments-icon-614x460.png */,
@@ -598,6 +606,7 @@
 				CCD954DB19074E2B005EFE06 /* verifyProduct.php in Resources */,
 				CCD9550F19075001005EFE06 /* TapjoyResources.bundle in Resources */,
 				CCD954D919074E2B005EFE06 /* featureCheck.php in Resources */,
+				CC94A1BC19191CB000C0F140 /* glyphicons_221_unshare.png in Resources */,
 				CCD954A519074BA3005EFE06 /* lockImage.png in Resources */,
 				CCD9549E19074BA3005EFE06 /* glyphicons_003_user.png in Resources */,
 				CCD954A719074BA3005EFE06 /* square.png in Resources */,
@@ -627,6 +636,7 @@
 				CCD954B419074BEA005EFE06 /* shareViewController.m in Sources */,
 				CCD9545E19074299005EFE06 /* AppDelegate.m in Sources */,
 				CCD954D119074E2B005EFE06 /* SFHFKeychainUtils.m in Sources */,
+				CC94A1B91918C41F00C0F140 /* CommentVC.m in Sources */,
 				CCD954D519074E2B005EFE06 /* MKStoreManager.m in Sources */,
 				CC0FD3EA1909E7B5008F4A63 /* NSDate+NVTimeAgo.m in Sources */,
 				CC03F8E119115FBB00ED4C5D /* PrivateMyVC.m in Sources */,

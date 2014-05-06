@@ -419,8 +419,8 @@
     if ([[segue identifier] isEqualToString:@"share"])
     {
         NSLog(@"blah");
-        shareViewController *vc = [[shareViewController alloc] init];
-        vc=[segue destinationViewController];
+//        shareViewController *vc = [[shareViewController alloc] init];
+//        vc=[segue destinationViewController];
         
 //        UIImage *image = [self captureImage:btn.tag];
         [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];

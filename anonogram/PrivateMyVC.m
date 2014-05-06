@@ -18,6 +18,7 @@
 #import "AppDelegate.h"
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
+#import "CommentVC.h"
 
 @interface PrivateMyVC (){
     NSUserDefaults *defaults;
@@ -328,14 +329,18 @@
     NSLog(@"btn.tag is %ld",(long)btn.tag);
     if ([[segue identifier] isEqualToString:@"share"])
     {
-        NSLog(@"blah");
-        shareViewController *vc = [[shareViewController alloc] init];
-        vc=[segue destinationViewController];
+        NSLog(@"blah private ");
+//        shareViewController *vc = [[shareViewController alloc] init];
+//        vc=[segue destinationViewController];
         
 //        UIImage *image = [self captureImage:btn.tag];
         [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];
 //        vc.image = image;
         
+    }
+    else {
+//        CommentVC *vc = [[CommentVC alloc] init];
+//        vc=[segue destinationViewController];
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {
@@ -480,6 +485,11 @@
     NSLog(@"getting data...");
     buttonsArray = [NSMutableArray arrayWithArray:[defaults objectForKey:@"twitterAccounts"]];
     NSPredicate *predicate ;
+    if (!buttonsArray.count) {
+        self.array=nil;
+        [self.TableView reloadData];
+        return;
+    }
     switch (buttonsArray.count) {
         case 1:
             predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",buttonsArray[0]];

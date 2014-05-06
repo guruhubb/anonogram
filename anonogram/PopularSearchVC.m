@@ -331,9 +331,9 @@
     NSLog(@"btn.tag is %ld",(long)btn.tag);
     if ([[segue identifier] isEqualToString:@"share"])
     {
-        NSLog(@"blah");
-        shareViewController *vc = [[shareViewController alloc] init];
-        vc=[segue destinationViewController];
+        NSLog(@"blah popular");
+//        shareViewController *vc = [[shareViewController alloc] init];
+//        vc=[segue destinationViewController];
         
 //        UIImage *image = [self captureImage:btn.tag];
         [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];
