@@ -69,7 +69,9 @@
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
 //    [self setup];
 //    [self getUUID];
-    [self twitterSwitch:nil];
+    if (![defaults objectForKey:@"twitterAccounts"])
+        [self twitterSwitch:nil];
+    [self refreshView];
     
 }
 - (IBAction)myAction:(id)sender {
@@ -425,7 +427,7 @@
         if(buttonIndex!=buttonsArray.count){
         [Flurry logEvent:@"TwitterSwitch"];
             NSString *string = buttonsArray[buttonIndex];
-          [defaults setValue:string forKey:@"twitterHandle"];
+//          [defaults setValue:string forKey:@"twitterHandle"];
             self.navigationItem.title= string;
         [self refreshView];
         }
@@ -476,10 +478,38 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    NSString *string1 =[NSString stringWithFormat:@" %@ ",[defaults valueForKey:@"twitterHandle"]];
-    NSString *string2 =[NSString stringWithFormat:@" @%@ ",[defaults valueForKey:@"twitterHandle"]];
+    buttonsArray = [NSMutableArray arrayWithArray:[defaults objectForKey:@"twitterAccounts"]];
+    NSPredicate *predicate ;
+    switch (buttonsArray.count) {
+        case 1:
+            predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",buttonsArray[0]];
+            break;
+        case 2:
+            predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@",buttonsArray[0],buttonsArray[1]];
+            break;
+        case 3:
+            predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@",buttonsArray[0],buttonsArray[1],buttonsArray[2]];
+            break;
+        case 4:
+            predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@",buttonsArray[0],buttonsArray[1],buttonsArray[2],buttonsArray[3]];
+            break;
+        case 5:
+            predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@",buttonsArray[0],buttonsArray[1],buttonsArray[2],buttonsArray[3],buttonsArray[4]];
+            break;
+        case 6:
+            predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@",buttonsArray[0],buttonsArray[1],buttonsArray[2],buttonsArray[3],buttonsArray[4],buttonsArray[5]];
+            break;
+        case 7:
+            predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@",buttonsArray[0],buttonsArray[1],buttonsArray[2],buttonsArray[3],buttonsArray[4],buttonsArray[5],buttonsArray[6]];
+            break;
+            
+        default:
+            break;
+    }
+//    NSString *string1 =[NSString stringWithFormat:@" %@ ",[defaults valueForKey:@"twitterHandle"]];
+//    NSString *string2 =[NSString stringWithFormat:@" @%@ ",[defaults valueForKey:@"twitterHandle"]];
 //     NSString *string3 =[NSString stringWithFormat:@" #%@ ",[defaults valueForKey:@"twitterHandle"]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || text contains[cd] %@",string1,string2];
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@ || %@",string1,string2];
     MSQuery *query = [self.table queryWithPredicate:predicate];
 
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
@@ -560,19 +590,19 @@
         
         [buttonsArray addObject:((ACAccount*)obj).username];
     }];
-    
+    [defaults setObject:buttonsArray forKey:@"twitterAccounts"];
     
     NSLog(@"%@", buttonsArray);
     
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    actionSheet.tag=2;
-    for( NSString *title in buttonsArray){
-        [actionSheet addButtonWithTitle:title];
-    }
-    [actionSheet addButtonWithTitle:@"Cancel"];
-    
-    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
-    [actionSheet showInView:self.view];
+//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+//    actionSheet.tag=2;
+//    for( NSString *title in buttonsArray){
+//        [actionSheet addButtonWithTitle:title];
+//    }
+//    [actionSheet addButtonWithTitle:@"Cancel"];
+//    
+//    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
+//    [actionSheet showInView:self.view];
 }
 - (void) getTwitterUsername {
     //get Twitter username and store it

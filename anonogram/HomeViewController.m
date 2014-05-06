@@ -19,31 +19,34 @@
 #import "AppDelegate.h"
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
+#import <Twitter/Twitter.h>
 
 @interface HomeViewController (){
     NSUserDefaults *defaults;
     NSString *token;
     BOOL isPrivateOn;
     BOOL recordingHashTag;
+    BOOL isHashTag;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
     NSMutableArray *filterHashTagArray;
     NSMutableArray *hashTagArray;
+    NSMutableArray *screen_nameArray;
+    NSMutableArray *filteredScreen_nameArray;
     NSInteger flagButton;
     NSInteger startParse;
-
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
     NSTimeInterval startTime ;
     UIBarButtonItem *isPrivateItem;
     UITableView *theTable;
+    ACAccount* theAccount;
 }
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
-
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
 @property (strong, nonatomic) NSMutableArray *array;
 @property (nonatomic, strong)   MSClient *client;
@@ -82,8 +85,11 @@
     [self setup];
     [self getUUID];
     [self getData];
-    
+    [self TwitterSwitch];
 }
+
+#pragma mark - Survey
+
 - (void) showSurvey {
     NSLog(@"showSurvey");
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Like Anonogram? Please Rate" message:nil
@@ -124,7 +130,11 @@
     theTable.layer.borderWidth=2.0;
     theTable.layer.borderColor=[UIColor darkGrayColor].CGColor;
     
+    
+    
     filterHashTagArray=[[NSMutableArray alloc] init];
+    screen_nameArray=[[NSMutableArray alloc] init];
+    filteredScreen_nameArray =[[NSMutableArray alloc] init];
     if ([defaults objectForKey:@"hashtags"]) {
         hashTagArray=[defaults objectForKey:@"hashtags"];
     }
@@ -137,17 +147,17 @@
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
     txtChat.delegate=self;
     txtChat.hidden=YES;
-    txtChat.font=[UIFont systemFontOfSize:14];
-    txtChat.text=@"placeholder";
+    txtChat.font=[UIFont systemFontOfSize:15];
+//    txtChat.text=@"placeholder";
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
     label.textColor=[UIColor lightGrayColor];
-    label.font = [UIFont systemFontOfSize:14];
+    label.font = [UIFont systemFontOfSize:15];
     label.text= @"140";
     label.tag =100;
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
     label2.textColor=[UIColor lightGrayColor];
-    label2.font = [UIFont systemFontOfSize:14];
+    label2.font = [UIFont systemFontOfSize:17];
     label2.textAlignment=NSTextAlignmentCenter;
     label2.text= @"To post privately, tap Private Off, mention Twitter username(s) in the message";
     label2.numberOfLines=14;
@@ -167,6 +177,9 @@
     [txtChat setKeyboardType:UIKeyboardTypeTwitter];
 
 }
+
+#pragma mark - Get UUID
+
 - (void) getUUID {
     
     NSString *retrieveuuid = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -184,7 +197,7 @@
     NSLog(@"UUID is %@",retrieveuuid);
 }
 
-
+#pragma mark - Tableview
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -201,8 +214,12 @@
 {
     if (tableView==self.theTableView)
         return _array.count;
-    else
-        return filterHashTagArray.count;
+    else {
+        if (isHashTag)
+            return filterHashTagArray.count;
+        else
+            return filteredScreen_nameArray.count;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
@@ -240,13 +257,14 @@
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"List"];
         }
-        
-        cell.textLabel.text = [filterHashTagArray objectAtIndex:indexPath.row];
+        if (isHashTag)
+            cell.textLabel.text = [filterHashTagArray objectAtIndex:indexPath.row];
+        else
+            cell.textLabel.text = [filteredScreen_nameArray objectAtIndex:indexPath.row];
         cell.textLabel.font = [UIFont fontWithName:@"GillSans-Light" size:16];
         cell.textLabel.textColor = [UIColor darkGrayColor];
         
 
-        
         return cell;
     }
 }
@@ -268,6 +286,35 @@
     }
     }
 }
+
+- (void) refreshView
+{
+    
+    //    nowTime =[[NSDate date] timeIntervalSince1970];
+    //    if ((nowTime-startTime)> 5 ){
+    //        startTime =[[NSDate date] timeIntervalSince1970];
+    self.array = [[NSMutableArray alloc] init];
+    [self getData];
+    //    }
+    [refreshControl endRefreshing];
+}
+
+- (void) storeData {
+    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    NSDictionary *item = @{ @"text" : @"Awesome item" };
+    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+        } else {
+            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        }
+    }];
+    
+}
+
+#pragma mark - Delete,Like,Flag,Share
+
 - (void) deleteText  {
     [self.theTableView beginUpdates];
 
@@ -480,32 +527,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-
-- (void) refreshView
-{
-
-//    nowTime =[[NSDate date] timeIntervalSince1970];
-//    if ((nowTime-startTime)> 5 ){
-//        startTime =[[NSDate date] timeIntervalSince1970];
-    self.array = [[NSMutableArray alloc] init];
-    [self getData];
-//    }
-    [refreshControl endRefreshing];
-}
-
-- (void) storeData {
-    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{ @"text" : @"Awesome item" };
-    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
-    }];
-    
-}
+#pragma mark - Get, Post Data
 
 - (void) getData {
     NSLog(@"getting data...");
@@ -536,7 +558,97 @@
         }
     }];
 }
+-(void)postComment
+{
+    
+    if (isPrivateOn)
+        [Flurry logEvent:@"Private Post"];
+    else
+        [Flurry logEvent:@"Post"];
+    
+    NSArray *parameters = [txtChat.text componentsSeparatedByString:@" "];
+    NSLog(@"parameters are %@",parameters);
+    for (NSString *parameter in parameters)
+    {
+        //        NSString *param = nil;
+        //        NSRange start = [txtChat.text rangeOfString:@"#"];
+        //        if (start.location != NSNotFound)
+        //        {
+        //            param = [txtChat.text substringFromIndex:start.location + start.length];
+        //            NSRange end = [param rangeOfString:@" "];
+        //            if (end.location != NSNotFound)
+        //            {
+        //                param = [param substringToIndex:end.location];
+        //            }
+        //        }
+        if([parameter hasPrefix:@"#"] && ![hashTagArray containsObject: parameter]){
+            NSLog(@"parameter is %@",parameter);
+            [hashTagArray insertObject:parameter atIndex:0];
+            [defaults setObject:hashTagArray forKey:@"hashtags"];
+        }
+        if([parameter hasPrefix:@"@"] && ![screen_nameArray containsObject: parameter]){
+            NSLog(@"parameter is %@",parameter);
+            [screen_nameArray insertObject:parameter atIndex:0];
+            [defaults setObject:screen_nameArray forKey:@"nametags"];
+        }
+    }
+    NSLog(@"hashtagarray is %@",hashTagArray);
+    //    NSString *param = nil;
+    //    NSRange start = [txtChat.text rangeOfString:@"#"];
+    //    if (start.location != NSNotFound)
+    //    {
+    //        param = [txtChat.text substringFromIndex:start.location + start.length];
+    //        NSRange end = [param rangeOfString:@" "];
+    //        if (end.location != NSNotFound)
+    //        {
+    //            param = [param substringToIndex:end.location];
+    //        }
+    //    }
+    //
+    //    for (NSString *hashTag in hashTagArray ){
+    //        if ([hashTag rangeOfString:hash options:NSCaseInsensitiveSearch].location != NSNotFound) {
+    //            [filterHashTagArray addObject:hashTag];
+    //        }
+    //    }
+    
+    //    [hashTagArray addObject:param];
+    //    if ([txtChat.text rangeOfString:@"@" options:NSCaseInsensitiveSearch].length)
+    //        isPrivateOn = YES;
+    //    else
+    //        isPrivateOn = NO;
+    //
+    //    txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])];
+    
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
+    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+            [self logErrorIfNotNil:error];
+        } else {
+            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        }
+        [self refreshView];
+    }];
+}
+
+
+- (void) logErrorIfNotNil:(NSError *) error
+{
+    if (error) {
+        NSLog(@"ERROR %@", error);
+    }
+}
+
+#pragma mark - Twitter
+
 - (void)TwitterSwitch {
+    if ([defaults objectForKey:@"nametags"]) {
+        screen_nameArray = [NSMutableArray arrayWithArray:[defaults objectForKey:@"nametags"]];
+        return;
+    }
     ACAccountStore *accountStore = [[ACAccountStore alloc] init];
     
     // Create an account type that ensures Twitter accounts are retrieved.
@@ -557,24 +669,33 @@
 }
 
 -(void)populateSheetAndShow:(NSArray *) accountsArray {
+    if(accountsArray.count==0){
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"You need to grant access to receive private messages\nGo to Settings->Twitter. Scroll down and turn Anonogram on"
+                                                       delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+        return;
+        
+    }
     buttonsArray = [NSMutableArray array];
     [accountsArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        
+        theAccount=(ACAccount*)obj;
+        [self getTwitterFriendsForAccount:((ACAccount*)obj)];
         [buttonsArray addObject:((ACAccount*)obj).username];
+        [defaults setObject:buttonsArray forKey:@"twitterAccounts"];
     }];
-    
     
     NSLog(@"%@", buttonsArray);
     
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    actionSheet.tag=2;
-    for( NSString *title in buttonsArray){
-        [actionSheet addButtonWithTitle:title];
-    }
-    [actionSheet addButtonWithTitle:@"Cancel"];
-    
-    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
-    [actionSheet showInView:self.view];
+//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+//    actionSheet.tag=2;
+//    for( NSString *title in buttonsArray){
+//        [actionSheet addButtonWithTitle:title];
+//    }
+//    [actionSheet addButtonWithTitle:@"Cancel"];
+//    
+//    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
+//    [actionSheet showInView:self.view];
 }
 - (void) getTwitterUsername {
     //get Twitter username and store it
@@ -594,7 +715,164 @@
     NSLog(@"twitterHandle is %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]);
 }
 
-#pragma mark - textView delegated methods
+-(void)getTwitterFriendsForAccount:(ACAccount*)account {
+    // In this case I am creating a dictionary for the account
+    // Add the account screen name
+    NSMutableDictionary *accountDictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:account.username, @"screen_name", nil];
+    // Add the user id (I needed it in my case, but it's not necessary for doing the requests)
+    [accountDictionary setObject:[[[account dictionaryWithValuesForKeys:[NSArray arrayWithObject:@"properties"]] objectForKey:@"properties"] objectForKey:@"user_id"] forKey:@"user_id"];
+    // Setup the URL, as you can see it's just Twitter's own API url scheme. In this case we want to receive it in JSON
+    NSURL *followingURL = [NSURL URLWithString:@"https://api.twitter.com/1/friends/ids.json"];
+//NSURL *followingURL = [NSURL URLWithString:@"https://api.twitter.com/1.1/friends/list.json"];
+//    NSString *string=@"http://api.twitter.com/1/users/lookup.json?user_id=77687121,43662011,6253282
+//    NSURL *followingURL = [NSURL URLWithString:@"http://api.twitter.com/1/users/lookup.json?user_id=%@",string];
+
+//    http://api.twitter.com/1/users/lookup.json?user_id=77687121,43662011,6253282
+    // Pass in the parameters (basically '.ids.json?screen_name=[screen_name]')
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:account.username, @"screen_name", nil];
+    // Setup the request
+
+    
+    SLRequest *twitterRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:TWRequestMethodGET URL:followingURL parameters:parameters];
+
+    // This is important! Set the account for the request so we can do an authenticated request. Without this you cannot get the followers for private accounts and Twitter may also return an error if you're doing too many requests
+    [twitterRequest setAccount:account];
+    // Perform the request for Twitter friends
+    [twitterRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
+        if (error) {
+            // deal with any errors - keep in mind, though you may receive a valid response that contains an error, so you may want to look at the response and ensure no 'error:' key is present in the dictionary
+        }
+        NSError *jsonError = nil;
+        // Convert the response into a dictionary
+        
+        NSDictionary *twitterFriends = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONWritingPrettyPrinted error:&jsonError];
+        NSLog(@"twitterFriends are %@",twitterFriends);
+        // Grab the Ids that Twitter returned and add them to the dictionary we created earlier
+        [accountDictionary setObject:[twitterFriends objectForKey:@"ids"] forKey:@"screen_name"];
+        NSString *string = [NSString stringWithFormat:@"%@",[accountDictionary objectForKey:@"screen_name"] ] ;
+        string = [string stringByReplacingOccurrencesOfString:@"(" withString:@" "];
+        string = [string stringByReplacingOccurrencesOfString:@")" withString:@" "];
+        string = [string stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+//        __block NSString *newString;
+//        [string enumerateSubstringsInRange:NSMakeRange(0, [string length])
+//                                   options:NSStringEnumerationByWords | NSStringEnumerationLocalized
+//                                usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop){
+//                                    newString = [substring stringByAppendingString:[substring lowercaseString] ];
+//                                    // This block is called once for each word in the string.
+////                                    [countedSet addObject:substring];
+//                                    
+//                                    // If you want to ignore case, so that "this" and "This"
+//                                    // are counted the same, use this line instead to convert
+//                                    // each word to lowercase first:
+//                                    // [countedSet addObject:[substring lowercaseString]];
+//                                }];
+
+        string = [self truncateByWordWithLimit:1000 string:string];
+        NSLog(@"Accountstring is %@", string);
+        [self getTwitterNames:string account:account];
+//        NSString *newString = [[string componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@" "];
+
+        
+    }];
+}
+
+- (NSString *)truncateByWordWithLimit:(NSInteger)limit string:(NSString *)string {
+
+    NSRange r = NSMakeRange(0, string.length);
+    while (r.length > limit) {
+        NSRange r0 = [string rangeOfString:@" " options:NSBackwardsSearch range:r];
+        if (!r0.length) break;
+        r = NSMakeRange(0, r0.location);
+    }
+    if (r.length == string.length) return string;
+    return [[string substringWithRange:r] stringByAppendingString:@" "];
+}
+
+- (void) turnFriendId: (NSString *)friID account: (ACAccount*) account{
+    // Setup the URL, as you can see it's just Twitter's own API url scheme. In this case we want to receive it in JSON
+//    NSLog(@"%@",friID);
+    friID = @"586671909";
+    NSString *string = [NSString stringWithFormat:@"https://api.twitter.com/1.1/users/lookup.json?user_id=%@",friID];
+    NSURL *followingURL = [NSURL URLWithString:string];
+    // Pass in the parameters (basically '.ids.json?screen_name=[screen_name]')
+    NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:friID, @"id_str", nil];
+    // Setup the request
+    SLRequest *twitterRequest = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:TWRequestMethodGET URL:followingURL parameters:parameters];
+//    TWRequest *twitterRequest = [[TWRequest alloc] initWithURL:followingURL
+//                                                    parameters:parameters
+//                                                 requestMethod:TWRequestMethodGET];
+    // This is important! Set the account for the request so we can do an authenticated request. Without this you cannot get the followers for private accounts and Twitter may also return an error if you're doing too many requests
+    [twitterRequest setAccount:account];
+    // Perform the request for Twitter friends
+    
+    [twitterRequest performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
+        if (error) {
+            // deal with any errors - keep in mind, though you may receive a valid response that contains an error, so you may want to look at the response and ensure no 'error:' key is present in the dictionary
+        }
+        NSError *jsonError = nil;
+        // Convert the response into a dictionary
+        NSDictionary *twitterGrabbedUserInfo = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONWritingPrettyPrinted error:&jsonError];
+        // Grab the Ids that Twitter returned and add them to the dictionary we created earlier
+        NSLog(@"twitterUserInfo are %@",twitterGrabbedUserInfo);
+
+        NSLog(@"names are %@", [twitterGrabbedUserInfo objectForKey:@"name"]);
+    }];
+}
+
+- (void) getTwitterNames: (NSString *)friID account:(ACAccount *)account {
+    NSURL *url = [NSURL URLWithString:@"https://api.twitter.com/1.1/users/lookup.json"];
+    NSMutableDictionary *params = [NSMutableDictionary new];
+    [params setObject:friID forKey:@"user_id"];
+    [params setObject:@"0" forKey:@"include_rts"]; // don't include retweets
+    [params setObject:@"1" forKey:@"trim_user"]; // trim the user information
+    [params setObject:@"1" forKey:@"count"]; // i don't even know what this does but it does something useful
+    [params setObject:@"0" forKey:@"include_entities"]; // i don't even know what this does but it does something useful
+    SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:TWRequestMethodGET URL:url parameters:params];
+//    TWRequest *request = [[TWRequest alloc] initWithURL:url parameters:params requestMethod:TWRequestMethodGET];
+    //  Attach an account to the request
+    [request setAccount:account]; // this can be any Twitter account obtained from the Account store
+    
+    [request performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
+        if (responseData) {
+            NSArray *twitterData = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingAllowFragments error:NULL] ;
+            NSLog(@"received Twitter data: %@", twitterData);
+            NSString *screen_name;
+            // to do something useful with this data:
+            for (NSDictionary *dictionary in twitterData){
+              
+                 screen_name = [dictionary objectForKey:@"screen_name"]; // the screen name you were after
+                screen_name = [NSString stringWithFormat:@"@%@",screen_name];
+                [screen_nameArray addObject:screen_name];
+            }
+            [defaults setObject:screen_nameArray forKey:@"nametags"];
+//            NSString *screen_name = [NSString stringWithFormat:@"%@",[twitterData objectForKey:@"screen_name"] ] ;
+
+           
+            NSLog(@"screen_name is %@",screen_nameArray);
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                // update your UI in here
+//                twitterScreenNameLabel.text = screen_name;
+//            });
+            
+//            // A handy bonus tip: twitter display picture
+//            NSString *profileImageUrl = [twitterData objectForKey:@"profile_image_url"];
+//            
+//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//                
+//                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profileImageUrl]];
+//                UIImage *image = [UIImage imageWithData:imageData]; // the matching profile image
+//                
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    // assign it to an imageview in your UI here
+//                    twitterProfileImageView.image = image;
+//                });
+//            });
+        }else{
+            NSLog(@"Error while downloading Twitter user data: %@", error);
+        }
+    }];
+}
+#pragma mark - TextView delegate methods
 
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
@@ -611,6 +889,7 @@
     NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
     NSUInteger location = replacementTextRange.location;
     static NSString *suffix = @"#";
+    static NSString *suffix1 = @"@";
     if (textView.text.length + text.length > 140){
         if (location != NSNotFound){
             [txtChat resignFirstResponder];
@@ -629,7 +908,11 @@
 //    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
 //    label2.hidden=YES;
     
-    if ([text isEqualToString:@"#"]) {
+    if ([text isEqualToString:suffix] || [text isEqualToString:suffix1] ) {
+        if ([text isEqualToString:suffix])
+            isHashTag = YES;
+        else
+            isHashTag = NO;
         NSLog(@"recordingHasTag");
         recordingHashTag = YES;
         startParse = range.location;
@@ -651,10 +934,9 @@
         NSString *currentText = [textView.text substringToIndex:range.location+1];
 //        NSString *appendingText = [textView.text substringFromIndex:range.location+1];
         
-        if ([currentText hasSuffix:suffix]) {
+        if ([currentText hasSuffix:suffix] || [currentText hasSuffix:suffix1]) {
             NSLog(@"recordingHasTag=NO");
             theTable.hidden = YES;
-
             recordingHashTag = NO;
         }
     }
@@ -668,7 +950,10 @@
         NSLog(@"textView.text length = %d",textView.text.length);
         if (startParse < [textView.text length] ) {
             value = [textView.text substringWithRange:NSMakeRange(startParse, [textView.text length] - startParse)];
-            [self filterHashTagTableWithHash:value];
+            if(isHashTag)
+                [self filterHashTagTableWithHash:value];
+            else
+                [self filterAtTagTableWithAt:value];
             NSLog(@"recordingHasTag2, value = %@",value);
         }
     }
@@ -710,6 +995,27 @@
         theTable.hidden=YES;
     NSLog(@"filterhashtagarray is %@",filterHashTagArray);
 
+    
+    [theTable reloadData];
+}
+
+-(void)filterAtTagTableWithAt:(NSString *)hash{
+    
+    [filteredScreen_nameArray removeAllObjects];
+    
+    for (NSString *hashTag in screen_nameArray )
+        if ([hashTag rangeOfString:hash options:NSCaseInsensitiveSearch].location != NSNotFound)
+            [filteredScreen_nameArray addObject:hashTag];
+
+    
+    if (!filteredScreen_nameArray.count && [hash length]<1)
+        filteredScreen_nameArray = [NSMutableArray arrayWithArray:screen_nameArray];
+
+    
+    if (!filteredScreen_nameArray.count)
+        theTable.hidden=YES;
+    NSLog(@"filterhashtagarray is %@",filteredScreen_nameArray);
+    
     
     [theTable reloadData];
 }
@@ -820,83 +1126,6 @@
     [txtChat becomeFirstResponder];
 }
 
--(void)postComment
-{
-    
-    if (isPrivateOn)
-        [Flurry logEvent:@"Private Post"];
-    else
-        [Flurry logEvent:@"Post"];
-    
-    NSArray *parameters = [txtChat.text componentsSeparatedByString:@" "];
-    NSLog(@"parameters are %@",parameters);
-    for (NSString *parameter in parameters)
-    {
-//        NSString *param = nil;
-//        NSRange start = [txtChat.text rangeOfString:@"#"];
-//        if (start.location != NSNotFound)
-//        {
-//            param = [txtChat.text substringFromIndex:start.location + start.length];
-//            NSRange end = [param rangeOfString:@" "];
-//            if (end.location != NSNotFound)
-//            {
-//                param = [param substringToIndex:end.location];
-//            }
-//        }
-        if([parameter hasPrefix:@"#"] && ![hashTagArray containsObject: parameter]){
-            NSLog(@"parameter is %@",parameter);
-            [hashTagArray insertObject:parameter atIndex:0];
-            [defaults setObject:hashTagArray forKey:@"hashtags"];
-        }
-    }
-     NSLog(@"hashtagarray is %@",hashTagArray);
-//    NSString *param = nil;
-//    NSRange start = [txtChat.text rangeOfString:@"#"];
-//    if (start.location != NSNotFound)
-//    {
-//        param = [txtChat.text substringFromIndex:start.location + start.length];
-//        NSRange end = [param rangeOfString:@" "];
-//        if (end.location != NSNotFound)
-//        {
-//            param = [param substringToIndex:end.location];
-//        }
-//    }
-//    
-//    for (NSString *hashTag in hashTagArray ){
-//        if ([hashTag rangeOfString:hash options:NSCaseInsensitiveSearch].location != NSNotFound) {
-//            [filterHashTagArray addObject:hashTag];
-//        }
-//    }
-    
-//    [hashTagArray addObject:param];
-//    if ([txtChat.text rangeOfString:@"@" options:NSCaseInsensitiveSearch].length)
-//        isPrivateOn = YES;
-//    else
-//        isPrivateOn = NO;
-//    
-//    txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])];
-    
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
-    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-            [self logErrorIfNotNil:error];
-        } else {
-            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
-        [self refreshView];
-    }];
-}
 
-
-- (void) logErrorIfNotNil:(NSError *) error
-{
-    if (error) {
-        NSLog(@"ERROR %@", error);
-    }
-}
 
 @end
