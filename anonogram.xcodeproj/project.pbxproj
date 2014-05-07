@@ -26,6 +26,8 @@
 		CC2766D51910592100D132A1 /* PopularSearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC2766D41910592100D132A1 /* PopularSearchVC.m */; };
 		CC94A1B91918C41F00C0F140 /* CommentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC94A1B81918C41F00C0F140 /* CommentVC.m */; };
 		CC94A1BC19191CB000C0F140 /* glyphicons_221_unshare.png in Resources */ = {isa = PBXBuildFile; fileRef = CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */; };
+		CC94A1C11919A87B00C0F140 /* glyphicons_187_more.png in Resources */ = {isa = PBXBuildFile; fileRef = CC94A1C01919A87B00C0F140 /* glyphicons_187_more.png */; };
+		CC94A1C41919BF4100C0F140 /* CommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CC94A1C31919BF4100C0F140 /* CommentCell.m */; };
 		CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
 		CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544F19074298005EFE06 /* CoreGraphics.framework */; };
 		CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9545119074299005EFE06 /* UIKit.framework */; };
@@ -130,6 +132,9 @@
 		CC94A1B71918C41F00C0F140 /* CommentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentVC.h; sourceTree = "<group>"; };
 		CC94A1B81918C41F00C0F140 /* CommentVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentVC.m; sourceTree = "<group>"; };
 		CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_221_unshare.png; sourceTree = "<group>"; };
+		CC94A1C01919A87B00C0F140 /* glyphicons_187_more.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_187_more.png; sourceTree = "<group>"; };
+		CC94A1C21919BF4100C0F140 /* CommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentCell.h; sourceTree = "<group>"; };
+		CC94A1C31919BF4100C0F140 /* CommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentCell.m; sourceTree = "<group>"; };
 		CCD9544A19074298005EFE06 /* anonogram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = anonogram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9544D19074298005EFE06 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCD9544F19074298005EFE06 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -343,6 +348,8 @@
 		CCD9545319074299005EFE06 /* anonogram */ = {
 			isa = PBXGroup;
 			children = (
+				CC94A1C21919BF4100C0F140 /* CommentCell.h */,
+				CC94A1C31919BF4100C0F140 /* CommentCell.m */,
 				CC94A1B71918C41F00C0F140 /* CommentVC.h */,
 				CC94A1B81918C41F00C0F140 /* CommentVC.m */,
 				CC2766D31910592100D132A1 /* PopularSearchVC.h */,
@@ -411,6 +418,7 @@
 			isa = PBXGroup;
 			children = (
 				CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */,
+				CC94A1C01919A87B00C0F140 /* glyphicons_187_more.png */,
 				CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */,
 				CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */,
 				CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */,
@@ -590,7 +598,6 @@
 				CCD9545819074299005EFE06 /* InfoPlist.strings in Resources */,
 				CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */,
 				CCD9549D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png in Resources */,
-				CCD9551A1908B9ED005EFE06 /* Main.storyboard in Resources */,
 				CCD954D419074E2B005EFE06 /* MKStoreKitConfigs.plist in Resources */,
 				CCD954D619074E2B005EFE06 /* README.mdown in Resources */,
 				CCD954A119074BA3005EFE06 /* glyphicons_136_cogwheel.png in Resources */,
@@ -600,6 +607,7 @@
 				CCD954A619074BA3005EFE06 /* more-512.png in Resources */,
 				CC03F8E319119C7800ED4C5D /* glyphicons_048_dislikes.png in Resources */,
 				CC03F8E51911A65400ED4C5D /* glyphicons_203_lock.png in Resources */,
+				CCD9551A1908B9ED005EFE06 /* Main.storyboard in Resources */,
 				CCD954A019074BA3005EFE06 /* glyphicons_019_heart_empty.png in Resources */,
 				CCD954D819074E2B005EFE06 /* DBSetup.sql in Resources */,
 				CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */,
@@ -608,6 +616,7 @@
 				CCD954D919074E2B005EFE06 /* featureCheck.php in Resources */,
 				CC94A1BC19191CB000C0F140 /* glyphicons_221_unshare.png in Resources */,
 				CCD954A519074BA3005EFE06 /* lockImage.png in Resources */,
+				CC94A1C11919A87B00C0F140 /* glyphicons_187_more.png in Resources */,
 				CCD9549E19074BA3005EFE06 /* glyphicons_003_user.png in Resources */,
 				CCD954A719074BA3005EFE06 /* square.png in Resources */,
 				CCD954A319074BA3005EFE06 /* icon-letter-mail-hi.png in Resources */,
@@ -633,6 +642,7 @@
 				CCD954B319074BEA005EFE06 /* SettingVC.m in Sources */,
 				CCD955201908B9FE005EFE06 /* HomeViewController.m in Sources */,
 				CCD9546419074299005EFE06 /* ViewController.m in Sources */,
+				CC94A1C41919BF4100C0F140 /* CommentCell.m in Sources */,
 				CCD954B419074BEA005EFE06 /* shareViewController.m in Sources */,
 				CCD9545E19074299005EFE06 /* AppDelegate.m in Sources */,
 				CCD954D119074E2B005EFE06 /* SFHFKeychainUtils.m in Sources */,

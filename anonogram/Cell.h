@@ -3,8 +3,7 @@
 //  PageViewDemo
 //
 //  Created by Saswata Basu on 4/23/14.
-//  Copyright (c) 2014 Appcoda. All rights reserved.
-//
+//  Copyright (c) 2014 Saswata Basu. All rights reserved.
 
 #import <UIKit/UIKit.h>
 
@@ -16,6 +15,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *flag;
 @property (weak, nonatomic) IBOutlet UIButton *like;
 @property (weak, nonatomic) IBOutlet UIButton *lock;
-@property (weak, nonatomic) IBOutlet UILabel *private;
+@property (weak, nonatomic) IBOutlet UILabel *privatePost;
+
+
 
 @end

@@ -15,19 +15,21 @@
     NSUserDefaults *defaults;
 }
 
-@synthesize array,arrayImages;
-@synthesize dicUserData;
-@synthesize commentButton, myPhotoBook;
-@synthesize chat_table, backButtonString;
-static const NSUInteger kMaximumNumberToParse = 24;
-static const NSUInteger kMaxDownload = 10000;
+@synthesize array;
+//,arrayImages;
+//@synthesize dicUserData;
+//@synthesize commentButton, myPhotoBook;
+@synthesize chat_table;
+//, backButtonString;
+//static const NSUInteger kMaximumNumberToParse = 24;
+//static const NSUInteger kMaxDownload = 10000;
 
 
 - (void) refreshView
 {
     self.array = nil;
-    self.arrayImages = nil;
-    arrayImages = [[NSMutableArray alloc] init ];
+//    self.arrayImages = nil;
+//    arrayImages = [[NSMutableArray alloc] init ];
     array = [[NSMutableArray alloc] init ];
     loadMore=1;
     [self updateData];
@@ -51,7 +53,7 @@ static const NSUInteger kMaxDownload = 10000;
 - (void)my_viewDidUnload
 {
     self.array=nil;
-    self.arrayImages=nil;
+//    self.arrayImages=nil;
     self.chat_table=nil;
 }
 
@@ -75,18 +77,19 @@ static const NSUInteger kMaxDownload = 10000;
 //    label.text = @"comments";
 //    self.navigationItem.titleView = label;
     defaults =  [NSUserDefaults standardUserDefaults];
-    chat_table = [[UITableView alloc]initWithFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
+//    chat_table = [[UITableView alloc]initWithFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
+    chat_table.frame =CGRectMake(0, 64, 320, screenSpecificSetting(460, 372));
 //    chat_table = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, 480-64)];
     
 //    array = [[NSMutableArray alloc] init];
     array = [[NSMutableArray alloc]initWithObjects:
                @"Background Color for Share",@"Add Watermark for Share", @"Like us on Facebook",@"Follow us on Twitter",
                @"Rate App",@"Feedback",@"Restore Purchases",nil];
-    arrayImages = [[NSMutableArray alloc] init];
-    self.chat_table.delegate=self;
-    self.chat_table.dataSource=self;
+//    arrayImages = [[NSMutableArray alloc] init];
+//    self.chat_table.delegate=self;
+//    self.chat_table.dataSource=self;
 
-    [self.view addSubview:self.chat_table];
+//    [self.view addSubview:self.chat_table];
 
 //    imageCache = [SDImageCache.alloc initWithNamespace:@"Bookly"];
 
@@ -97,13 +100,13 @@ static const NSUInteger kMaxDownload = 10000;
 
 //    [self updateData];
 
-    if ([self.chat_table respondsToSelector:@selector(setSeparatorInset:)]) {
-        [self.chat_table setSeparatorInset:UIEdgeInsetsZero];
-    }
+//    if ([self.chat_table respondsToSelector:@selector(setSeparatorInset:)]) {
+//        [self.chat_table setSeparatorInset:UIEdgeInsetsZero];
+//    }
     [self.chat_table reloadData];
 
 }
--(void) colorCode {
+-(UIColor*) colorCode {
     CGFloat goldenRatio =0.618033988749895;
     CGFloat hue = (CGFloat)arc4random()/ (CGFloat)RAND_MAX;
     hue += goldenRatio;
@@ -111,7 +114,7 @@ static const NSUInteger kMaxDownload = 10000;
     //    CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
     CGFloat saturation = ( arc4random() % 128 / 256.0 )+0.25 ;//  0.5 to 1.0, away from white, +0.5 lightens the colors
     CGFloat brightness = ( arc4random() % 128 / 256.0 ) ;//  0.5 to 1.0, away from black, +0.25 adds more lighter colors
-    self.view.backgroundColor = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8];
+    return [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8];
 }
 
 - (IBAction)cancel:(id)sender {
@@ -157,11 +160,11 @@ static const NSUInteger kMaxDownload = 10000;
 }
 -(void)updateData
 {
-    array = nil;
-    arrayImages=nil;
+//    array = nil;
+//    arrayImages=nil;
     array = [[NSMutableArray alloc] init];
-    arrayImages = [[NSMutableArray alloc] init];
-    imageCounter=0;
+//    arrayImages = [[NSMutableArray alloc] init];
+//    imageCounter=0;
 //    [self loadxmlparsing];
 }
 - (void) turnOnIndicator {
@@ -293,33 +296,33 @@ static const NSUInteger kMaxDownload = 10000;
 //    });
 //    
 //}
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
-{
-//    if (indexPath.section==1)
-//        return 45;
-//    else {
-        if(array){
-//            NSString *strlblcomments =[[self.array objectAtIndex:indexPath.row] objectForKey:@"comment"];
-            NSString *strlblcomments =[self.array objectAtIndex:indexPath.row] ;
-
-            NSLog(@"strlblcomments is %@",strlblcomments);
-        
- 
-            if (strlblcomments){
-                CGRect textRect = [strlblcomments boundingRectWithSize:CGSizeMake(230.0f, MAXFLOAT)
-                                                               options:NSStringDrawingUsesLineFragmentOrigin
-                                                            attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:13]}
-                                                               context:nil];
-                
-                textSize = textRect.size;
-
-
-                NSLog(@"textSize, height is %f and width is %f",textSize.height, textSize.width);
-            }
-        }
-    return MAX(textSize.height+30, 45.0f);
-//    }
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
+//{
+////    if (indexPath.section==1)
+////        return 45;
+////    else {
+//        if(array){
+////            NSString *strlblcomments =[[self.array objectAtIndex:indexPath.row] objectForKey:@"comment"];
+//            NSString *strlblcomments =[self.array objectAtIndex:indexPath.row] ;
+//
+//            NSLog(@"strlblcomments is %@",strlblcomments);
+//        
+// 
+//            if (strlblcomments){
+//                CGRect textRect = [strlblcomments boundingRectWithSize:CGSizeMake(230.0f, MAXFLOAT)
+//                                                               options:NSStringDrawingUsesLineFragmentOrigin
+//                                                            attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:13]}
+//                                                               context:nil];
+//                
+//                textSize = textRect.size;
+//
+//
+//                NSLog(@"textSize, height is %f and width is %f",textSize.height, textSize.width);
+//            }
+//        }
+//    return MAX(textSize.height+30, 45.0f);
+////    }
+//}
 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -361,16 +364,16 @@ static const NSUInteger kMaxDownload = 10000;
     
         
 //        self.chat_table.separatorColor = [UIColor colorWithRed:0.0/255.0 green:64.0/255.0 blue:128.0/255.0 alpha:1.0];
-    if ([tableView respondsToSelector:@selector(setSeparatorInset:)]) {
-        [tableView setSeparatorInset:UIEdgeInsetsZero];
-    }
-        static NSString *CellIdentifier = @"cellComments";
+//    if ([tableView respondsToSelector:@selector(setSeparatorInset:)]) {
+//        [tableView setSeparatorInset:UIEdgeInsetsZero];
+//    }
+        static NSString *CellIdentifier = @"commentCell";
     
-        UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        if (cell == nil)
-        {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
-        }
+        CommentCell *cell = (CommentCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+//        if (cell == nil)
+//        {
+//            cell = [[CommentVC alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
+//        }
     
 //    self.chat_table.allowsSelection=YES;
 //    self.chat_table.userInteractionEnabled=YES;
@@ -428,18 +431,22 @@ static const NSUInteger kMaxDownload = 10000;
     NSString *strlblcomments =[self.array objectAtIndex:indexPath.row];
     
 //            cell..text = [[self.array objectAtIndex:indexPath.row] objectForKey:@"timestamp"];
-            CGRect textRect = [strlblcomments boundingRectWithSize:CGSizeMake(230.0f, MAXFLOAT)
-                                                 options:NSStringDrawingUsesLineFragmentOrigin
-                                              attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:13]}
-                                                 context:nil];
-            
-            textSize = textRect.size;
+//            CGRect textRect = [strlblcomments boundingRectWithSize:CGSizeMake(230.0f, MAXFLOAT)
+//                                                 options:NSStringDrawingUsesLineFragmentOrigin
+//                                              attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:13]}
+//                                                 context:nil];
+//            
+//            textSize = textRect.size;
 //            textSize = [strlblcomments sizeWithFont:[UIFont systemFontOfSize:13]
 //                                  constrainedToSize:CGSizeMake(230.0f, MAXFLOAT)
 //                                      lineBreakMode:NSLineBreakByWordWrapping];
 
 //            [cell.textLabel setFrame:CGRectMake(45, 7, 230, MAX(textSize.height+30, 45.0f))];
-            cell.textLabel.text=strlblcomments;
+            cell.replyLabel.text=strlblcomments;
+    cell.colorView.backgroundColor = [self colorCode];
+    cell.numberOfLikesLabel.text = @"167";
+    cell.timestampLabel.text=@"23 m";
+    
 //        }
 
         return cell;
@@ -591,28 +598,28 @@ static const NSUInteger kMaxDownload = 10000;
 {
 //    iscomment=TRUE;
     
-    [txtChat resignFirstResponder];
+    [_txtChat resignFirstResponder];
    [Flurry logEvent:@"Comment: Post"];
-    NSString *id1=[self.dicUserData objectForKey:@"id"];
-    
-    NSString *strid= [id1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+//    NSString *id1=[self.dicUserData objectForKey:@"id"];
+//    
+//    NSString *strid= [id1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     
 //    NSString *tagid=[self.dicUserData objectForKey:@"tagId"];
 //    NSString *strtagid=[tagid stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-    NSString *randomNumber=@"arc4random()";
+//    NSString *randomNumber=@"arc4random()";
 //    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *token = [defaults objectForKey:@"booklyAccessToken"];
-    NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postComment&mediaId=%@&tagId=%@&comment=%@&authtoken=%@&rand=%@",strid,_tagId,[txtChat.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],token,randomNumber];
+//    NSString *token = [defaults objectForKey:@"booklyAccessToken"];
+//    NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postComment&mediaId=%@&tagId=%@&comment=%@&authtoken=%@&rand=%@",strid,_tagId,[txtChat.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],token,randomNumber];
     
   //  http://m.omentos.com/backend/api.php?method=postComment&mediaId=78&tagId=32&comment=Nice!!&auth token=//f7177163c833dff4b38fc8d2872f1ec6_4fd081e00cdb0U2FyYXZhbmFuVVNFUg==4fd081e00d19a
     
     
-    NSLog(@"final url is %@",urlString1);
-    
-    NSURL *url = [[NSURL alloc]initWithString:urlString1];
-    NSLog(@"url is%@",url);
-    NSData *Data = [NSData dataWithContentsOfURL:url];
-    url=nil;
+//    NSLog(@"final url is %@",urlString1);
+//    
+//    NSURL *url = [[NSURL alloc]initWithString:urlString1];
+//    NSLog(@"url is%@",url);
+//    NSData *Data = [NSData dataWithContentsOfURL:url];
+//    url=nil;
     
 //    if (!Data) {
 ////        downloadBusy = NO;
@@ -629,7 +636,7 @@ static const NSUInteger kMaxDownload = 10000;
 //    loadMore=1;
 //    [self updateData];
     
-    [self.array insertObject:txtChat.text atIndex:0];
+    [self.array insertObject:_txtChat.text atIndex:0];
     [self.chat_table reloadData];
 }
 
@@ -638,6 +645,8 @@ static const NSUInteger kMaxDownload = 10000;
 -(void)retrieveComments
 {
     NSLog(@"retrieve data");
+}
+- (IBAction)likeButtonAction:(id)sender {
 }
 
 //- (void) getCommentImage: (NSMutableDictionary*) dic12
@@ -755,7 +764,7 @@ static const NSUInteger kMaxDownload = 10000;
             [UIView animateWithDuration:0.2 animations:^{
 
                 [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
-                [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
+                [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
                 }];
     
 //    [self.chat_table setFrame:CGRectMake(0, 44, 320, screenSpecificSetting(460, 372))];
@@ -763,11 +772,11 @@ static const NSUInteger kMaxDownload = 10000;
 //}];
 
             // check if comment is nil or not.
-            if(![txtChat.text isEqualToString:@""])
+            if(![_txtChat.text isEqualToString:@""])
                 [self postComment];
             
             // make comment nil now.
-           txtChat.text = @"";
+           _txtChat.text = @"";
 
             return YES;
 }
@@ -776,15 +785,16 @@ static const NSUInteger kMaxDownload = 10000;
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     NSLog(@"begin editing");
+    
 //    [textField becomeFirstResponder];
     // changing frame of tableview and toolbar when textfield begin editing.
     [UIView animateWithDuration:0.2 animations:^{
         [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(411-209, 323-209))];
-        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(200+64, 112+64), 320, 44)];
+        [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(200+64, 112+64), 320, 44)];
 //        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(200, 112), 320, 44)];
 
         }];
-
+    [_inputAccessoryView removeFromSuperview];
     [self createInputAccessoryView];
     [textField setInputAccessoryView:_inputAccessoryView];
 //    txtChat=textField;
@@ -793,7 +803,7 @@ static const NSUInteger kMaxDownload = 10000;
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    return (newLength > 140) ? NO : YES;
+    return (newLength > 130) ? NO : YES;
 }
 
 
@@ -819,28 +829,28 @@ static const NSUInteger kMaxDownload = 10000;
     
     NSArray *items = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
     [_inputAccessoryView setItems:items animated:YES];
-    [txtChat addSubview:_inputAccessoryView];
+    [_txtChat addSubview:_inputAccessoryView];
 }
 
 -(void)doneKeyboard{
-    [txtChat resignFirstResponder];
+    [_txtChat resignFirstResponder];
     [UIView animateWithDuration:0.2 animations:^{
         [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
-        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
+        [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
     }];
-    if(![txtChat.text isEqualToString:@""])
+    if(![_txtChat.text isEqualToString:@""])
         [self postComment];
     
     // make comment nil now.
-    txtChat.text = @"";
+    _txtChat.text = @"";
 
 }
 -(void)cancelKeyboard{
-    [txtChat resignFirstResponder];
-    txtChat.text=@"";
+    [_txtChat resignFirstResponder];
+    _txtChat.text=@"";
     [UIView animateWithDuration:0.2 animations:^{
         [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
-        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
+        [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
     }];
  }
 

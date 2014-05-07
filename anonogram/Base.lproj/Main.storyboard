@@ -178,7 +178,6 @@
                                                     <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
                                                     <connections>
                                                         <action selector="flagAction:" destination="OtL-yv-8sd" eventType="touchUpInside" id="AIv-av-tQ5"/>
-                                                        <action selector="flagAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="leG-If-7b0"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="mHA-pf-gdt">
@@ -191,7 +190,6 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="likeAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Y2d-1Q-whF"/>
                                                         <action selector="likeAction:" destination="OtL-yv-8sd" eventType="touchUpInside" id="xUW-i8-Q9P"/>
                                                     </connections>
                                                 </button>
@@ -279,7 +277,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2m ago" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZUK-lS-LBm">
-                                                    <rect key="frame" x="6" y="5" width="50" height="21"/>
+                                                    <rect key="frame" x="255" y="174" width="50" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -292,18 +290,8 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="9Ja-Am-vuO">
-                                                    <rect key="frame" x="273" y="171" width="50" height="30"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <inset key="contentEdgeInsets" minX="19" minY="8" maxX="19" maxY="8"/>
-                                                    <state key="normal" title="Flag" image="glyphicons_266_flag.png"/>
-                                                    <connections>
-                                                        <action selector="flagAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="1r5-cl-5W2"/>
-                                                        <action selector="flagAction:" destination="QPS-zS-iNn" eventType="touchUpInside" id="a1c-Uw-5nw"/>
-                                                    </connections>
-                                                </button>
                                                 <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7g7-vT-IT7">
-                                                    <rect key="frame" x="-18" y="170" width="58" height="30"/>
+                                                    <rect key="frame" x="-17" y="170" width="58" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="15" maxY="0.0"/>
@@ -313,7 +301,6 @@
                                                     </state>
                                                     <connections>
                                                         <action selector="likeAction:" destination="QPS-zS-iNn" eventType="touchUpInside" id="9Sb-Vs-Mqz"/>
-                                                        <action selector="likeAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="lBT-zs-aRA"/>
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1637" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="som-xO-c9y" userLabel="Label - #likes">
@@ -330,15 +317,15 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="QGP-tW-6DC">
+                                                <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="QGP-tW-6DC" userLabel="Button - More">
                                                     <rect key="frame" x="185" y="170" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
-                                                    <state key="normal" title="Share" image="glyphicons_222_share.png">
+                                                    <state key="normal" title="Share" image="glyphicons_187_more.png">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" id="s9Z-HM-DcV"/>
+                                                        <action selector="flagAction:" destination="QPS-zS-iNn" eventType="touchUpInside" id="f1u-yR-G9k"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Vre-EA-0LS" userLabel="Button - Reply">
@@ -366,14 +353,14 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="flag" destination="9Ja-Am-vuO" id="0U2-Wi-ewS"/>
+                                            <outlet property="flag" destination="QGP-tW-6DC" id="gAm-EQ-i7M"/>
                                             <outlet property="like" destination="7g7-vT-IT7" id="ArO-q0-wtV"/>
                                             <outlet property="likeCount" destination="som-xO-c9y" id="GGJ-G7-COa"/>
                                             <outlet property="lock" destination="2JO-bf-KHp" id="Ic5-fB-Ir1"/>
                                             <outlet property="pageContent" destination="79h-68-tsH" id="hQM-PU-ThJ"/>
-                                            <outlet property="private" destination="t8h-sb-7CM" id="muL-tB-oty"/>
-                                            <outlet property="share" destination="QGP-tW-6DC" id="fvk-gM-CDj"/>
+                                            <outlet property="privatePost" destination="t8h-sb-7CM" id="MjO-WC-fOH"/>
                                             <outlet property="timestamp" destination="ZUK-lS-LBm" id="nve-vj-wns"/>
+                                            <segue destination="8di-gF-XD9" kind="modal" identifier="share" id="Vg1-kn-29u"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -421,7 +408,7 @@
                                 <items>
                                     <barButtonItem title="Item" style="plain" id="PET-hq-Qpc">
                                         <textField key="customView" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add your comments ..." clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" id="ngt-zI-uks">
-                                            <rect key="frame" x="16" y="7" width="300" height="30"/>
+                                            <rect key="frame" x="16" y="7" width="288" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -433,6 +420,73 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="65" sectionHeaderHeight="22" sectionFooterHeight="22" id="hGy-JC-YnX">
+                                <rect key="frame" x="0.0" y="64" width="320" height="460"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="commentCell" rowHeight="65" id="OOZ-bj-maC" customClass="CommentCell">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="65"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OOZ-bj-maC" id="XGp-w9-gDn">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" id="MR7-SM-83Z">
+                                                    <rect key="frame" x="5" y="20" width="30" height="28"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <color key="backgroundColor" red="0.74857436129999999" green="0.85752166969999999" blue="0.25168225360000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                </view>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="iwL-UB-QbC">
+                                                    <rect key="frame" x="40" y="-2" width="236" height="57"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <string key="text">I can write about 130 characters on anonogram.  It takes 130 characters and does not take any more. 130 characters is the absolute lim</string>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ENr-HC-tDw">
+                                                    <rect key="frame" x="277" y="5" width="43" height="48"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                                    <inset key="contentEdgeInsets" minX="5" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                    <state key="normal" title="+">
+                                                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="likeButtonAction:" destination="Cic-4v-u7C" eventType="touchUpInside" id="QLD-hU-eI3"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="+165" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lLe-Ih-UVQ">
+                                                    <rect key="frame" x="81" y="43" width="33" height="26"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="23 m" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Irn-56-gCy">
+                                                    <rect key="frame" x="40" y="43" width="33" height="26"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="colorView" destination="MR7-SM-83Z" id="MLm-Ux-Hhg"/>
+                                            <outlet property="likeButton" destination="ENr-HC-tDw" id="khO-Oo-RmG"/>
+                                            <outlet property="numberOfLikesLabel" destination="lLe-Ih-UVQ" id="hrF-4U-haO"/>
+                                            <outlet property="replyLabel" destination="iwL-UB-QbC" id="82F-ow-Lys"/>
+                                            <outlet property="timestampLabel" destination="Irn-56-gCy" id="TSq-4T-9gN"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="Cic-4v-u7C" id="KyE-fC-JuL"/>
+                                    <outlet property="delegate" destination="Cic-4v-u7C" id="Oz3-TH-OFG"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
@@ -449,6 +503,7 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="chat_table" destination="hGy-JC-YnX" id="fCG-ya-dOV"/>
                         <outlet property="textToolBar" destination="wrA-24-JBg" id="P9z-Fq-3Hh"/>
                         <outlet property="txtChat" destination="ngt-zI-uks" id="59m-ue-4eJ"/>
                     </connections>
@@ -763,6 +818,7 @@
         <image name="glyphicons_048_dislikes.png" width="25" height="24"/>
         <image name="glyphicons_128_message_lock.png" width="28" height="24"/>
         <image name="glyphicons_136_cogwheel.png" width="24" height="24"/>
+        <image name="glyphicons_187_more.png" width="22" height="6"/>
         <image name="glyphicons_203_lock.png" width="21" height="26"/>
         <image name="glyphicons_221_unshare.png" width="24" height="18"/>
         <image name="glyphicons_222_share.png" width="24" height="18"/>
@@ -780,6 +836,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="s9Z-HM-DcV"/>
+        <segue reference="ob9-Xa-DCc"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -177,7 +177,7 @@
     cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
-    cell.private.tag=indexPath.row;
+    cell.privatePost.tag=indexPath.row;
     cell.lock.tag=indexPath.row;
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -297,7 +297,7 @@
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     
     if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userId"]] ){
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:nil];
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:@"Share", nil];
         actionSheet.tag=0;
         [actionSheet showInView:sender];
     }
@@ -306,15 +306,18 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
         [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (!items.count) {
-                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:@"Share", nil];
                 actionSheet.tag=1;
                 [actionSheet showInView:sender];
                 
             }
             else {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You have already flagged this post!" message:nil
-                                                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                [alert show];
+                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Share", nil];
+                actionSheet.tag=2;
+                [actionSheet showInView:sender];
+//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You have already flagged this post!" message:nil
+//                                                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//                [alert show];
             }
         }];
 //            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
@@ -325,8 +328,8 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    UIButton * btn = (UIButton *) sender;
-    NSLog(@"btn.tag is %ld",(long)btn.tag);
+//    UIButton * btn = (UIButton *) sender;
+//    NSLog(@"btn.tag is %ld",(long)btn.tag);
     if ([[segue identifier] isEqualToString:@"share"])
     {
         NSLog(@"blah private ");
@@ -334,7 +337,7 @@
 //        vc=[segue destinationViewController];
         
 //        UIImage *image = [self captureImage:btn.tag];
-        [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];
+        [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
 //        vc.image = image;
         
     }
@@ -397,6 +400,10 @@
             NSLog(@"delete");
             [self deleteText];
         }
+    else if (buttonIndex==1){
+ [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+             [self performSegueWithIdentifier: @"share" sender: nil];
+        }
     }
     if (actionSheet.tag == 1) {
         if (buttonIndex==0){
@@ -427,15 +434,23 @@
             [self.TableView reloadData];
 
         }
+        else if (buttonIndex==1){
+  [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+            [self performSegueWithIdentifier: @"share" sender: nil];
+        }
     }
     if (actionSheet.tag == 2){
-        if(buttonIndex!=buttonsArray.count){
-        [Flurry logEvent:@"TwitterSwitch"];
-            NSString *string = buttonsArray[buttonIndex];
-//          [defaults setValue:string forKey:@"twitterHandle"];
-            self.navigationItem.title= string;
-        [self refreshView];
+        if (buttonIndex==0) {
+             [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+            [self performSegueWithIdentifier: @"share" sender: nil];
         }
+//        if(buttonIndex!=buttonsArray.count){
+//        [Flurry logEvent:@"TwitterSwitch"];
+//            NSString *string = buttonsArray[buttonIndex];
+////          [defaults setValue:string forKey:@"twitterHandle"];
+//            self.navigationItem.title= string;
+//        [self refreshView];
+//        }
     }
 //    [[self.view viewWithTag:1] removeFromSuperview];
 }

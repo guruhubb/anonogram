@@ -8,13 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "Flurry.h"
+#import "CommentCell.h"
 #import <WindowsAzureMobileServices/WindowsAzureMobileServices.h>
-
 
 @interface CommentVC : UIViewController<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 {
-    IBOutlet UIToolbar          *textToolBar;
-    IBOutlet UITextField        *txtChat;
+
     CGSize textSize;
 
     NSInteger loadMore;
@@ -23,14 +22,18 @@
     NSInteger imageCounter;
     UIToolbar *_inputAccessoryView;
 }
-@property (nonatomic,readwrite) BOOL commentButton;
-@property (nonatomic,readwrite) BOOL myPhotoBook;
-@property(nonatomic,strong)NSDictionary *dicUserData;
+@property (weak, nonatomic)IBOutlet UIToolbar *textToolBar;
+@property (weak, nonatomic)IBOutlet UITextField *txtChat;
+//@property (nonatomic,readwrite) BOOL commentButton;
+//@property (nonatomic,readwrite) BOOL myPhotoBook;
+//@property(nonatomic,strong)NSDictionary *dicUserData;
 @property(nonatomic,strong) NSMutableArray *array;
-@property(nonatomic,strong) NSMutableArray *arrayImages;
-@property(nonatomic,strong) UITableView *chat_table;
-@property(nonatomic,strong)NSString *backButtonString;
-@property(nonatomic,strong)NSString *tagId;
+//@property(nonatomic,strong) NSMutableArray *arrayImages;
+
+
+@property (weak, nonatomic) IBOutlet UITableView *chat_table;
+//@property(nonatomic,strong)NSString *backButtonString;
+//@property(nonatomic,strong)NSString *tagId;
 @end
 
 
