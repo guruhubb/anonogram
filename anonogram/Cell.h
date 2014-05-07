@@ -11,11 +11,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *pageContent;
 @property (weak, nonatomic) IBOutlet UILabel *likeCount;
 @property (weak, nonatomic) IBOutlet UILabel *timestamp;
-@property (weak, nonatomic) IBOutlet UIButton *share;
 @property (weak, nonatomic) IBOutlet UIButton *flag;
 @property (weak, nonatomic) IBOutlet UIButton *like;
 @property (weak, nonatomic) IBOutlet UIButton *lock;
 @property (weak, nonatomic) IBOutlet UILabel *privatePost;
+@property (weak, nonatomic) IBOutlet UILabel *replies;
 
 
 

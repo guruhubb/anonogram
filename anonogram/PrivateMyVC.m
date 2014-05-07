@@ -167,32 +167,32 @@
     NSLog(@"dictionary is %@",dictionary);
     cell.pageContent.text = [dictionary objectForKey:@"text"];
     cell.likeCount.text = [dictionary objectForKey:@"likes"];
+    cell.replies.text = [dictionary objectForKey:@"replies"];
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
-    
     if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
         cell.lock.hidden=NO;
     }
     else
         cell.lock.hidden=YES;
-    cell.share.tag = indexPath.row;
+//    cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
     cell.privatePost.tag=indexPath.row;
     cell.lock.tag=indexPath.row;
     
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-
-    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
-        [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
-    }
-    else {
-        [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
-//        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
-//        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-//            if (items.count) cell.flag.userInteractionEnabled=NO;
-//        }];
-    }
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//
+//    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
+//        [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
+//    }
+//    else {
+//        [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
+////        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+////        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+////        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+////            if (items.count) cell.flag.userInteractionEnabled=NO;
+////        }];
+//    }
     indexPathRow=indexPath;
     return cell;
 }

@@ -107,9 +107,9 @@
 
 }
 -(UIColor*) colorCode {
-    CGFloat goldenRatio =0.618033988749895;
+//    CGFloat goldenRatio =0.618033988749895;
     CGFloat hue = (CGFloat)arc4random()/ (CGFloat)RAND_MAX;
-    hue += goldenRatio;
+//    hue += goldenRatio;
     hue = fmodf(hue, 1.0);
     //    CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
     CGFloat saturation = ( arc4random() % 128 / 256.0 )+0.25 ;//  0.5 to 1.0, away from white, +0.5 lightens the colors
@@ -444,8 +444,8 @@
 //            [cell.textLabel setFrame:CGRectMake(45, 7, 230, MAX(textSize.height+30, 45.0f))];
             cell.replyLabel.text=strlblcomments;
     cell.colorView.backgroundColor = [self colorCode];
-    cell.numberOfLikesLabel.text = @"167";
-    cell.timestampLabel.text=@"23 m";
+    cell.numberOfLikesLabel.text = @"+167";
+    cell.timestampLabel.text=@"23m";
     
 //        }
 

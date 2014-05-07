@@ -207,7 +207,7 @@
     if(tableView== theTable)
         return 30;
     else
-        return 200;
+        return 290;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection: (NSInteger)section
@@ -233,21 +233,28 @@
     NSLog(@"dictionary is %@",dictionary);
     cell.pageContent.text = [dictionary objectForKey:@"text"];
     cell.likeCount.text = [dictionary objectForKey:@"likes"];
+    cell.replies.text = [dictionary objectForKey:@"replies"];
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
-
-    cell.share.tag = indexPath.row;
+    if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
+        cell.lock.hidden=NO;
+    }
+    else
+        cell.lock.hidden=YES;
+    cell.privatePost.tag=indexPath.row;
+    cell.lock.tag=indexPath.row;
+//    cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
     
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-
-    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
-        [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
-    }
-    else {
-        [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
-       
-    }
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//
+//    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
+//        [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
+//    }
+//    else {
+//        [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
+//       
+//    }
     indexPathRow=indexPath;
         return cell;}
     else {
@@ -286,7 +293,24 @@
     }
     }
 }
+- (IBAction)lockAction:(id)sender {
 
+    UIButton *btn = (UIButton*)sender;
+    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag];
+    NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
+    
+    //    label.alpha=1;
+    label.hidden=NO;
+    [UIView animateWithDuration:3
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                         label.alpha=0.0; }
+                     completion:^(BOOL finished){
+                         label.alpha=1.0;
+                         label.hidden=YES;
+                     }];
+}
 - (void) refreshView
 {
     
@@ -380,37 +404,70 @@
         }
     }];
 }
-
 - (IBAction)flagAction:(id)sender {
-   UIButton *btn = (UIButton *)sender;
+    UIButton *btn = (UIButton *)sender;
     flagButton = btn.tag;
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     
-    
     if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userId"]] ){
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:nil];
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:@"Share", nil];
         actionSheet.tag=0;
         [actionSheet showInView:sender];
     }
     
     else {
-        
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
         [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (!items.count) {
-                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:@"Share", nil];
                 actionSheet.tag=1;
                 [actionSheet showInView:sender];
-
+                
             }
             else {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You have already flagged this post!" message:nil
-                                                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                [alert show];
+                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Share", nil];
+                actionSheet.tag=2;
+                [actionSheet showInView:sender];
+                //                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You have already flagged this post!" message:nil
+                //                                                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                //                [alert show];
             }
         }];
-                }
+        //            UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+        //    actionSheet.tag=1;
+        //    [actionSheet showInView:sender];
+    }
 }
+//- (IBAction)flagAction:(id)sender {
+//   UIButton *btn = (UIButton *)sender;
+//    flagButton = btn.tag;
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    
+//    
+//    if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userId"]] ){
+//        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:nil];
+//        actionSheet.tag=0;
+//        [actionSheet showInView:sender];
+//    }
+//    
+//    else {
+//        
+//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
+//        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//            if (!items.count) {
+//                UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:nil];
+//                actionSheet.tag=1;
+//                [actionSheet showInView:sender];
+//
+//            }
+//            else {
+//                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You have already flagged this post!" message:nil
+//                                                               delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//                [alert show];
+//            }
+//        }];
+//                }
+//}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -475,19 +532,22 @@
 //    UIGraphicsEndImageContext();
 //    return customScreenShot;
 }
-
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == 0) {
         if (buttonIndex==0){
             NSLog(@"delete");
             [self deleteText];
         }
+        else if (buttonIndex==1){
+            [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+            [self performSegueWithIdentifier: @"share" sender: nil];
+        }
     }
     if (actionSheet.tag == 1) {
         if (buttonIndex==0){
             [Flurry logEvent:@"Flag"];
-//            UIButton *btn = (UIButton *)[self.view viewWithTag:flagButton];
-//            btn.userInteractionEnabled=NO;
+            //            UIButton *btn = (UIButton *)[self.view viewWithTag:flagButton];
+            //            btn.userInteractionEnabled=NO;
             NSLog(@"flag as inappropriate");
             
             NSDictionary *dictionary=[self.array objectAtIndex:flagButton];
@@ -510,17 +570,73 @@
                 [self logErrorIfNotNil:error];
             }];
             [self.theTableView reloadData];
-
+            
+        }
+        else if (buttonIndex==1){
+            [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+            [self performSegueWithIdentifier: @"share" sender: nil];
         }
     }
     if (actionSheet.tag == 2){
-        [Flurry logEvent:@"TwitterSwitch"];
-
-          [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
-        [self refreshView];
+        if (buttonIndex==0) {
+            [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+            [self performSegueWithIdentifier: @"share" sender: nil];
+        }
+        //        if(buttonIndex!=buttonsArray.count){
+        //        [Flurry logEvent:@"TwitterSwitch"];
+        //            NSString *string = buttonsArray[buttonIndex];
+        ////          [defaults setValue:string forKey:@"twitterHandle"];
+        //            self.navigationItem.title= string;
+        //        [self refreshView];
+        //        }
     }
-//    [[self.view viewWithTag:1] removeFromSuperview];
+    //    [[self.view viewWithTag:1] removeFromSuperview];
 }
+//-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+//    if (actionSheet.tag == 0) {
+//        if (buttonIndex==0){
+//            NSLog(@"delete");
+//            [self deleteText];
+//        }
+//    }
+//    if (actionSheet.tag == 1) {
+//        if (buttonIndex==0){
+//            [Flurry logEvent:@"Flag"];
+////            UIButton *btn = (UIButton *)[self.view viewWithTag:flagButton];
+////            btn.userInteractionEnabled=NO;
+//            NSLog(@"flag as inappropriate");
+//            
+//            NSDictionary *dictionary=[self.array objectAtIndex:flagButton];
+//            NSString *flagsCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"flags"] integerValue]+1 ];
+//            if ([flagsCount integerValue]>kFlagsAllowed){   //delete item if flagCount is more than kFlagsAllowed
+//                [self deleteText];
+//                return;
+//            }
+//            [dictionary setValue:flagsCount forKey:@"flags"];
+//            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"flags": flagsCount};
+//            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+//                //handle errors or any additional logic as needed
+//                [self logErrorIfNotNil:error];
+//            }];
+//            
+//            NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//            NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+//            [self.isFlagTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
+//                //handle errors or any additional logic as needed
+//                [self logErrorIfNotNil:error];
+//            }];
+//            [self.theTableView reloadData];
+//
+//        }
+//    }
+//    if (actionSheet.tag == 2){
+//        [Flurry logEvent:@"TwitterSwitch"];
+//
+//          [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
+//        [self refreshView];
+//    }
+////    [[self.view viewWithTag:1] removeFromSuperview];
+//}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -1099,11 +1215,12 @@
     label.text = @"140";
     NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
     if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
-        //    {
+        {
         //    if(![txtChat.text isEqualToString:@""])
         txtChat.text = [NSString stringWithFormat:@" %@ ",txtChat.text];
         [self postComment];
-    
+        }
+
     txtChat.text = @"";
 }
 -(void)cancelKeyboard{
