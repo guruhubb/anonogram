@@ -17,6 +17,7 @@
 #import "NSDate+NVTimeAgo.h"
 #import "Flurry.h"
 #import "AppDelegate.h"
+#import "CommentVC.h"
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 #import <Twitter/Twitter.h>
@@ -27,6 +28,7 @@
     BOOL isPrivateOn;
     BOOL recordingHashTag;
     BOOL isHashTag;
+    BOOL isComment;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
@@ -36,6 +38,7 @@
     NSMutableArray *filteredScreen_nameArray;
     NSInteger flagButton;
     NSInteger startParse;
+    NSInteger commentedPost;
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
@@ -47,6 +50,8 @@
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
+@property (nonatomic, strong)   MSTable *commentTable;
+@property (nonatomic, strong)   MSTable *isLikeCommentTable;
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
 @property (strong, nonatomic) NSMutableArray *array;
 @property (nonatomic, strong)   MSClient *client;
@@ -58,7 +63,16 @@
 -(void)viewDidAppear:(BOOL)animated {
     if ([defaults boolForKey:@"showSurveyAnonogram"]&&![defaults boolForKey:@"rateDoneAnonogram"])
         [self performSelector:@selector(showSurvey) withObject:nil afterDelay:0.1];
-
+    if (isComment){
+        isComment = NO;
+        NSLog(@"comment update, commentedPost is %d",commentedPost);
+        [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+            NSLog(@"item is %@",item);
+            [self.array replaceObjectAtIndex:commentedPost withObject:item];
+            [self.theTableView reloadData];
+            [self logErrorIfNotNil:error];
+        }];
+     }
 }
 
 - (void)viewDidLoad
@@ -67,6 +81,8 @@
 
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
+    [self.theTableView setSeparatorInset:UIEdgeInsetsZero];
+
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -224,7 +240,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
-    [tableView setSeparatorInset:UIEdgeInsetsZero];
+//    [tableView setSeparatorInset:UIEdgeInsetsZero];
     if (tableView==_theTableView){
     Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
     if (self.array.count <= indexPath.row)
@@ -233,7 +249,10 @@
     NSLog(@"dictionary is %@",dictionary);
     cell.pageContent.text = [dictionary objectForKey:@"text"];
     cell.likeCount.text = [dictionary objectForKey:@"likes"];
-    cell.replies.text = [dictionary objectForKey:@"replies"];
+        if ([dictionary objectForKey:@"replies"]!=(id)[NSNull null])
+            cell.replies.text = [dictionary objectForKey:@"replies"];
+        else
+            cell.replies.text = @"0";
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
     if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
         cell.lock.hidden=NO;
@@ -245,6 +264,7 @@
 //    cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
+    cell.replyButton.tag=indexPath.row;
     
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //
@@ -350,6 +370,15 @@
         [self logErrorIfNotNil:error];
     }];
     NSDictionary *item =@{@"postId" : [[self.array objectAtIndex:flagButton] objectForKey:@"id" ]};
+    [self.commentTable readWithId:item completion:^(NSDictionary *item, NSError *error) {
+        NSLog(@"item is %@",item);
+        [self logErrorIfNotNil:error];
+        NSDictionary *item1 =@{@"commentId" : [item objectForKey:@"id" ]};
+        [self.isLikeCommentTable delete:item1 completion:^(NSDictionary *item, NSError *error) {
+            [self logErrorIfNotNil:error];
+        }];
+    }];
+    
     [self.isLikeTable delete:item completion:^(NSDictionary *item, NSError *error) {
         [self logErrorIfNotNil:error];
     }];
@@ -357,6 +386,10 @@
         [self logErrorIfNotNil:error];
     }];
     
+    [self.commentTable delete:item completion:^(NSDictionary *item, NSError *error) {
+        [self logErrorIfNotNil:error];
+    }];
+
     [self.array removeObjectAtIndex:flagButton];
     [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
 
@@ -480,9 +513,25 @@
 //        vc=[segue destinationViewController];
         
 //        UIImage *image = [self captureImage:btn.tag];
-        [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];
+        [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+
+//        [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];
 //        vc.image = image;
         
+    }
+    else if ([[segue identifier] isEqualToString:@"goToSettings"]){
+        
+    }
+    else {
+        commentedPost=btn.tag;
+        isComment = YES;
+        NSDictionary *dictionary = self.array[commentedPost];
+        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
+        CommentVC *vc = [[CommentVC alloc] init];
+        vc=(CommentVC*)[[segue destinationViewController]topViewController];
+        vc.postId =string;
+        vc.replies = [dictionary objectForKey:@"replies"];
+
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {
@@ -736,10 +785,10 @@
     //    txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])];
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
-    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
+//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+    [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         if (error) {
             NSLog(@"Error: %@", error);
             [self logErrorIfNotNil:error];

@@ -13,7 +13,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        _colorView.layer.cornerRadius=5;
+
     }
     return self;
 }

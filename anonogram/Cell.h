@@ -16,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *lock;
 @property (weak, nonatomic) IBOutlet UILabel *privatePost;
 @property (weak, nonatomic) IBOutlet UILabel *replies;
+@property (weak, nonatomic) IBOutlet UIButton *replyButton;
 
 
 

@@ -16,6 +16,7 @@
 #import "NSDate+NVTimeAgo.h"
 #import "Flurry.h"
 #import "AppDelegate.h"
+#import "CommentVC.h"
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 #import "CommentVC.h"
@@ -28,7 +29,8 @@
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
     NSInteger flagButton;
-
+    BOOL isComment;
+    NSInteger commentedPost;
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
@@ -48,12 +50,28 @@
 
 @implementation PrivateMyVC
 
+-(void)viewDidAppear:(BOOL)animated {
+
+    if (isComment){
+        isComment = NO;
+        NSLog(@"comment update, commentedPost is %d",commentedPost);
+        [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+            NSLog(@"item is %@",item);
+            [self.array replaceObjectAtIndex:commentedPost withObject:item];
+            [self.TableView reloadData];
+            [self logErrorIfNotNil:error];
+        }];
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     startTime=0;
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.TableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
+    [self.TableView setSeparatorInset:UIEdgeInsetsZero];
+
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -88,12 +106,12 @@
     }
     else {
         isPrivateOn=YES;
-        NSString *string = [defaults valueForKey:@"twitterHandle"];
-        NSLog(@"STRING is %@",string);
-
-        if (string !=NULL)
-            self.navigationItem.title = string;
-        else
+//        NSString *string = [defaults valueForKey:@"twitterHandle"];
+//        NSLog(@"STRING is %@",string);
+//
+//        if (string !=NULL)
+//            self.navigationItem.title = string;
+//        else
             self.navigationItem.title = [NSString stringWithFormat:@"NOTIFICATIONS"];
         UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
         self.navigationItem.rightBarButtonItem = privateButton;
@@ -159,7 +177,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
-    
+//    [tableView setSeparatorInset:UIEdgeInsetsZero];
     Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
     if (self.array.count <= indexPath.row)
         return cell;
@@ -179,7 +197,8 @@
     cell.like.tag=indexPath.row;
     cell.privatePost.tag=indexPath.row;
     cell.lock.tag=indexPath.row;
-    
+    cell.replyButton.tag=indexPath.row;
+
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //
 //    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
@@ -243,6 +262,7 @@
     [self.isFlagTable delete:item completion:^(NSDictionary *item, NSError *error) {
         [self logErrorIfNotNil:error];
     }];
+    
     
     [self.array removeObjectAtIndex:flagButton];
     [self.TableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
@@ -328,8 +348,8 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-//    UIButton * btn = (UIButton *) sender;
-//    NSLog(@"btn.tag is %ld",(long)btn.tag);
+    UIButton * btn = (UIButton *) sender;
+    NSLog(@"btn.tag is %ld",(long)btn.tag);
     if ([[segue identifier] isEqualToString:@"share"])
     {
         NSLog(@"blah private ");
@@ -342,8 +362,15 @@
         
     }
     else {
-//        CommentVC *vc = [[CommentVC alloc] init];
-//        vc=[segue destinationViewController];
+        commentedPost=btn.tag;
+        isComment = YES;
+        NSDictionary *dictionary = self.array[commentedPost];
+        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
+        CommentVC *vc = [[CommentVC alloc] init];
+        vc=(CommentVC*)[[segue destinationViewController]topViewController];
+        vc.postId =string;
+        vc.replies = [dictionary objectForKey:@"replies"];
+        
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {

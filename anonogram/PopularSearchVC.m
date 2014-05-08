@@ -16,6 +16,7 @@
 #import "NSDate+NVTimeAgo.h"
 #import "Flurry.h"
 #import "AppDelegate.h"
+#import "CommentVC.h"
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 
@@ -27,7 +28,8 @@
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
     NSInteger flagButton;
-
+    BOOL isComment;
+    NSInteger commentedPost;
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
@@ -46,12 +48,27 @@
 
 @implementation PopularSearchVC
 
+-(void)viewDidAppear:(BOOL)animated {
+    
+    if (isComment){
+        isComment = NO;
+        NSLog(@"comment update, commentedPost is %d",commentedPost);
+        [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+            NSLog(@"item is %@",item);
+            [self.array replaceObjectAtIndex:commentedPost withObject:item];
+            [self.popularTableView reloadData];
+            [self logErrorIfNotNil:error];
+        }];
+    }
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     startTime=0;
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.popularTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
+    [self.popularTableView setSeparatorInset:UIEdgeInsetsZero];
+
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -185,7 +202,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
-    
+//     [tableView setSeparatorInset:UIEdgeInsetsZero];
     Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
    
     if (self.array.count <= indexPath.row)
@@ -196,24 +213,10 @@
     cell.likeCount.text = [dictionary objectForKey:@"likes"];
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
     cell.replies.text = [dictionary objectForKey:@"replies"];
-
-//    cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
-    
-//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//
-//    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
-//        [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
-//    }
-//    else {
-//        [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
-//        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
-//        [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-//            if (items.count) cell.flag.userInteractionEnabled=NO;
-//        }];
-//    }
+    cell.replyButton.tag=indexPath.row;
+
     indexPathRow=indexPath;
     
     return cell;
@@ -370,8 +373,21 @@
 //        vc=[segue destinationViewController];
         
 //        UIImage *image = [self captureImage:btn.tag];
-        [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];
+//        [defaults setObject:UIImagePNGRepresentation([self captureImage:btn.tag]) forKey:@"image"];
+        [defaults setObject:UIImagePNGRepresentation([self captureImage:flagButton]) forKey:@"image"];
+
 //        vc.image = image;
+        
+    }
+    else {
+        commentedPost=btn.tag;
+        isComment = YES;
+        NSDictionary *dictionary = self.array[commentedPost];
+        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
+        CommentVC *vc = [[CommentVC alloc] init];
+        vc=(CommentVC*)[[segue destinationViewController]topViewController];
+        vc.postId =string;
+        vc.replies = [dictionary objectForKey:@"replies"];
         
     }
 }

@@ -5,34 +5,74 @@
 //  Created by Saswata Basu on 3/21/14.
 //  Copyright (c) 2014 Saswata Basu. All rights reserved.
 //
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
-
+#define kLimit 20
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
 #import "CommentVC.h"
+#import "AppDelegate.h"
+#import "NSDate+NVTimeAgo.h"
+@interface CommentVC (){
 
-@implementation CommentVC {
+    UIRefreshControl *refreshControl;
+
+    CGSize textSize;
     NSUserDefaults *defaults;
-}
+    NSIndexPath *indexPathRow;
 
+    NSInteger loadMore;
+    NSInteger oldCount;
+    NSInteger counter;
+    NSInteger imageCounter;
+    UIToolbar *_inputAccessoryView;
+}
+@property (weak, nonatomic)IBOutlet UIToolbar *textToolBar;
+@property (weak, nonatomic)IBOutlet UITextField *txtChat;
+//@property (nonatomic,readwrite) BOOL commentButton;
+//@property (nonatomic,readwrite) BOOL myPhotoBook;
+//@property(nonatomic,strong)NSDictionary *dicUserData;
+@property(nonatomic,strong) NSMutableArray *array;
+//@property(nonatomic,strong) NSMutableArray *arrayImages;
+
+
+@property (weak, nonatomic) IBOutlet UITableView *chat_table;
+@property (nonatomic, strong)   MSClient *client;
+@property (nonatomic, strong)   MSTable *commentTable;
+@property (nonatomic, strong)   MSTable *isLikeCommentTable;
+@property (nonatomic, strong)   MSTable *table;
+@end
+
+@implementation CommentVC
 @synthesize array;
 //,arrayImages;
 //@synthesize dicUserData;
 //@synthesize commentButton, myPhotoBook;
-@synthesize chat_table;
+@synthesize chat_table,postId;
 //, backButtonString;
 //static const NSUInteger kMaximumNumberToParse = 24;
 //static const NSUInteger kMaxDownload = 10000;
 
 
+//- (void) refreshView
+//{
+//    self.array = nil;
+////    self.arrayImages = nil;
+////    arrayImages = [[NSMutableArray alloc] init ];
+//    array = [[NSMutableArray alloc] init ];
+//    loadMore=1;
+//    [self updateData];
+//}
 - (void) refreshView
 {
-    self.array = nil;
-//    self.arrayImages = nil;
-//    arrayImages = [[NSMutableArray alloc] init ];
-    array = [[NSMutableArray alloc] init ];
-    loadMore=1;
-    [self updateData];
+    
+    //    nowTime =[[NSDate date] timeIntervalSince1970];
+    //    if ((nowTime-startTime)> 5 ){
+    //        startTime =[[NSDate date] timeIntervalSince1970];
+    self.array = [[NSMutableArray alloc] init];
+    [self getData];
+    //    }
+    [refreshControl endRefreshing];
 }
 - (void)didReceiveMemoryWarning
 {
@@ -64,6 +104,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+    self.table = [self.client tableWithName:@"anonogramTable"];
+    self.commentTable = [self.client tableWithName:@"commentTable"];
+    self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
+//    self.postId = [defaults stringForKey:@"postId"];
+    NSLog(@"postId is %@ and %@",self.postId, self.replies);
 //    [self turnOnIndicator];
   
 //    oldCount=0;
@@ -79,12 +125,14 @@
     defaults =  [NSUserDefaults standardUserDefaults];
 //    chat_table = [[UITableView alloc]initWithFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
     chat_table.frame =CGRectMake(0, 64, 320, screenSpecificSetting(460, 372));
+    [self.chat_table setSeparatorInset:UIEdgeInsetsZero];
+
 //    chat_table = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, 480-64)];
     
 //    array = [[NSMutableArray alloc] init];
-    array = [[NSMutableArray alloc]initWithObjects:
-               @"Background Color for Share",@"Add Watermark for Share", @"Like us on Facebook",@"Follow us on Twitter",
-               @"Rate App",@"Feedback",@"Restore Purchases",nil];
+//    array = [[NSMutableArray alloc]initWithObjects:
+//               @"Background Color for Share",@"Add Watermark for Share", @"Like us on Facebook",@"Follow us on Twitter",
+//               @"Rate App",@"Feedback",@"Restore Purchases",nil];
 //    arrayImages = [[NSMutableArray alloc] init];
 //    self.chat_table.delegate=self;
 //    self.chat_table.dataSource=self;
@@ -103,7 +151,11 @@
 //    if ([self.chat_table respondsToSelector:@selector(setSeparatorInset:)]) {
 //        [self.chat_table setSeparatorInset:UIEdgeInsetsZero];
 //    }
-    [self.chat_table reloadData];
+//    [self.chat_table reloadData];
+    refreshControl = [[UIRefreshControl alloc]init];
+    [self.chat_table addSubview:refreshControl];
+    [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
+    [self refreshView];
 
 }
 -(UIColor*) colorCode {
@@ -112,11 +164,25 @@
 //    hue += goldenRatio;
     hue = fmodf(hue, 1.0);
     //    CGFloat hue = ( arc4random() % 256 / 256.0 );  //  0.0 to 1.0
-    CGFloat saturation = ( arc4random() % 128 / 256.0 )+0.25 ;//  0.5 to 1.0, away from white, +0.5 lightens the colors
-    CGFloat brightness = ( arc4random() % 128 / 256.0 ) ;//  0.5 to 1.0, away from black, +0.25 adds more lighter colors
+    CGFloat saturation = ( arc4random() % 128 / 256.0 )+0.5 ;//  0.5 to 1.0, away from white, +0.5 lightens the colors
+    CGFloat brightness = ( arc4random() % 128 / 256.0 )+0.25 ;//  0.5 to 1.0, away from black, +0.25 adds more lighter colors
     return [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:0.8];
 }
+-(UIColor*) pastelColorCode : (UIColor *) mix {
+    CGFloat red = ( arc4random() % 256 / 256.0 );
+    CGFloat green = ( arc4random() % 256 / 256.0 );
+    CGFloat blue = ( arc4random() % 256 / 256.0 );
+    const CGFloat *components = CGColorGetComponents(mix.CGColor);
 
+    // mix the color
+    if (mix != NULL) {
+        red = (red + components[0]) / 2;
+        green = (green + components[1]) / 2;
+        blue = (blue + components[2]) / 2;
+    }
+    UIColor *color = [UIColor colorWithRed:red green:green blue:blue alpha:components[3]];
+    return color;
+}
 - (IBAction)cancel:(id)sender {
     [self dismissViewControllerAnimated: NO completion: nil];
 }
@@ -367,9 +433,26 @@
 //    if ([tableView respondsToSelector:@selector(setSeparatorInset:)]) {
 //        [tableView setSeparatorInset:UIEdgeInsetsZero];
 //    }
+//     [tableView setSeparatorInset:UIEdgeInsetsZero];
         static NSString *CellIdentifier = @"commentCell";
     
         CommentCell *cell = (CommentCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (self.array.count <= indexPath.row)
+        return cell;
+    NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
+    NSLog(@"dictionary is %@",dictionary);
+    NSMutableString *tempHex=[[NSMutableString alloc] init];
+    [tempHex appendString:[dictionary objectForKey:@"color"]];
+    unsigned colorInt = 0;
+    [[NSScanner scannerWithString:tempHex] scanHexInt:&colorInt];
+    cell.colorView.backgroundColor = UIColorFromRGB(colorInt);
+    cell.colorView.layer.cornerRadius=5;
+    cell.colorView.layer.masksToBounds=YES;
+    cell.replyLabel.text = [dictionary objectForKey:@"reply"];
+    cell.numberOfLikesLabel.text = [dictionary objectForKey:@"likes"];
+    cell.timestampLabel.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
+    cell.likeButton.tag = indexPath.row;
+    indexPathRow=indexPath;
 //        if (cell == nil)
 //        {
 //            cell = [[CommentVC alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
@@ -428,7 +511,7 @@
     
 //    NSString *strlblcomments =[[self.array objectAtIndex:indexPath.row] objectForKey:@"comment"];
 
-    NSString *strlblcomments =[self.array objectAtIndex:indexPath.row];
+//    NSString *strlblcomments =[self.array objectAtIndex:indexPath.row];
     
 //            cell..text = [[self.array objectAtIndex:indexPath.row] objectForKey:@"timestamp"];
 //            CGRect textRect = [strlblcomments boundingRectWithSize:CGSizeMake(230.0f, MAXFLOAT)
@@ -442,10 +525,7 @@
 //                                      lineBreakMode:NSLineBreakByWordWrapping];
 
 //            [cell.textLabel setFrame:CGRectMake(45, 7, 230, MAX(textSize.height+30, 45.0f))];
-            cell.replyLabel.text=strlblcomments;
-    cell.colorView.backgroundColor = [self colorCode];
-    cell.numberOfLikesLabel.text = @"+167";
-    cell.timestampLabel.text=@"23m";
+  
     
 //        }
 
@@ -503,14 +583,26 @@
 ////        else [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 //    }
 //}
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
-    if (bottomEdge >= scrollView.contentSize.height) {
-        // we are at the end
-            loadMore++;
-//            [self loadxmlparsing];
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {
+        float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+        if (bottomEdge >= scrollView.contentSize.height) {
+//            if (!isSearchOn)
+                [self getData];
+//            else
+//                [self getDataSearch];
+        }
     }
 }
+
+//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+//    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+//    if (bottomEdge >= scrollView.contentSize.height) {
+//        // we are at the end
+//            loadMore++;
+////            [self loadxmlparsing];
+//    }
+//}
 
 //- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 //{
@@ -551,7 +643,7 @@
         
 
         
-        NSString *me = [defaults objectForKey:@"me"];
+//        NSString *me = [defaults objectForKey:@"me"];
 //        NSString *userId = [[self.array objectAtIndex:indexPath.row] objectForKey:@"userId"];
         NSString *userId = [self.array objectAtIndex:indexPath.row] ;
 
@@ -571,7 +663,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView beginUpdates]; 
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [Flurry logEvent:@"Comment: Delete"];
+        [Flurry logEvent:@"Delete Comment"];
         //add code here for when you hit delete
         
 //        NSString *commentId=[[self.array objectAtIndex:indexPath.row] objectForKey:@"id"];
@@ -587,66 +679,201 @@
 //        NSData *Data = [NSData dataWithContentsOfURL:url];
 //        Data=nil;
 //        url=nil;
+        
+        
+       
+        NSString *string = [[self.array objectAtIndex:indexPath.row] objectForKey:@"id" ];
+        [self.commentTable deleteWithId:string completion:^(NSDictionary *item, NSError *error) {
+            [self logErrorIfNotNil:error];
+        }];
+        NSDictionary *item =@{@"commentId" :string};
+        [self.isLikeCommentTable delete:item completion:^(NSDictionary *item, NSError *error) {
+            [self logErrorIfNotNil:error];
+        }];
+        NSString *string1 = [NSString stringWithFormat:@"%d",self.array.count-1 ];
+        NSDictionary *item1 =@{@"id" : self.postId, @"replies": string1};
+        [self.table update:item1 completion:^(NSDictionary *item, NSError *error) {
+            [self logErrorIfNotNil:error];
+        }];
         [self.array removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
     }
     [tableView endUpdates];
+    [tableView reloadData];
 }
 
 // post comment to parse server.
+//-(void)postComment
+//{
+////    iscomment=TRUE;
+//    
+//    [_txtChat resignFirstResponder];
+//   [Flurry logEvent:@"Comment: Post"];
+////    NSString *id1=[self.dicUserData objectForKey:@"id"];
+////    
+////    NSString *strid= [id1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+//    
+////    NSString *tagid=[self.dicUserData objectForKey:@"tagId"];
+////    NSString *strtagid=[tagid stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+////    NSString *randomNumber=@"arc4random()";
+////    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+////    NSString *token = [defaults objectForKey:@"booklyAccessToken"];
+////    NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postComment&mediaId=%@&tagId=%@&comment=%@&authtoken=%@&rand=%@",strid,_tagId,[txtChat.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],token,randomNumber];
+//    
+//  //  http://m.omentos.com/backend/api.php?method=postComment&mediaId=78&tagId=32&comment=Nice!!&auth token=//f7177163c833dff4b38fc8d2872f1ec6_4fd081e00cdb0U2FyYXZhbmFuVVNFUg==4fd081e00d19a
+//    
+//    
+////    NSLog(@"final url is %@",urlString1);
+////    
+////    NSURL *url = [[NSURL alloc]initWithString:urlString1];
+////    NSLog(@"url is%@",url);
+////    NSData *Data = [NSData dataWithContentsOfURL:url];
+////    url=nil;
+//    
+////    if (!Data) {
+//////        downloadBusy = NO;
+////        NSLog(@" No Internet Connection");
+////        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+////
+////        return;
+////    }
+////    NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
+////    self.array = nil;
+////    self.arrayImages = nil;
+////    arrayImages = [[NSMutableArray alloc] init ];
+////    array = [[NSMutableArray alloc] init ];
+////    loadMore=1;
+////    [self updateData];
+//    
+//    [self.array insertObject:_txtChat.text atIndex:0];
+//    [self.chat_table reloadData];
+//}
+- (void) getData {
+    NSLog(@"getting data...");
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    //    NSString *word1 = [defaults objectForKey:@"filterWord1"];
+    //    NSString *word2 = [defaults objectForKey:@"filterWord2"];
+    //    NSString *word3 = [defaults objectForKey:@"filterWord3"];
+    
+    NSPredicate *predicate;
+    //    if (![defaults boolForKey:@"filter"])
+    predicate = [NSPredicate predicateWithFormat:@"postId == %@ ",self.postId];
+    //    else {
+    //
+    //        predicate = [NSPredicate predicateWithFormat:@"((text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@) && isPrivate == false)|| userId == %@",word1,word2,word3,userId];
+    //    }
+    
+    MSQuery *query = [self.commentTable queryWithPredicate:predicate];
+    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+    query.includeTotalCount = YES; // Request the total item count
+    query.fetchLimit = kLimit;
+    query.fetchOffset = self.array.count;
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+        [self logErrorIfNotNil:error];
+        if(!error) {
+            //add the items to our local copy
+            [self.array addObjectsFromArray:items];
+            [self.chat_table reloadData];
+        }
+    }];
+}
+- (NSString *)hexStringForColor:(UIColor *)color {
+    const CGFloat *components = CGColorGetComponents(color.CGColor);
+    CGFloat r = components[0];
+    CGFloat g = components[1];
+    CGFloat b = components[2];
+    NSString *hexString=[NSString stringWithFormat:@"%02X%02X%02X", (int)(r * 255), (int)(g * 255), (int)(b * 255)];
+    return hexString;
+}
 -(void)postComment
 {
-//    iscomment=TRUE;
     
-    [_txtChat resignFirstResponder];
-   [Flurry logEvent:@"Comment: Post"];
-//    NSString *id1=[self.dicUserData objectForKey:@"id"];
-//    
-//    NSString *strid= [id1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    UIColor *color;
+    NSString *colorString = [defaults objectForKey:@"color"];
+    if (!colorString){
+        color = [self pastelColorCode:[UIColor whiteColor]];
+    color = [self colorCode];
+
+        colorString = [self hexStringForColor:color];
+        NSLog(@"color is %@",colorString);
+        [defaults setObject:colorString forKey:@"color"];
+    }
+     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSLog(@"inserting into commentTable userId = %@, postId = %@, reply = %@, color = %@",userId,postId,_txtChat.text, colorString);
+
+    NSDictionary *item = @{@"postId" : self.postId, @"userId" : userId,@"reply" : _txtChat.text, @"color" :colorString,@"likes" :@"0"};
     
-//    NSString *tagid=[self.dicUserData objectForKey:@"tagId"];
-//    NSString *strtagid=[tagid stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//    NSString *randomNumber=@"arc4random()";
-//    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//    NSString *token = [defaults objectForKey:@"booklyAccessToken"];
-//    NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postComment&mediaId=%@&tagId=%@&comment=%@&authtoken=%@&rand=%@",strid,_tagId,[txtChat.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],token,randomNumber];
     
-  //  http://m.omentos.com/backend/api.php?method=postComment&mediaId=78&tagId=32&comment=Nice!!&auth token=//f7177163c833dff4b38fc8d2872f1ec6_4fd081e00cdb0U2FyYXZhbmFuVVNFUg==4fd081e00d19a
-    
-    
-//    NSLog(@"final url is %@",urlString1);
-//    
-//    NSURL *url = [[NSURL alloc]initWithString:urlString1];
-//    NSLog(@"url is%@",url);
-//    NSData *Data = [NSData dataWithContentsOfURL:url];
-//    url=nil;
-    
-//    if (!Data) {
-////        downloadBusy = NO;
-//        NSLog(@" No Internet Connection");
-//        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-//
-//        return;
-//    }
-//    NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-//    self.array = nil;
-//    self.arrayImages = nil;
-//    arrayImages = [[NSMutableArray alloc] init ];
-//    array = [[NSMutableArray alloc] init ];
-//    loadMore=1;
-//    [self updateData];
-    
-    [self.array insertObject:_txtChat.text atIndex:0];
-    [self.chat_table reloadData];
+//    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
+
+    [self.commentTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        if (error) {
+            NSLog(@"Error: %@", error);
+            [self logErrorIfNotNil:error];
+        } else {
+            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
+            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
+            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        }
+        [self refreshView];
+    }];
 }
 
-
+- (void) logErrorIfNotNil:(NSError *) error
+{
+    if (error) {
+        NSLog(@"ERROR %@", error);
+    }
+}
 // retrieving comments from parse server and load it to tableview by reloading tableview.
 -(void)retrieveComments
 {
     NSLog(@"retrieve data");
 }
 - (IBAction)likeButtonAction:(id)sender {
+ 
+        [Flurry logEvent:@"LikeComment"];
+        UIButton *btnPressLike = (UIButton*)sender;
+        NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
+        
+        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && commentId == %@",userId,[dictionary objectForKey:@"id" ]];
+        [self.isLikeCommentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            if (items.count) {
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                
+                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.isLikeCommentTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.chat_table reloadData];
+            }
+            else {
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                
+                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+                NSDictionary *item1 =@{@"commentId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+                
+                [self.isLikeCommentTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.chat_table reloadData];
+            }
+        }];
+    
 }
 
 //- (void) getCommentImage: (NSMutableDictionary*) dic12
@@ -803,7 +1030,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    return (newLength > 130) ? NO : YES;
+    return (newLength > 120) ? NO : YES;
 }
 
 

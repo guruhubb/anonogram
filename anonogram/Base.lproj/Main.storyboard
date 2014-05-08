@@ -27,7 +27,7 @@
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write something, anything ..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Qvh-oD-u2l">
                                                     <rect key="frame" x="15" y="0.0" width="290" height="290"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="22"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -75,7 +75,7 @@
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Wpj-l2-MHz" userLabel="Button - More">
                                                     <rect key="frame" x="185" y="257" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
+                                                    <inset key="contentEdgeInsets" minX="14" minY="12" maxX="14" maxY="12"/>
                                                     <state key="normal" title="Share" image="glyphicons_187_more.png">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -114,6 +114,8 @@
                                             <outlet property="lock" destination="6kC-Yi-ZpZ" id="FmK-Nd-Hrf"/>
                                             <outlet property="pageContent" destination="Qvh-oD-u2l" id="yf3-a3-fZn"/>
                                             <outlet property="privatePost" destination="fIR-Zg-KPx" id="ykd-2b-iJ9"/>
+                                            <outlet property="replies" destination="I9N-Jc-gP3" id="lyY-c6-xfH"/>
+                                            <outlet property="replyButton" destination="I4s-hq-DNh" id="pqT-ME-1Mp"/>
                                             <outlet property="timestamp" destination="T6U-2U-Sdh" id="05l-yb-hKI"/>
                                         </connections>
                                     </tableViewCell>
@@ -142,7 +144,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="theTableView" destination="ePz-zs-sdP" id="Rid-FX-sOF"/>
-                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" modalTransitionStyle="flipHorizontal" id="G8Z-2i-oeg"/>
+                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" modalTransitionStyle="crossDissolve" id="G8Z-2i-oeg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -189,7 +191,7 @@
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write something, anything ..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z3c-Pj-fV9">
                                                     <rect key="frame" x="15" y="0.0" width="290" height="290"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="22"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -230,7 +232,7 @@
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="0M9-Am-Xlp" userLabel="Button - More">
                                                     <rect key="frame" x="185" y="257" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
+                                                    <inset key="contentEdgeInsets" minX="14" minY="12" maxX="14" maxY="12"/>
                                                     <state key="normal" title="Share" image="glyphicons_187_more.png">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -256,6 +258,8 @@
                                             <outlet property="like" destination="w5a-hF-73P" id="bvQ-1M-ujO"/>
                                             <outlet property="likeCount" destination="9ej-bw-YBH" id="dtp-jU-uqd"/>
                                             <outlet property="pageContent" destination="z3c-Pj-fV9" id="h0J-J7-ot2"/>
+                                            <outlet property="replies" destination="UkA-O5-PoH" id="KKj-bD-wpW"/>
+                                            <outlet property="replyButton" destination="XjI-87-QUP" id="XUc-yF-7Yu"/>
                                             <outlet property="timestamp" destination="tLN-EJ-fxd" id="fLj-MJ-VKT"/>
                                         </connections>
                                     </tableViewCell>
@@ -280,7 +284,7 @@
                         <outlet property="popularTableView" destination="TzR-TB-XNq" id="3ox-Xn-jbh"/>
                         <outlet property="searchBarButton" destination="6k1-WG-ku9" id="Uq7-aC-lma"/>
                         <outlet property="searchButton" destination="abH-z2-cET" id="yJW-Yc-iXv"/>
-                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" modalTransitionStyle="coverVertical" id="OhB-tv-a0N"/>
+                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" modalTransitionStyle="crossDissolve" id="OhB-tv-a0N"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Q9-Lk-K07" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -310,7 +314,7 @@
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write something, anything ..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="79h-68-tsH">
                                                     <rect key="frame" x="15" y="0.0" width="290" height="290"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="20"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="22"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -358,7 +362,7 @@
                                                 <button opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="QGP-tW-6DC" userLabel="Button - More">
                                                     <rect key="frame" x="185" y="257" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
+                                                    <inset key="contentEdgeInsets" minX="14" minY="12" maxX="14" maxY="12"/>
                                                     <state key="normal" title="Share" image="glyphicons_187_more.png">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -398,6 +402,7 @@
                                             <outlet property="pageContent" destination="79h-68-tsH" id="hQM-PU-ThJ"/>
                                             <outlet property="privatePost" destination="t8h-sb-7CM" id="MjO-WC-fOH"/>
                                             <outlet property="replies" destination="MPa-pL-e2g" id="XTw-PB-G5C"/>
+                                            <outlet property="replyButton" destination="Vre-EA-0LS" id="tuy-hl-5fR"/>
                                             <outlet property="timestamp" destination="ZUK-lS-LBm" id="nve-vj-wns"/>
                                         </connections>
                                     </tableViewCell>
@@ -411,11 +416,6 @@
                     </view>
                     <navigationItem key="navigationItem" title="NOTIFICATIONS" id="qMR-s9-hcQ">
                         <barButtonItem key="backBarButtonItem" title="  " id="3pH-Ij-c32"/>
-                        <barButtonItem key="leftBarButtonItem" image="glyphicons_411_twitter.png" id="LQF-KM-ilc">
-                            <connections>
-                                <action selector="twitterSwitch:" destination="QPS-zS-iNn" id="IeZ-gr-XaQ"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="glyphicons_003_user.png" id="AA4-yI-Wx0">
                             <connections>
                                 <action selector="myAction:" destination="QPS-zS-iNn" id="u0P-gk-HUS"/>
@@ -425,7 +425,7 @@
                     <connections>
                         <outlet property="TableView" destination="Y7d-lr-5Wh" id="obS-aW-dTa"/>
                         <outlet property="myButton" destination="AA4-yI-Wx0" id="YU7-7V-eBW"/>
-                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" modalTransitionStyle="partialCurl" id="Ty9-RM-kub"/>
+                        <segue destination="8di-gF-XD9" kind="modal" identifier="share" modalTransitionStyle="crossDissolve" id="Ty9-RM-kub"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZHy-5M-KeM" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -464,22 +464,22 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="commentCell" rowHeight="65" id="OOZ-bj-maC" customClass="CommentCell">
-                                        <rect key="frame" x="0.0" y="22" width="320" height="65"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="commentCell" rowHeight="70" id="OOZ-bj-maC" customClass="CommentCell">
+                                        <rect key="frame" x="0.0" y="22" width="320" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="OOZ-bj-maC" id="XGp-w9-gDn">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="69"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" id="MR7-SM-83Z">
-                                                    <rect key="frame" x="5" y="14" width="30" height="28"/>
+                                                    <rect key="frame" x="8" y="14" width="30" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" red="0.74857436129999999" green="0.85752166969999999" blue="0.25168225360000002" alpha="1" colorSpace="calibratedRGB"/>
                                                 </view>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="write something, anything" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="iwL-UB-QbC">
-                                                    <rect key="frame" x="45" y="-2" width="240" height="57"/>
+                                                    <rect key="frame" x="45" y="0.0" width="240" height="56"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -495,15 +495,15 @@
                                                         <action selector="likeButtonAction:" destination="Cic-4v-u7C" eventType="touchUpInside" id="QLD-hU-eI3"/>
                                                     </connections>
                                                 </button>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="+165" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lLe-Ih-UVQ">
-                                                    <rect key="frame" x="279" y="43" width="41" height="26"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="500k" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lLe-Ih-UVQ">
+                                                    <rect key="frame" x="285" y="50" width="35" height="23"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="23m" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Irn-56-gCy">
-                                                    <rect key="frame" x="249" y="43" width="32" height="26"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="25/12/16" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Irn-56-gCy">
+                                                    <rect key="frame" x="234" y="50" width="51" height="23"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="13"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -859,7 +859,6 @@
         <image name="glyphicons_187_more.png" width="22" height="6"/>
         <image name="glyphicons_203_lock.png" width="21" height="26"/>
         <image name="glyphicons_221_unshare.png" width="24" height="18"/>
-        <image name="glyphicons_411_twitter.png" width="24" height="24"/>
         <image name="icon-letter-mail-hi.png" width="600" height="429"/>
         <image name="instagram-512-2.png" width="512" height="512"/>
         <image name="more-512.png" width="512" height="512"/>
@@ -872,7 +871,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="G8Z-2i-oeg"/>
-        <segue reference="ZAK-vz-cei"/>
+        <segue reference="OhB-tv-a0N"/>
+        <segue reference="8nr-Ce-8CQ"/>
     </inferredMetricsTieBreakers>
 </document>
