@@ -95,7 +95,7 @@
     _docController.delegate=self;
     //key to open Instagram app - need to make sure docController is "strong"
     _docController.UTI = @"com.instagram.exclusivegram";
-    _docController.annotation = [NSDictionary dictionaryWithObject:@"#anonogram from Anonogram app" forKey:@"InstagramCaption"];
+    _docController.annotation = [NSDictionary dictionaryWithObject:@"#anonogram from @anonogram_app" forKey:@"InstagramCaption"];
     [_docController presentOpenInMenuFromRect:self.view.frame inView:self.view animated:YES];
 }
 

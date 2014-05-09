@@ -687,14 +687,14 @@
 }
 - (UIImage *) captureImage : (NSInteger) index {
     
-    UIView* captureView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 310, 310)];
+    UIView* captureView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"white"])
         captureView.backgroundColor = [UIColor whiteColor];
     else
         captureView.backgroundColor = [UIColor blackColor];
 
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,0 , 290, 290)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20,20 , 280, 280)];
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(185,275 , 110, 30)];
     label.textAlignment=NSTextAlignmentCenter;
     label.numberOfLines=6;
@@ -1390,8 +1390,7 @@
         isPrivateItem.tintColor=[UIColor redColor];
         UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
         label2.hidden=YES;
-        UILabel *label = (UILabel*)[self.view viewWithTag:110];        
-        //    label.alpha=1;
+        UILabel *label = (UILabel*)[self.view viewWithTag:110];
         label.hidden=NO;
         [self.view bringSubviewToFront:label];
         [UIView animateWithDuration:5

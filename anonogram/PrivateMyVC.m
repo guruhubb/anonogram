@@ -81,6 +81,8 @@
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     isPrivateOn=YES;
+    UILabel *label = (UILabel*)[self.view viewWithTag:110];
+    label.text =@"No Notifications yet\n\nMake sure access to Twitter is On\n\nYou will receive posts that mention your Twitter username";
     if (!IS_TALL_SCREEN) {
         self.TableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
@@ -536,16 +538,15 @@
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {
-    
-    UIView* captureView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 310, 310)];
+    UIView* captureView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"white"])
         captureView.backgroundColor = [UIColor whiteColor];
     else
         captureView.backgroundColor = [UIColor blackColor];
-
     
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20,20 , 280, 280)];
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(185,275 , 110, 30)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,0 , 290, 290)];
     label.font = [UIFont fontWithName:@"GillSans-Light" size:22.0];
     label.textAlignment=NSTextAlignmentCenter;
     label.numberOfLines=6;
@@ -690,8 +691,11 @@
     buttonsArray = [NSMutableArray arrayWithArray:[defaults objectForKey:@"twitterAccounts"]];
     NSPredicate *predicate ;
     if (!buttonsArray.count) {
-        self.array=nil;
+//        self.array=nil;
         [self.TableView reloadData];
+        UILabel *label = (UILabel*)[self.view viewWithTag:110];
+        label.hidden=NO;
+        [self.view bringSubviewToFront:label];
         return;
     }
     switch (buttonsArray.count) {
@@ -739,6 +743,16 @@
             //add the items to our local copy
             [self.array addObjectsFromArray:items];
             NSLog(@"array is %@",self.array);
+            if (self.array.count==0){
+                UILabel *label = (UILabel*)[self.view viewWithTag:110];
+                label.hidden=NO;
+                [self.view bringSubviewToFront:label];
+            }
+            else {
+                UILabel *label = (UILabel*)[self.view viewWithTag:110];
+                label.hidden=YES;
+            }
+                
 
             [self.TableView reloadData];
         }

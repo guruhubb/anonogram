@@ -579,16 +579,14 @@
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {
-    
-    UIView* captureView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 310, 310)];
+
+    UIView* captureView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"white"])
         captureView.backgroundColor = [UIColor whiteColor];
     else
         captureView.backgroundColor = [UIColor blackColor];
-
-    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20,20 , 280, 280)];
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(185,275 , 110, 30)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,0 , 290, 290)];
     label.font = [UIFont fontWithName:@"GillSans-Light" size:22.0];
     label.textAlignment=NSTextAlignmentCenter;
     label.numberOfLines=6;
