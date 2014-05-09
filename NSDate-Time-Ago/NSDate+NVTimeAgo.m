@@ -51,12 +51,12 @@
     
     //Should never hit this but handle the future case
     if(secondsSince < 0)
-        return @"0s";
+        return @"0s ago";
         
     
     // < 1 minute = "Just now"
     if(secondsSince < MINUTE)
-        return [NSString stringWithFormat:@"%ds",(int)secondsSince];
+        return [NSString stringWithFormat:@"%ds ago",(int)secondsSince];
     
     
     // < 1 hour = "x minutes ago"
@@ -192,9 +192,9 @@
     
     //Handle Plural
     if(minutesSince == 1)
-        return @"1m";
+        return @"1m ago";
     else
-        return [NSString stringWithFormat:@"%dm", minutesSince];
+        return [NSString stringWithFormat:@"%dm ago", minutesSince];
 }
 
 
@@ -206,9 +206,9 @@
     
     //Handle Plural
     if(hoursSince == 1)
-        return @"1h";
+        return @"1h ago";
     else
-        return [NSString stringWithFormat:@"%dh", hoursSince];
+        return [NSString stringWithFormat:@"%dh ago", hoursSince];
 }
 
 
@@ -216,11 +216,11 @@
 - (NSString *)formatAsYesterday
 {
     //Create date formatter
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     
     //Format
-    [dateFormatter setDateFormat:@"h:mm a"];
-    return @"1d";
+//    [dateFormatter setDateFormat:@"h:mm a"];
+    return @"1d ago";
 }
 
 

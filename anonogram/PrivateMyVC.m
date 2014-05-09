@@ -39,7 +39,8 @@
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
-
+@property (nonatomic, strong)   MSTable *commentTable;
+@property (nonatomic, strong)   MSTable *isLikeCommentTable;
 
 @property (strong, nonatomic) IBOutlet UITableView *TableView;
 @property (strong, nonatomic) NSMutableArray *array;
@@ -77,6 +78,8 @@
     self.table = [self.client tableWithName:@"anonogramTable"];
     self.isLikeTable = [self.client tableWithName:@"isLike"];
     self.isFlagTable = [self.client tableWithName:@"isFlag"];
+    self.commentTable = [self.client tableWithName:@"commentTable"];
+    self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     isPrivateOn=YES;
     if (!IS_TALL_SCREEN) {
         self.TableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
@@ -197,7 +200,7 @@
 //    cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
-    cell.privatePost.tag=indexPath.row;
+    cell.privatePost.tag=indexPath.row+100;
     cell.lock.tag=indexPath.row;
     cell.replyButton.tag=indexPath.row;
 
@@ -261,7 +264,7 @@
 }
 - (IBAction)lockAction:(id)sender {
     UIButton *btn = (UIButton*)sender;
-    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag];
+    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+100];
     NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
 
 //    label.alpha=1;
@@ -291,29 +294,102 @@
 }
 - (void) deleteText  {
     [self.TableView beginUpdates];
-
+    
     [Flurry logEvent:@"Delete"];
-
-    NSLog(@"delete id is %@",[[self.array objectAtIndex:flagButton] objectForKey:@"id" ]);
-
-    [self.table deleteWithId:[[self.array objectAtIndex:flagButton] objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+    
+    NSString *postId = [[self.array objectAtIndex:flagButton] objectForKey:@"id" ];
+    NSLog(@"postId is %@",postId);
+    
+    /* delete post from table */
+    
+    [self.table deleteWithId:postId completion:^(NSDictionary *item, NSError *error) {
         [self logErrorIfNotNil:error];
     }];
-    NSDictionary *item =@{@"postId" : [[self.array objectAtIndex:flagButton] objectForKey:@"id" ]};
-    [self.isLikeTable delete:item completion:^(NSDictionary *item, NSError *error) {
-        [self logErrorIfNotNil:error];
-    }];
-    [self.isFlagTable delete:item completion:^(NSDictionary *item, NSError *error) {
+    //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"postId == %@",postId];
+    
+    /* delete likes of the post from isLikeTable */
+    
+    [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"isLikeTable items for postId are %@",items);
+        
+        for (NSDictionary *dictionary in items){
+            [self.isLikeTable deleteWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+        }
         [self logErrorIfNotNil:error];
     }];
     
+    /* delete flags of the post from isFlagTable */
+    
+    [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"isFlagTable items for postId are %@",items);
+        
+        for (NSDictionary *dictionary in items){
+            [self.isFlagTable deleteWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+        }
+        [self logErrorIfNotNil:error];
+    }];
+    
+    /* delete comments of the post from commentTable */
+    
+    [self.commentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"commentTable items for postId are %@",items);
+        
+        for (NSDictionary *dictionary in items){
+            NSString *commentId = [dictionary objectForKey:@"id" ];
+            [self.commentTable deleteWithId:commentId completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+            NSPredicate *predicateComment = [NSPredicate predicateWithFormat:@"commentId == %@",commentId];
+            [self.isLikeCommentTable readWithPredicate:predicateComment completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+                NSLog(@"isLikeCommentTable items for postId are %@",items);
+                
+                for (NSDictionary *dictionary in items){
+                    [self.isLikeCommentTable deleteWithId:[dictionary objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
+                }
+                [self logErrorIfNotNil:error];
+            }];
+        }
+        [self logErrorIfNotNil:error];
+    }];
     
     [self.array removeObjectAtIndex:flagButton];
     [self.TableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
-
+    
     [self.TableView endUpdates];
     [self.TableView reloadData];
 }
+//- (void) deleteText  {
+//    [self.TableView beginUpdates];
+//
+//    [Flurry logEvent:@"Delete"];
+//
+//    NSLog(@"delete id is %@",[[self.array objectAtIndex:flagButton] objectForKey:@"id" ]);
+//
+//    [self.table deleteWithId:[[self.array objectAtIndex:flagButton] objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+//        [self logErrorIfNotNil:error];
+//    }];
+//    NSDictionary *item =@{@"postId" : [[self.array objectAtIndex:flagButton] objectForKey:@"id" ]};
+//    [self.isLikeTable delete:item completion:^(NSDictionary *item, NSError *error) {
+//        [self logErrorIfNotNil:error];
+//    }];
+//    [self.isFlagTable delete:item completion:^(NSDictionary *item, NSError *error) {
+//        [self logErrorIfNotNil:error];
+//    }];
+//    
+//    
+//    [self.array removeObjectAtIndex:flagButton];
+//    [self.TableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
+//
+//    [self.TableView endUpdates];
+//    [self.TableView reloadData];
+//}
 
 - (IBAction)likeAction:(id)sender {
     [Flurry logEvent:@"Like"];
