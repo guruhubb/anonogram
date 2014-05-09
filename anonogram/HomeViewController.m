@@ -29,6 +29,7 @@
     BOOL recordingHashTag;
     BOOL isHashTag;
     BOOL isComment;
+    BOOL isRed;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
@@ -164,6 +165,9 @@
     txtChat.delegate=self;
     txtChat.hidden=YES;
     txtChat.font=[UIFont systemFontOfSize:15];
+//    txtChat.textColor=[UIColor lightGrayColor];
+    txtChat.tintColor=[UIColor lightGrayColor];
+//    [[UITextView appearance] setTintColor:[UIColor lightGrayColor]];
 //    txtChat.text=@"placeholder";
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
@@ -185,8 +189,8 @@
     [self createInputAccessoryView];
 //    [self createInputAccessoryViewForSearch];
     [self.view addSubview:txtChat];
-    [self.view addSubview:_inputAccessoryView];
-    _inputAccessoryView.hidden=YES;
+//    [self.view addSubview:_inputAccessoryView];
+//    _inputAccessoryView.hidden=YES;
 //    _searchBarButton.hidden=YES;
 //    _searchBarButton.placeholder = @"Search #hashtag, @username";
 //    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
@@ -248,11 +252,13 @@
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
     NSLog(@"dictionary is %@",dictionary);
     cell.pageContent.text = [dictionary objectForKey:@"text"];
-    cell.likeCount.text = [dictionary objectForKey:@"likes"];
-        if ([dictionary objectForKey:@"replies"]!=(id)[NSNull null])
+        NSString *string = @"+";
+        cell.likeCount.text = [string stringByAppendingString: [dictionary objectForKey:@"likes"]];
+//    cell.likeCount.text = [dictionary objectForKey:@"likes"];
+//        if ([dictionary objectForKey:@"replies"]!=(id)[NSNull null])
             cell.replies.text = [dictionary objectForKey:@"replies"];
-        else
-            cell.replies.text = @"0";
+//        else
+//            cell.replies.text = @"0";
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
     if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
         cell.lock.hidden=NO;
@@ -265,7 +271,18 @@
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
     cell.replyButton.tag=indexPath.row;
-    
+//         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+//        [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//            if (items.count) {
+//                cell.likeCount.textColor=[UIColor redColor];
+//            }
+//            else {
+//                cell.likeCount.textColor=[UIColor lightGrayColor];
+//                
+//            }
+////            [self.theTableView reloadData];
+//        }];
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //
 //    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
@@ -303,6 +320,47 @@
         NSString *newString = [txtChat.text stringByReplacingCharactersInRange:NSMakeRange(startParse, [txtChat.text length] - startParse) withString:cell.textLabel.text];
         txtChat.text = newString;
         theTable.hidden=YES;
+    }
+    else {
+        NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
+        
+        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+        [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            if (items.count) {
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                isRed = NO;
+                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.theTableView reloadData];
+                
+            }
+            else {
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                isRed = YES;
+                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+                NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+                
+                [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.theTableView reloadData];
+            }
+        }];
+        [tableView reloadData];
+
+
     }
     [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
@@ -1188,8 +1246,8 @@
 -(void)createInputAccessoryView {
     
     UIToolbar *inputAccessoryView1 = [[UIToolbar alloc] init];
-    inputAccessoryView1.barTintColor=[UIColor lightGrayColor];
-    [inputAccessoryView1 sizeToFit];
+//    inputAccessoryView1.barTintColor=[UIColor whiteColor];
+//    [inputAccessoryView1 sizeToFit];
     
     inputAccessoryView1.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
     UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
@@ -1224,7 +1282,7 @@
     if (isPrivateOn){
         isPrivateOn=NO;
         isPrivateItem.title=@"Private Off";
-        isPrivateItem.tintColor=[UIColor whiteColor];
+        isPrivateItem.tintColor=[UIColor lightGrayColor];
     }
     else {
         isPrivateOn=YES;

@@ -446,13 +446,28 @@
     unsigned colorInt = 0;
     [[NSScanner scannerWithString:tempHex] scanHexInt:&colorInt];
     cell.colorView.backgroundColor = UIColorFromRGB(colorInt);
-    cell.colorView.layer.cornerRadius=5;
+    cell.colorView.layer.cornerRadius=15;
     cell.colorView.layer.masksToBounds=YES;
     cell.replyLabel.text = [dictionary objectForKey:@"reply"];
-    cell.numberOfLikesLabel.text = [dictionary objectForKey:@"likes"];
+    NSString *string = @"+";
+    cell.numberOfLikesLabel.text = [string stringByAppendingString: [dictionary objectForKey:@"likes"]];
     cell.timestampLabel.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
     cell.likeButton.tag = indexPath.row;
     indexPathRow=indexPath;
+    
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && commentId == %@",userId,[dictionary objectForKey:@"id" ]];
+//    [self.isLikeCommentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        if (items.count) {
+//            
+//            cell.numberOfLikesLabel.textColor=[UIColor redColor];
+//        }
+//        else {
+//            cell.numberOfLikesLabel.textColor=[UIColor lightGrayColor];
+//
+//        }
+////        [self.chat_table reloadData];
+//    }];
 //        if (cell == nil)
 //        {
 //            cell = [[CommentVC alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] ;
@@ -629,7 +644,46 @@
 //    pvc.userId = userId;
 //    
 //    [self.navigationController pushViewController:pvc animated:YES];
+    [Flurry logEvent:@"LikeComment"];
+//    UIButton *btnPressLike = (UIButton*)sender;
+    NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
+    
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && commentId == %@",userId,[dictionary objectForKey:@"id" ]];
+    [self.isLikeCommentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        if (items.count) {
+            NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+            [dictionary setValue:likesCount forKey:@"likes"];
+            
+            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+            [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+            [self.isLikeCommentTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+            [self.chat_table reloadData];
+        }
+        else {
+            NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
+            [dictionary setValue:likesCount forKey:@"likes"];
+            
+            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+            [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+            NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+            NSDictionary *item1 =@{@"commentId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+            
+            [self.isLikeCommentTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+            [self.chat_table reloadData];
+        }
+    }];
    [ tableView deselectRowAtIndexPath:indexPath animated:NO];
+    [self.chat_table reloadData];
+
 //    }
 }
 
@@ -640,21 +694,21 @@
     // Return YES if you want the specified item to be editable.
     
     if (self.array.count > indexPath.row ) {
-        
+        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 
+        if ([userId isEqualToString:[self.array[indexPath.row] objectForKey:@"userId"]] ){
+        
         
 //        NSString *me = [defaults objectForKey:@"me"];
 //        NSString *userId = [[self.array objectAtIndex:indexPath.row] objectForKey:@"userId"];
-        NSString *userId = [self.array objectAtIndex:indexPath.row] ;
 
-        NSLog(@"userId is %@",userId);
-    
+            NSLog(@"delete allowed");
 //        if ([userId isEqualToString:me] || myPhotoBook){
             return YES;
-//        }
-//        else {
-//            return NO;
-//        }
+        }
+        else {
+            return NO;
+        }
     }
     else return NO;
 }
@@ -1038,19 +1092,20 @@
 -(void)createInputAccessoryView {
     
     _inputAccessoryView = [[UIToolbar alloc] init];
-    [_inputAccessoryView sizeToFit];
-    
+//    [_inputAccessoryView sizeToFit];
+//    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
+
     _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
     
 
-    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"cancel"
+    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
                                                                    style:UIBarButtonItemStyleBordered
                                                                   target:self action:@selector(cancelKeyboard)];
     //Use this to put space in between your toolbox buttons
     UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                                                               target:nil
                                                                               action:nil];
-    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"done"
+    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
                                                                  style:UIBarButtonItemStyleDone
                                                                 target:self action:@selector(doneKeyboard)];
     

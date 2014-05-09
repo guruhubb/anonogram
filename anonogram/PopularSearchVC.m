@@ -161,6 +161,7 @@
     [self createInputAccessoryViewForSearch];
     _searchBarButton.hidden=YES;
     _searchBarButton.placeholder = @"Type anything";
+    _searchBarButton.tintColor=[UIColor lightGrayColor];
     [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [self.view addSubview:_inputAccessoryView];
     _inputAccessoryView.hidden=YES;
@@ -210,7 +211,9 @@
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
     NSLog(@"dictionary is %@",dictionary);
     cell.pageContent.text = [dictionary objectForKey:@"text"];
-    cell.likeCount.text = [dictionary objectForKey:@"likes"];
+    NSString *string = @"+";
+    cell.likeCount.text = [string stringByAppendingString: [dictionary objectForKey:@"likes"]];
+//    cell.likeCount.text = [dictionary objectForKey:@"likes"];
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
     cell.replies.text = [dictionary objectForKey:@"replies"];
     cell.flag.tag=indexPath.row;
@@ -220,6 +223,48 @@
     indexPathRow=indexPath;
     
     return cell;
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+
+        NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
+        
+        NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+        [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            if (items.count) {
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                
+                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.popularTableView reloadData];
+                
+            }
+            else {
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                
+                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+                NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+                
+                [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.popularTableView reloadData];
+            }
+        }];
+        
+//    }
+//    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {
@@ -711,8 +756,8 @@
 -(void)createInputAccessoryView {
     
     UIToolbar *inputAccessoryView1 = [[UIToolbar alloc] init];
-    inputAccessoryView1.barTintColor=[UIColor lightGrayColor];
-    [inputAccessoryView1 sizeToFit];
+//    inputAccessoryView1.barTintColor=[UIColor lightGrayColor];
+//    [inputAccessoryView1 sizeToFit];
     
     inputAccessoryView1.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
     UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
@@ -748,7 +793,7 @@
     
     _inputAccessoryView = [[UIToolbar alloc] init];
     _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
-    [_inputAccessoryView sizeToFit];
+//    [_inputAccessoryView sizeToFit];
     
     _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
     UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"

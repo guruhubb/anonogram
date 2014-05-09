@@ -34,7 +34,6 @@
 		CCD9545819074299005EFE06 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CCD9545619074299005EFE06 /* InfoPlist.strings */; };
 		CCD9545A19074299005EFE06 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD9545919074299005EFE06 /* main.m */; };
 		CCD9545E19074299005EFE06 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD9545D19074299005EFE06 /* AppDelegate.m */; };
-		CCD9546419074299005EFE06 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD9546319074299005EFE06 /* ViewController.m */; };
 		CCD9546619074299005EFE06 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CCD9546519074299005EFE06 /* Images.xcassets */; };
 		CCD9546D19074299005EFE06 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9546C19074299005EFE06 /* XCTest.framework */; };
 		CCD9546E19074299005EFE06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCD9544D19074298005EFE06 /* Foundation.framework */; };
@@ -145,8 +144,6 @@
 		CCD9545B19074299005EFE06 /* anonogram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "anonogram-Prefix.pch"; sourceTree = "<group>"; };
 		CCD9545C19074299005EFE06 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CCD9545D19074299005EFE06 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		CCD9546219074299005EFE06 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		CCD9546319074299005EFE06 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		CCD9546519074299005EFE06 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		CCD9546B19074299005EFE06 /* anonogramTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = anonogramTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCD9546C19074299005EFE06 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -369,8 +366,6 @@
 				CCD954AE19074BEA005EFE06 /* SettingVC.m */,
 				CCD954AF19074BEA005EFE06 /* shareViewController.h */,
 				CCD954B019074BEA005EFE06 /* shareViewController.m */,
-				CCD9546219074299005EFE06 /* ViewController.h */,
-				CCD9546319074299005EFE06 /* ViewController.m */,
 				CCD9546519074299005EFE06 /* Images.xcassets */,
 				CCD9545419074299005EFE06 /* Supporting Files */,
 			);
@@ -641,7 +636,6 @@
 			files = (
 				CCD954B319074BEA005EFE06 /* SettingVC.m in Sources */,
 				CCD955201908B9FE005EFE06 /* HomeViewController.m in Sources */,
-				CCD9546419074299005EFE06 /* ViewController.m in Sources */,
 				CC94A1C41919BF4100C0F140 /* CommentCell.m in Sources */,
 				CCD954B419074BEA005EFE06 /* shareViewController.m in Sources */,
 				CCD9545E19074299005EFE06 /* AppDelegate.m in Sources */,
