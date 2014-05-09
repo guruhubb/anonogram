@@ -5,7 +5,7 @@
 //  Created by Saswata Basu on 3/21/14.
 //  Copyright (c) 2014 Saswata Basu. All rights reserved.
 //
-
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
 #define kLimit 20
@@ -105,6 +105,7 @@
     [self getUUID];
     [self getData];
     [self TwitterSwitch];
+    [self composeAction:nil];
 }
 
 #pragma mark - Survey
@@ -166,22 +167,22 @@
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
     txtChat.delegate=self;
     txtChat.hidden=YES;
-    txtChat.font=[UIFont systemFontOfSize:15];
+    txtChat.font=[UIFont fontWithName:@"GillSans-Light" size:16];
 //    txtChat.textColor=[UIColor lightGrayColor];
-    txtChat.tintColor=[UIColor lightGrayColor];
+    txtChat.tintColor=[UIColor darkGrayColor];
 //    [[UITextView appearance] setTintColor:[UIColor lightGrayColor]];
 //    txtChat.text=@"placeholder";
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
-    label.textColor=[UIColor lightGrayColor];
-    label.font = [UIFont systemFontOfSize:15];
+    label.textColor=[UIColor darkGrayColor];
+    label.font = [UIFont fontWithName:@"GillSans-Light" size:16];
     label.text= @"140";
     label.tag =100;
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
-    label2.textColor=[UIColor lightGrayColor];
-    label2.font = [UIFont systemFontOfSize:17];
+    label2.textColor=[UIColor darkGrayColor];
+    label2.font = [UIFont fontWithName:@"GillSans-Light" size:16];
     label2.textAlignment=NSTextAlignmentCenter;
-    label2.text= @"To post privately, tap Private Off, mention Twitter username(s) in the message";
+    label2.text= @"Share a thought with anyone\n\nOr send a Private message - mention their Twitter username\n\nNo contacts access. No signups. No location tracking. Truly anonymous";
     label2.numberOfLines=14;
     label2.tag =105;
     [txtChat addSubview:label];
@@ -267,7 +268,18 @@
     }
     else
         cell.lock.hidden=YES;
-    cell.privatePost.tag=indexPath.row+100;
+//        NSMutableString *tempHex=[[NSMutableString alloc] init];
+//        [tempHex appendString:[dictionary objectForKey:@"color"]];
+//        unsigned colorInt = 0;
+//        [[NSScanner scannerWithString:tempHex] scanHexInt:&colorInt];
+//        cell.colorView.backgroundColor = UIColorFromRGB(colorInt);
+//        cell.colorView.layer.cornerRadius=15;
+//        cell.colorView.layer.masksToBounds=YES;
+
+//    if (indexPath.row%2)
+//        cell.contentView.backgroundColor =[self pastelColorCode:[UIColor whiteColor]];
+//        cell.contentView.backgroundColor = [UIColor blueColor];
+    cell.privatePost.tag=indexPath.row+1000;
     cell.lock.tag=indexPath.row;
 //    cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
@@ -330,25 +342,45 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
+                NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
+                NSLog(@"likeCountis %d",likeCount);
+                if (likeCount>0){
                 NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
                 [dictionary setValue:likesCount forKey:@"likes"];
-                isRed = NO;
-                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                
+                [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                    NSLog(@"item is %@",item);
+                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
+                    NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                    
+                    [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
                     [self logErrorIfNotNil:error];
                 }];
                 [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
                 }];
                 [self.theTableView reloadData];
+                   }
                 
             }
             else {
                 NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
                 [dictionary setValue:likesCount forKey:@"likes"];
-                isRed = YES;
-                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                
+                //            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                //            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                //                [self logErrorIfNotNil:error];
+                //            }];
+                [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                    NSLog(@"item is %@",item);
+                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
+                    NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                    
+                    [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
                     [self logErrorIfNotNil:error];
                 }];
                 NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -376,7 +408,7 @@
 - (IBAction)lockAction:(id)sender {
 
     UIButton *btn = (UIButton*)sender;
-    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+100];
+    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+1000];
     NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
     
 //    label.alpha=1;
@@ -403,19 +435,19 @@
     [refreshControl endRefreshing];
 }
 
-- (void) storeData {
-    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{ @"text" : @"Awesome item" };
-    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
-    }];
-    
-}
+//- (void) storeData {
+//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+//    NSDictionary *item = @{ @"text" : @"Awesome item" };
+//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+//    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+//        if (error) {
+//            NSLog(@"Error: %@", error);
+//        } else {
+//            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+//        }
+//    }];
+//    
+//}
 
 #pragma mark - Delete,Like,Flag,Share
 
@@ -495,6 +527,7 @@
 
 - (IBAction)likeAction:(id)sender {
     [Flurry logEvent:@"Like"];
+    
     UIButton *btnPressLike = (UIButton*)sender;
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
 
@@ -502,30 +535,50 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
     [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         if (items.count) {
-            NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
-            [dictionary setValue:likesCount forKey:@"likes"];
+            NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
+            NSLog(@"likeCountis %d",likeCount);
+            if (likeCount>0){
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                
+                [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                    NSLog(@"item is %@",item);
+                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
+                    NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                    
+                    [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.theTableView reloadData];
+            }
             
-            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
-                [self logErrorIfNotNil:error];
-            }]; 
-            [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
-                [self logErrorIfNotNil:error];
-            }];
-            [self.theTableView reloadData];
-
         }
         else {
             NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
             [dictionary setValue:likesCount forKey:@"likes"];
-
-            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+            
+            //            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+            //            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+            //                [self logErrorIfNotNil:error];
+            //            }];
+            [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                NSLog(@"item is %@",item);
+                NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
+                NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                
+                [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
                 [self logErrorIfNotNil:error];
             }];
             NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
             NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
-
+            
             [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
@@ -641,11 +694,11 @@
         captureView.backgroundColor = [UIColor blackColor];
 
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,60 , 290, 180)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,0 , 290, 290)];
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(185,275 , 110, 30)];
     label.textAlignment=NSTextAlignmentCenter;
     label.numberOfLines=6;
-    label.font = [UIFont fontWithName:@"GillSans-Light" size:20.0];
+    label.font = [UIFont fontWithName:@"GillSans-Light" size:22.0];
     label.text = [self.array[index] objectForKey:@"text"];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"white"])
         label.textColor = [UIColor blackColor];
@@ -821,6 +874,29 @@
         }
     }];
 }
+-(UIColor*) pastelColorCode : (UIColor *) mix {
+    CGFloat red = ( arc4random() % 256 / 256.0 );
+    CGFloat green = ( arc4random() % 256 / 256.0 );
+    CGFloat blue = ( arc4random() % 256 / 256.0 );
+    const CGFloat *components = CGColorGetComponents(mix.CGColor);
+    
+    // mix the color
+    if (mix != NULL) {
+        red = (red + components[0]) / 2;
+        green = (green + components[1]) / 2;
+        blue = (blue + components[2]) / 2;
+    }
+    UIColor *color = [UIColor colorWithRed:red green:green blue:blue alpha:components[3]];
+    return color;
+}
+- (NSString *)hexStringForColor:(UIColor *)color {
+    const CGFloat *components = CGColorGetComponents(color.CGColor);
+    CGFloat r = components[0];
+    CGFloat g = components[1];
+    CGFloat b = components[2];
+    NSString *hexString=[NSString stringWithFormat:@"%02X%02X%02X", (int)(r * 255), (int)(g * 255), (int)(b * 255)];
+    return hexString;
+}
 -(void)postComment
 {
     
@@ -856,31 +932,17 @@
         }
     }
     NSLog(@"hashtagarray is %@",hashTagArray);
-    //    NSString *param = nil;
-    //    NSRange start = [txtChat.text rangeOfString:@"#"];
-    //    if (start.location != NSNotFound)
-    //    {
-    //        param = [txtChat.text substringFromIndex:start.location + start.length];
-    //        NSRange end = [param rangeOfString:@" "];
-    //        if (end.location != NSNotFound)
-    //        {
-    //            param = [param substringToIndex:end.location];
-    //        }
-    //    }
-    //
-    //    for (NSString *hashTag in hashTagArray ){
-    //        if ([hashTag rangeOfString:hash options:NSCaseInsensitiveSearch].location != NSNotFound) {
-    //            [filterHashTagArray addObject:hashTag];
-    //        }
-    //    }
-    
-    //    [hashTagArray addObject:param];
-    //    if ([txtChat.text rangeOfString:@"@" options:NSCaseInsensitiveSearch].length)
-    //        isPrivateOn = YES;
-    //    else
-    //        isPrivateOn = NO;
-    //
-    //    txtChat.text=[txtChat.text stringByReplacingOccurrencesOfString:@"@isprivate" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [txtChat.text length])];
+//    UIColor *color;
+//    NSString *colorString = [defaults objectForKey:@"color"];
+//    if (!colorString){
+//        color = [self pastelColorCode:[UIColor whiteColor]];
+//        //    color = [self colorCode];
+//        
+//        colorString = [self hexStringForColor:color];
+//        NSLog(@"color is %@",colorString);
+//        [defaults setObject:colorString forKey:@"color"];
+//    }
+
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
@@ -934,7 +996,7 @@
 -(void)populateSheetAndShow:(NSArray *) accountsArray {
     if(accountsArray.count==0){
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"You need to grant access to receive private messages\nGo to Settings->Twitter. Scroll down and turn Anonogram on"
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"Grant access to receive public or private mentions\nGo to Settings->Twitter. Scroll down and turn Anonogram on"
                                                        delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alert show];
         return;
@@ -1295,7 +1357,7 @@
     UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                                                               target:nil
                                                                               action:nil];
-    isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"Private Off"
+    isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"Public"
                                                                       style:UIBarButtonItemStyleBordered
                                                                      target:self action:@selector(addText)];
 //    isPrivateItem.tag=200;
@@ -1319,13 +1381,28 @@
     NSLog(@"isPrivateItem title is %@",isPrivateItem.title);
     if (isPrivateOn){
         isPrivateOn=NO;
-        isPrivateItem.title=@"Private Off";
+        isPrivateItem.title=@"Public";
         isPrivateItem.tintColor=[UIColor lightGrayColor];
     }
     else {
         isPrivateOn=YES;
-        isPrivateItem.title=@"Private On";
+        isPrivateItem.title=@"Private";
         isPrivateItem.tintColor=[UIColor redColor];
+        UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+        label2.hidden=YES;
+        UILabel *label = (UILabel*)[self.view viewWithTag:110];        
+        //    label.alpha=1;
+        label.hidden=NO;
+        [self.view bringSubviewToFront:label];
+        [UIView animateWithDuration:5
+                              delay:0.0
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^{
+                             label.alpha=0.0; }
+                         completion:^(BOOL finished){
+                             label.alpha=1.0;
+                             label.hidden=YES;
+                         }];
 
     }
     

@@ -25,7 +25,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write something, anything ..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Qvh-oD-u2l">
-                                                    <rect key="frame" x="15" y="0.0" width="290" height="290"/>
+                                                    <rect key="frame" x="15" y="0.0" width="290" height="275"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="22"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -125,6 +125,12 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="a6b-xN-ANP"/>
                                 </connections>
                             </tableView>
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="110" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is a private post - only you and Twitter mentions can view it" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lce-mV-STL">
+                                <rect key="frame" x="15" y="114" width="290" height="36"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                     </view>
                     <navigationItem key="navigationItem" title="ANONOGRAM" id="ZwE-XD-9MZ">
@@ -882,7 +888,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ty9-RM-kub"/>
-        <segue reference="8lB-T6-BcC"/>
+        <segue reference="G8Z-2i-oeg"/>
+        <segue reference="ZAK-vz-cei"/>
     </inferredMetricsTieBreakers>
 </document>

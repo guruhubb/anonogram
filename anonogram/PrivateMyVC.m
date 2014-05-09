@@ -200,7 +200,7 @@
 //    cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
-    cell.privatePost.tag=indexPath.row+100;
+    cell.privatePost.tag=indexPath.row+1000;
     cell.lock.tag=indexPath.row;
     cell.replyButton.tag=indexPath.row;
 
@@ -228,25 +228,45 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
-                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
-                [dictionary setValue:likesCount forKey:@"likes"];
-                
-                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
-                    [self logErrorIfNotNil:error];
-                }];
-                [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
-                    [self logErrorIfNotNil:error];
-                }];
-                [self.TableView reloadData];
+                NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
+                NSLog(@"likeCountis %d",likeCount);
+                if (likeCount>0){
+                    NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+                    [dictionary setValue:likesCount forKey:@"likes"];
+                    
+                    [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                        NSLog(@"item is %@",item);
+                        NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
+                        NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                        
+                        [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                            [self logErrorIfNotNil:error];
+                        }];
+                        [self logErrorIfNotNil:error];
+                    }];
+                    [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
+                    [self.TableView reloadData];
+                }
                 
             }
             else {
                 NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
                 [dictionary setValue:likesCount forKey:@"likes"];
                 
-                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-                [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                //            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+                //            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+                //                [self logErrorIfNotNil:error];
+                //            }];
+                [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                    NSLog(@"item is %@",item);
+                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
+                    NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                    
+                    [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
                     [self logErrorIfNotNil:error];
                 }];
                 NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -264,7 +284,7 @@
 }
 - (IBAction)lockAction:(id)sender {
     UIButton *btn = (UIButton*)sender;
-    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+100];
+    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+1000];
     NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
 
 //    label.alpha=1;
@@ -400,29 +420,50 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
     [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         if (items.count) {
-            NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
-            [dictionary setValue:likesCount forKey:@"likes"];
+            NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
+            NSLog(@"likeCountis %d",likeCount);
+            if (likeCount>0){
+                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+                [dictionary setValue:likesCount forKey:@"likes"];
+                
+                [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                    NSLog(@"item is %@",item);
+                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
+                    NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                    
+                    [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                [self.TableView reloadData];
+            }
             
-            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
-                [self logErrorIfNotNil:error];
-            }]; 
-            [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
-                [self logErrorIfNotNil:error];
-            }];
-            [self.TableView reloadData];
         }
         else {
             NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
             [dictionary setValue:likesCount forKey:@"likes"];
-
-            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+            
+            //            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+            //            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+            //                [self logErrorIfNotNil:error];
+            //            }];
+            [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                NSLog(@"item is %@",item);
+                NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
+                NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+                
+                [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
                 [self logErrorIfNotNil:error];
             }];
             NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
             NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
-
+            
             [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
@@ -503,11 +544,11 @@
         captureView.backgroundColor = [UIColor blackColor];
 
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,60 , 290, 180)];
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(185,275 , 110, 30)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(15,0 , 290, 290)];
+    label.font = [UIFont fontWithName:@"GillSans-Light" size:22.0];
     label.textAlignment=NSTextAlignmentCenter;
     label.numberOfLines=6;
-    label.font = [UIFont fontWithName:@"GillSans-Light" size:20.0];
     label.text = [self.array[index] objectForKey:@"text"];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"white"])
         label.textColor = [UIColor blackColor];

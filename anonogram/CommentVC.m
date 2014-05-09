@@ -722,14 +722,28 @@
         [Flurry logEvent:@"Delete Comment"];
         //add code here for when you hit delete
 
-        NSString *string = [[self.array objectAtIndex:indexPath.row] objectForKey:@"id" ];
-        [self.commentTable deleteWithId:string completion:^(NSDictionary *item, NSError *error) {
+        NSString *commentId = [[self.array objectAtIndex:indexPath.row] objectForKey:@"id" ];
+        [self.commentTable deleteWithId:commentId completion:^(NSDictionary *item, NSError *error) {
             [self logErrorIfNotNil:error];
         }];
-        NSDictionary *item =@{@"commentId" :string};
-        [self.isLikeCommentTable delete:item completion:^(NSDictionary *item, NSError *error) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"commentId == %@",commentId];
+        
+        /* delete likes of the post from isLikeTable */
+        
+        [self.isLikeCommentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            NSLog(@"isLikeTable items for postId are %@",items);
+            
+            for (NSDictionary *dictionary in items){
+                [self.isLikeCommentTable deleteWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+            }
             [self logErrorIfNotNil:error];
         }];
+//        NSDictionary *item =@{@"commentId" :string};
+//        [self.isLikeCommentTable delete:item completion:^(NSDictionary *item, NSError *error) {
+//            [self logErrorIfNotNil:error];
+//        }];
         NSString *string1 = [NSString stringWithFormat:@"%d",self.array.count-1 ];
         NSDictionary *item1 =@{@"id" : self.postId, @"replies": string1};
         [self.table update:item1 completion:^(NSDictionary *item, NSError *error) {
@@ -833,7 +847,7 @@
     NSString *colorString = [defaults objectForKey:@"color"];
     if (!colorString){
         color = [self pastelColorCode:[UIColor whiteColor]];
-    color = [self colorCode];
+//    color = [self colorCode];
 
         colorString = [self hexStringForColor:color];
         NSLog(@"color is %@",colorString);
@@ -848,17 +862,28 @@
 //    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
 
     [self.commentTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
+//        if (error) {
+//            NSLog(@"Error: %@", error);
             [self logErrorIfNotNil:error];
-        } else {
-            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
-            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
-            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+//        } else {
+//            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
+//            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
+            [self.table readWithId:self.postId completion:^(NSDictionary *item, NSError *error) {
+                NSLog(@"item is %@",item);
+                NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]+1 ];
+                NSDictionary *itemReplies =@{@"id" : [item objectForKey:@"id" ], @"replies": string};
+                
+                [self.table update:itemReplies   completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
                 [self logErrorIfNotNil:error];
             }];
-            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
+
+//            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+//                [self logErrorIfNotNil:error];
+//            }];
+//            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+//        }
         [self refreshView];
     }];
 }
