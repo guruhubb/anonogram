@@ -11,7 +11,7 @@
 #import <WindowsAzureMobileServices/WindowsAzureMobileServices.h>
 
 
-@interface PopularSearchVC : UIViewController < UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
+@interface PopularSearchVC : UIViewController < UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UISearchBarDelegate>
 
 
 

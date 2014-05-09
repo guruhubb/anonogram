@@ -462,7 +462,7 @@
                                 </items>
                             </toolbar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="70" sectionHeaderHeight="22" sectionFooterHeight="22" id="hGy-JC-YnX">
-                                <rect key="frame" x="0.0" y="64" width="320" height="460"/>
+                                <rect key="frame" x="0.0" y="134" width="320" height="390"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -527,6 +527,14 @@
                                     <outlet property="delegate" destination="Cic-4v-u7C" id="Oz3-TH-OFG"/>
                                 </connections>
                             </tableView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="blN-By-a53">
+                                <rect key="frame" x="0.0" y="64" width="320" height="70"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
@@ -544,6 +552,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="chat_table" destination="hGy-JC-YnX" id="fCG-ya-dOV"/>
+                        <outlet property="replyTitle" destination="blN-By-a53" id="Ffd-IW-98l"/>
                         <outlet property="textToolBar" destination="wrA-24-JBg" id="P9z-Fq-3Hh"/>
                         <outlet property="txtChat" destination="ngt-zI-uks" id="59m-ue-4eJ"/>
                     </connections>
@@ -873,7 +882,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="OhB-tv-a0N"/>
-        <segue reference="8nr-Ce-8CQ"/>
+        <segue reference="G8Z-2i-oeg"/>
+        <segue reference="ZAK-vz-cei"/>
     </inferredMetricsTieBreakers>
 </document>

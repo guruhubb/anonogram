@@ -409,12 +409,13 @@
         commentedPost=btn.tag;
         isComment = YES;
         NSDictionary *dictionary = self.array[commentedPost];
-        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
+//        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
         CommentVC *vc = [[CommentVC alloc] init];
         vc=(CommentVC*)[[segue destinationViewController]topViewController];
-        vc.postId =string;
+        vc.postId =[dictionary objectForKey:@"id"];
         vc.replies = [dictionary objectForKey:@"replies"];
-        
+        vc.replyTitleString=[dictionary objectForKey:@"text"];
+
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {

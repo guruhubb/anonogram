@@ -30,7 +30,7 @@
     NSInteger flagButton;
     BOOL isComment;
     NSInteger commentedPost;
-    UITextView        *txtChat;
+    UITextView *txtChat;
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
     NSTimeInterval startTime ;
@@ -117,6 +117,28 @@
     self.navigationItem.rightBarButtonItem = popularButton;
     
 }
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+    
+    if(!([[_searchBarButton.text stringByTrimmingCharactersInSet: set] length] == 0) )
+    {
+        [Flurry logEvent:@"Search"];
+        [defaults setBool:YES forKey:@"searchOn"];
+        self.array = [[NSMutableArray alloc] init];
+        
+        [_searchBarButton resignFirstResponder];
+        _searchBarButton.hidden=YES;
+        _inputAccessoryView.hidden=YES;
+        
+        NSLog(@"_searchBarButton.text whitespace length again is %d",[[_searchBarButton.text stringByTrimmingCharactersInSet: set] length]);
+        NSString *string  =[NSString stringWithFormat:@"%@", _searchBarButton.text ];
+        //        _pageTitles[currentIndex]= string;
+        self.navigationItem.title= [NSString stringWithFormat:@"%@",string];
+        //        [self openSearch];
+        [defaults setObject:string forKey:@"search"];
+        [self getDataSearch];
+    }
+}// called when keyboard search button pressed
 - (void)searchBarClicked
 {
     NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
@@ -159,6 +181,7 @@
 -(void) setup {
 
     [self createInputAccessoryViewForSearch];
+    _searchBarButton.delegate=self;
     _searchBarButton.hidden=YES;
     _searchBarButton.placeholder = @"Type anything";
     _searchBarButton.tintColor=[UIColor lightGrayColor];
@@ -428,11 +451,12 @@
         commentedPost=btn.tag;
         isComment = YES;
         NSDictionary *dictionary = self.array[commentedPost];
-        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
+//        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
         CommentVC *vc = [[CommentVC alloc] init];
         vc=(CommentVC*)[[segue destinationViewController]topViewController];
-        vc.postId =string;
+        vc.postId =[dictionary objectForKey:@"id"];
         vc.replies = [dictionary objectForKey:@"replies"];
+         vc.replyTitleString=[dictionary objectForKey:@"text"];
         
     }
 }
@@ -610,19 +634,19 @@
     [refreshControl endRefreshing];
 }
 
-- (void) storeData {
-    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{ @"text" : @"Awesome item" };
-    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
-    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
-        } else {
-            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
-    }];
-    
-}
+//- (void) storeData {
+//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
+//    NSDictionary *item = @{ @"text" : @"Awesome item" };
+//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
+//    [itemTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+//        if (error) {
+//            NSLog(@"Error: %@", error);
+//        } else {
+//            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+//        }
+//    }];
+//    
+//}
 
 - (void) getData {
     NSLog(@"getting data...");
@@ -662,132 +686,138 @@
         }
     }];
 }
-- (void)TwitterSwitch {
-    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
-    
-    // Create an account type that ensures Twitter accounts are retrieved.
-    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
-    
-    
-    // Request access from the user to use their Twitter accounts.
-    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
-//    [accountStore requestAccessToAccountsWithType:accountType withCompletionHandler:^(BOOL granted, NSError *error) {
-        
-        
-        // Get the list of Twitter accounts.
-        NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
-        
-        NSLog(@"%@", accountsArray);
-        [self performSelectorOnMainThread:@selector(populateSheetAndShow:) withObject:accountsArray waitUntilDone:NO];
-    }];
-}
-
--(void)populateSheetAndShow:(NSArray *) accountsArray {
-    buttonsArray = [NSMutableArray array];
-    [accountsArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        
-        [buttonsArray addObject:((ACAccount*)obj).username];
-    }];
-    
-    
-    NSLog(@"%@", buttonsArray);
-    
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    actionSheet.tag=2;
-    for( NSString *title in buttonsArray){
-        [actionSheet addButtonWithTitle:title];
-    }
-    [actionSheet addButtonWithTitle:@"Cancel"];
-    
-    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
-    [actionSheet showInView:self.view];
-}
-- (void) getTwitterUsername {
-    //get Twitter username and store it
-    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
-    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
-    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error)
-     {
-         if(granted) {
-             NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
-             if ([accountsArray count] > 0) {
-                 ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
-                 NSLog(@"%@",twitterAccount.username);
-                 NSLog(@"%@",twitterAccount.accountType);
-                 [defaults setValue:twitterAccount.username forKey:@"twitterHandle"];
-             }
-         }}];
-    NSLog(@"twitterHandle is %@",[defaults valueForKey:@"twitterHandle"]);
-}
+//- (void)TwitterSwitch {
+//    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+//    
+//    // Create an account type that ensures Twitter accounts are retrieved.
+//    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+//    
+//    
+//    // Request access from the user to use their Twitter accounts.
+//    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error){
+////    [accountStore requestAccessToAccountsWithType:accountType withCompletionHandler:^(BOOL granted, NSError *error) {
+//        
+//        
+//        // Get the list of Twitter accounts.
+//        NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
+//        
+//        NSLog(@"%@", accountsArray);
+//        [self performSelectorOnMainThread:@selector(populateSheetAndShow:) withObject:accountsArray waitUntilDone:NO];
+//    }];
+//}
+//
+//-(void)populateSheetAndShow:(NSArray *) accountsArray {
+//    buttonsArray = [NSMutableArray array];
+//    [accountsArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//        
+//        [buttonsArray addObject:((ACAccount*)obj).username];
+//    }];
+//    
+//    
+//    NSLog(@"%@", buttonsArray);
+//    
+//    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+//    actionSheet.tag=2;
+//    for( NSString *title in buttonsArray){
+//        [actionSheet addButtonWithTitle:title];
+//    }
+//    [actionSheet addButtonWithTitle:@"Cancel"];
+//    
+//    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
+//    [actionSheet showInView:self.view];
+//}
+//- (void) getTwitterUsername {
+//    //get Twitter username and store it
+//    ACAccountStore *accountStore = [[ACAccountStore alloc] init];
+//    ACAccountType *accountType = [accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
+//    [accountStore requestAccessToAccountsWithType:accountType options:nil completion:^(BOOL granted, NSError *error)
+//     {
+//         if(granted) {
+//             NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
+//             if ([accountsArray count] > 0) {
+//                 ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
+//                 NSLog(@"%@",twitterAccount.username);
+//                 NSLog(@"%@",twitterAccount.accountType);
+//                 [defaults setValue:twitterAccount.username forKey:@"twitterHandle"];
+//             }
+//         }}];
+//    NSLog(@"twitterHandle is %@",[defaults valueForKey:@"twitterHandle"]);
+//}
 
 #pragma mark - textView delegated methods
 
 
-- (void)textViewDidBeginEditing:(UITextView *)textView {
-    textView.text = @"";
-    [textView becomeFirstResponder];
-}
-
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
-    NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
-    NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
-    NSUInteger location = replacementTextRange.location;
-    
-    if (textView.text.length + text.length > 140){
-        if (location != NSNotFound){
-            [textView resignFirstResponder];
-        }
-        return NO;
-    }
-    else if (location != NSNotFound){
-        [textView resignFirstResponder];
-        return NO;
-    }
-    return YES;
-}
-- (void)textViewDidChange:(UITextView *)textView{
-    UILabel *label = (UILabel *)[self.view viewWithTag:100];
-    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
-    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
-    label2.hidden=YES;
-    
-}
-
--(void)createInputAccessoryView {
-    
-    UIToolbar *inputAccessoryView1 = [[UIToolbar alloc] init];
-//    inputAccessoryView1.barTintColor=[UIColor lightGrayColor];
-//    [inputAccessoryView1 sizeToFit];
-    
-    inputAccessoryView1.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
-    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-                                                                   style:UIBarButtonItemStyleBordered
-                                                                  target:self action:@selector(cancelKeyboard)];
-    //Use this to put space in between your toolbox buttons
-    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                                              target:nil
-                                                                              action:nil];
-    UIBarButtonItem *isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"@IsPrivate"
-                                                                      style:UIBarButtonItemStyleBordered
-                                                                     target:self action:@selector(addText)];
-    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Send"
-                                                                 style:UIBarButtonItemStyleBordered
-                                                                target:self action:@selector(doneKeyboard)];
-    
-    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
-    [inputAccessoryView1 setItems:itemsView animated:NO];
-    [txtChat addSubview:inputAccessoryView1];
-    
-}
-
--(void) addText {
-    [Flurry logEvent:@"isPrivate Tapped"];
-    
-    txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
-    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
-    label2.hidden=YES;
-    
-}
+//- (void)textViewDidBeginEditing:(UITextView *)textView {
+//    textView.text = @"";
+//    [textView becomeFirstResponder];
+//}
+//
+//- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+//    if([text isEqualToString:@"\n"]) {
+//        NSLog(@"done");
+//        [self doneKeyboard];
+//        return YES;
+//    }
+//    
+//    NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
+//    NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
+//    NSUInteger location = replacementTextRange.location;
+//    
+//    if (textView.text.length + text.length > 140){
+//        if (location != NSNotFound){
+//            [textView resignFirstResponder];
+//        }
+//        return NO;
+//    }
+//    else if (location != NSNotFound){
+//        [textView resignFirstResponder];
+//        return NO;
+//    }
+//    return YES;
+//}
+//- (void)textViewDidChange:(UITextView *)textView{
+//    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+//    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
+//    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+//    label2.hidden=YES;
+//    
+//}
+//
+//-(void)createInputAccessoryView {
+//    
+//    UIToolbar *inputAccessoryView1 = [[UIToolbar alloc] init];
+////    inputAccessoryView1.barTintColor=[UIColor lightGrayColor];
+////    [inputAccessoryView1 sizeToFit];
+//    
+//    inputAccessoryView1.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
+//    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+//                                                                   style:UIBarButtonItemStyleBordered
+//                                                                  target:self action:@selector(cancelKeyboard)];
+//    //Use this to put space in between your toolbox buttons
+//    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+//                                                                              target:nil
+//                                                                              action:nil];
+//    UIBarButtonItem *isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"@IsPrivate"
+//                                                                      style:UIBarButtonItemStyleBordered
+//                                                                     target:self action:@selector(addText)];
+//    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Send"
+//                                                                 style:UIBarButtonItemStyleBordered
+//                                                                target:self action:@selector(doneKeyboard)];
+//    
+//    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
+//    [inputAccessoryView1 setItems:itemsView animated:NO];
+//    [txtChat addSubview:inputAccessoryView1];
+//    
+//}
+//
+//-(void) addText {
+//    [Flurry logEvent:@"isPrivate Tapped"];
+//    
+//    txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
+//    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+//    label2.hidden=YES;
+//    
+//}
 
 -(void)createInputAccessoryViewForSearch {
     
@@ -811,35 +841,35 @@
     [_inputAccessoryView setItems:itemsView animated:NO];
 }
 
--(void)doneKeyboard{
-    [txtChat resignFirstResponder];
-    txtChat.hidden=YES;
-    UILabel *label = (UILabel *)[self.view viewWithTag:100];
-    label.text = @"140";
-    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
-    if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
-        //    {
-        //    if(![txtChat.text isEqualToString:@""])
-//        [self postComment];
-    txtChat.text = @"";
-}
--(void)cancelKeyboard{
-    [txtChat resignFirstResponder];
-    txtChat.text=@"";
-    txtChat.hidden=YES;
-    UILabel *label = (UILabel *)[self.view viewWithTag:100];
-    label.text = @"140";
-    
-}
-- (IBAction)composeAction:(id)sender {
-    
-    NSLog(@"compose");
-    txtChat.hidden=NO;
-    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
-    label2.hidden=NO;
-    [self.view bringSubviewToFront:txtChat];
-    [txtChat becomeFirstResponder];
-}
+//-(void)doneKeyboard{
+//    [txtChat resignFirstResponder];
+//    txtChat.hidden=YES;
+//    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+//    label.text = @"140";
+//    NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
+//    if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
+//        //    {
+//        //    if(![txtChat.text isEqualToString:@""])
+////        [self postComment];
+//    txtChat.text = @"";
+//}
+//-(void)cancelKeyboard{
+//    [txtChat resignFirstResponder];
+//    txtChat.text=@"";
+//    txtChat.hidden=YES;
+//    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+//    label.text = @"140";
+//    
+//}
+//- (IBAction)composeAction:(id)sender {
+//    
+//    NSLog(@"compose");
+//    txtChat.hidden=NO;
+//    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+//    label2.hidden=NO;
+//    [self.view bringSubviewToFront:txtChat];
+//    [txtChat becomeFirstResponder];
+//}
 
 //-(void)postComment
 //{

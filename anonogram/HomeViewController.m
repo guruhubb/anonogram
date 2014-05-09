@@ -422,31 +422,81 @@
 
     [Flurry logEvent:@"Delete"];
 
-    NSLog(@"delete id is %@",[[self.array objectAtIndex:flagButton] objectForKey:@"id" ]);
+    NSString *postId = [[self.array objectAtIndex:flagButton] objectForKey:@"id" ];
+    NSLog(@"delete id is %@",postId);
 
-    [self.table deleteWithId:[[self.array objectAtIndex:flagButton] objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+    /* delete post from table */
+    
+    [self.table deleteWithId:postId completion:^(NSDictionary *item, NSError *error) {
         [self logErrorIfNotNil:error];
     }];
-    NSDictionary *item =@{@"postId" : [[self.array objectAtIndex:flagButton] objectForKey:@"id" ]};
-    [self.commentTable readWithId:item completion:^(NSDictionary *item, NSError *error) {
-        NSLog(@"item is %@",item);
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,postId];
+    
+    /* delete likes of the post from isLikeTable */
+
+    [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        for (NSDictionary *dictionary in items){
+            [self.isLikeTable deleteWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+        }
         [self logErrorIfNotNil:error];
-        NSDictionary *item1 =@{@"commentId" : [item objectForKey:@"id" ]};
-        [self.isLikeCommentTable delete:item1 completion:^(NSDictionary *item, NSError *error) {
-            [self logErrorIfNotNil:error];
-        }];
     }];
     
-    [self.isLikeTable delete:item completion:^(NSDictionary *item, NSError *error) {
-        [self logErrorIfNotNil:error];
-    }];
-    [self.isFlagTable delete:item completion:^(NSDictionary *item, NSError *error) {
+    /* delete flags of the post from isFlagTable */
+
+    [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        for (NSDictionary *dictionary in items){
+            [self.isFlagTable deleteWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+        }
         [self logErrorIfNotNil:error];
     }];
     
-    [self.commentTable delete:item completion:^(NSDictionary *item, NSError *error) {
+    /* delete comments of the post from commentTable */
+
+    [self.commentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        for (NSDictionary *dictionary in items){
+            NSString *commentId = [dictionary objectForKey:@"id" ];
+            [self.commentTable deleteWithId:commentId completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+            }];
+            NSPredicate *predicateComment = [NSPredicate predicateWithFormat:@"commentId == %@",commentId];
+            [self.isLikeCommentTable readWithPredicate:predicateComment completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+                for (NSDictionary *dictionary in items){
+                    [self.isLikeCommentTable deleteWithId:[dictionary objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+                        [self logErrorIfNotNil:error];
+                    }];
+                }
+                [self logErrorIfNotNil:error];
+            }];
+        }
         [self logErrorIfNotNil:error];
     }];
+    
+    
+//    NSDictionary *item =@{@"postId" : [[self.array objectAtIndex:flagButton] objectForKey:@"id" ]};
+//    [self.commentTable readWithId:item completion:^(NSDictionary *item, NSError *error) {
+//        NSLog(@"item is %@",item);
+//        [self logErrorIfNotNil:error];
+//        NSDictionary *item1 =@{@"commentId" : [item objectForKey:@"id" ]};
+//        [self.isLikeCommentTable delete:item1 completion:^(NSDictionary *item, NSError *error) {
+//            [self logErrorIfNotNil:error];
+//        }];
+//    }];
+//    
+//    [self.isLikeTable delete:item completion:^(NSDictionary *item, NSError *error) {
+//        [self logErrorIfNotNil:error];
+//    }];
+//    [self.isFlagTable delete:item completion:^(NSDictionary *item, NSError *error) {
+//        [self logErrorIfNotNil:error];
+//    }];
+//    
+//    [self.commentTable delete:item completion:^(NSDictionary *item, NSError *error) {
+//        [self logErrorIfNotNil:error];
+//    }];
 
     [self.array removeObjectAtIndex:flagButton];
     [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
@@ -584,11 +634,13 @@
         commentedPost=btn.tag;
         isComment = YES;
         NSDictionary *dictionary = self.array[commentedPost];
-        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
+//        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"id"]];
+//        NSString *string = [[NSString alloc] initWithString:[dictionary objectForKey:@"text"]];
         CommentVC *vc = [[CommentVC alloc] init];
         vc=(CommentVC*)[[segue destinationViewController]topViewController];
-        vc.postId =string;
+        vc.postId =[dictionary objectForKey:@"id"];
         vc.replies = [dictionary objectForKey:@"replies"];
+        vc.replyTitleString=[dictionary objectForKey:@"text"];
 
     }
 }
@@ -847,12 +899,12 @@
     NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
 //    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
     [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-        if (error) {
-            NSLog(@"Error: %@", error);
+//        if (error) {
+//            NSLog(@"Error: %@", error);
             [self logErrorIfNotNil:error];
-        } else {
+//        } else {
             NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-        }
+//        }
         [self refreshView];
     }];
 }
@@ -1104,10 +1156,12 @@
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
-//    if([text isEqualToString:@"\n"]) {
-//        [textView resignFirstResponder];
-//        return YES;
-//    }
+    if([text isEqualToString:@"\n"]) {
+        NSLog(@"done");
+        [self doneKeyboard];
+        return YES;
+    }
+
     NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
     NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
     NSUInteger location = replacementTextRange.location;
@@ -1125,11 +1179,7 @@
          txtChat.hidden=YES;
         return NO;
     }
-    
-//    UILabel *label = (UILabel *)[self.view viewWithTag:100];
-//    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
-//    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
-//    label2.hidden=YES;
+
     
     if ([text isEqualToString:suffix] || [text isEqualToString:suffix1] ) {
         if ([text isEqualToString:suffix])
@@ -1143,7 +1193,6 @@
         theTable.hidden = NO;
         
     }else if ([text isEqualToString:@" "]) {
-//        currentHashTag = nil;
         recordingHashTag = NO;
         theTable.hidden = YES;
         
@@ -1163,6 +1212,7 @@
             recordingHashTag = NO;
         }
     }
+
     
        return YES;
 }

@@ -36,6 +36,8 @@
 //@property(nonatomic,strong)NSString *tagId;
 @property (nonatomic, strong) NSString *postId;
 @property (nonatomic, strong) NSString *replies;
+@property (nonatomic, strong) NSString *replyTitleString;
+@property (weak, nonatomic) IBOutlet UILabel *replyTitle;
 
 @end
 

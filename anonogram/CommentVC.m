@@ -109,7 +109,8 @@
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
 //    self.postId = [defaults stringForKey:@"postId"];
-    NSLog(@"postId is %@ and %@",self.postId, self.replies);
+    NSLog(@"postId is %@ and %@ and %@",self.postId, self.replies,self.replyTitleString);
+    self.replyTitle.text=self.replyTitleString;
 //    [self turnOnIndicator];
   
 //    oldCount=0;
@@ -124,7 +125,7 @@
 //    self.navigationItem.titleView = label;
     defaults =  [NSUserDefaults standardUserDefaults];
 //    chat_table = [[UITableView alloc]initWithFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
-    chat_table.frame =CGRectMake(0, 64, 320, screenSpecificSetting(460, 372));
+    chat_table.frame =CGRectMake(0, 134, 320, screenSpecificSetting(390, 372-70));
     [self.chat_table setSeparatorInset:UIEdgeInsetsZero];
 
 //    chat_table = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, 320, 480-64)];
@@ -156,6 +157,7 @@
     [self.chat_table addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
     [self refreshView];
+     [_txtChat becomeFirstResponder];
 
 }
 -(UIColor*) colorCode {
@@ -719,23 +721,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         [Flurry logEvent:@"Delete Comment"];
         //add code here for when you hit delete
-        
-//        NSString *commentId=[[self.array objectAtIndex:indexPath.row] objectForKey:@"id"];
-//        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//        NSString *token = [defaults objectForKey:@"booklyAccessToken"];
-//        
-//        NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
-//        
-//        NSLog(@"final url is %@",urlString1);
-//        
-//        NSURL *url = [[NSURL alloc]initWithString:urlString1];
-//        NSLog(@"url is%@",url);
-//        NSData *Data = [NSData dataWithContentsOfURL:url];
-//        Data=nil;
-//        url=nil;
-        
-        
-       
+
         NSString *string = [[self.array objectAtIndex:indexPath.row] objectForKey:@"id" ];
         [self.commentTable deleteWithId:string completion:^(NSDictionary *item, NSError *error) {
             [self logErrorIfNotNil:error];
@@ -1044,7 +1030,7 @@
             [textField resignFirstResponder];
             [UIView animateWithDuration:0.2 animations:^{
 
-                [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
+                [self.chat_table setFrame:CGRectMake(0, 134, 320, screenSpecificSetting(390, 372-90))];
                 [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
                 }];
     
@@ -1070,7 +1056,7 @@
 //    [textField becomeFirstResponder];
     // changing frame of tableview and toolbar when textfield begin editing.
     [UIView animateWithDuration:0.2 animations:^{
-        [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(411-209, 323-209))];
+        [self.chat_table setFrame:CGRectMake(0, 134, 320, screenSpecificSetting(411-209-70, 323-209-70))];
         [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(200+64, 112+64), 320, 44)];
 //        [textToolBar setFrame:CGRectMake(0, screenSpecificSetting(200, 112), 320, 44)];
 
@@ -1117,7 +1103,7 @@
 -(void)doneKeyboard{
     [_txtChat resignFirstResponder];
     [UIView animateWithDuration:0.2 animations:^{
-        [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
+        [self.chat_table setFrame:CGRectMake(0, 134, 320, screenSpecificSetting(460-70, 372-70))];
         [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
     }];
     if(![_txtChat.text isEqualToString:@""])
@@ -1131,7 +1117,7 @@
     [_txtChat resignFirstResponder];
     _txtChat.text=@"";
     [UIView animateWithDuration:0.2 animations:^{
-        [self.chat_table setFrame:CGRectMake(0, 64, 320, screenSpecificSetting(460, 372))];
+        [self.chat_table setFrame:CGRectMake(0, 134, 320, screenSpecificSetting(460-70, 372-70))];
         [_textToolBar setFrame:CGRectMake(0, screenSpecificSetting(460+64, 372+64), 320, 44)];
     }];
  }
