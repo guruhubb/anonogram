@@ -126,9 +126,9 @@
                                 </connections>
                             </tableView>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="110" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is a private post - only you and Twitter mentions can view it" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lce-mV-STL">
-                                <rect key="frame" x="15" y="114" width="290" height="36"/>
+                                <rect key="frame" x="15" y="100" width="290" height="42"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="18"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -445,7 +445,7 @@
             </objects>
             <point key="canvasLocation" x="366" y="1596"/>
         </scene>
-        <!--CommentVC - COMMENTS-->
+        <!--CommentVC - REPLIES-->
         <scene sceneID="rsO-Mk-uTn">
             <objects>
                 <viewController id="Cic-4v-u7C" customClass="CommentVC" sceneMemberID="viewController">
@@ -459,7 +459,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <items>
                                     <barButtonItem title="Item" style="plain" id="PET-hq-Qpc">
-                                        <textField key="customView" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add your comments ..." clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" id="ngt-zI-uks">
+                                        <textField key="customView" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Reply here ..." clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="whileEditing" id="ngt-zI-uks">
                                             <rect key="frame" x="16" y="7" width="288" height="30"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -554,7 +554,7 @@
                         <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="COMMENTS" id="8Zg-Yf-LUv">
+                    <navigationItem key="navigationItem" title="REPLIES" id="8Zg-Yf-LUv">
                         <barButtonItem key="rightBarButtonItem" systemItem="stop" id="eAX-GR-J3X">
                             <connections>
                                 <action selector="cancel:" destination="Cic-4v-u7C" id="qQF-Ui-oXE"/>

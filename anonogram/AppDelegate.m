@@ -14,16 +14,19 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.client = [MSClient clientWithApplicationURLString:@"https://anonogram.azure-mobile.net/"
-                                            applicationKey:@"oAKRURLTEiBfoIJRVwqrKecBxLtMxW68"];
+//    self.client = [MSClient clientWithApplicationURLString:@"https://anonogram.azure-mobile.net/"
+//                                            applicationKey:@"oAKRURLTEiBfoIJRVwqrKecBxLtMxW68"];
+    self.client = [MSClient clientWithApplicationURLString:@"https://anon.azure-mobile.net/"
+                                            applicationKey:@"NuASAQGUliUUBLzfFIeFRqnGLYQOyh94"];
+    
     [NewRelicAgent startWithApplicationToken:@"AA5805ad45b0b2260a17ed011dfb4e831a13b79eea"];
     
     [Flurry setCrashReportingEnabled:YES];
     [Flurry startSession:@"QVX85GQB3X9V2SVHGVJH"];
     
-    
-	[Tapjoy requestTapjoyConnect:@"e771b5ff-5727-4ff9-8b31-5a2dfaeda76b"
-					   secretKey:@"yKagIWePRD2lkBFeG1Pm" options:@{ TJC_OPTION_ENABLE_LOGGING : @(YES) }];
+//    
+//	[Tapjoy requestTapjoyConnect:@"e771b5ff-5727-4ff9-8b31-5a2dfaeda76b"
+//					   secretKey:@"yKagIWePRD2lkBFeG1Pm" options:@{ TJC_OPTION_ENABLE_LOGGING : @(YES) }];
  
     [MKStoreManager sharedManager];
     

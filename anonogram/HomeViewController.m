@@ -69,6 +69,7 @@
         NSLog(@"comment update, commentedPost is %d",commentedPost);
         [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
             NSLog(@"item is %@",item);
+            if (item == NULL) return;
             [self.array replaceObjectAtIndex:commentedPost withObject:item];
             [self.theTableView reloadData];
             [self logErrorIfNotNil:error];
@@ -167,7 +168,7 @@
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
     txtChat.delegate=self;
     txtChat.hidden=YES;
-    txtChat.font=[UIFont fontWithName:@"GillSans-Light" size:16];
+    txtChat.font=[UIFont fontWithName:@"GillSans-Light" size:18];
 //    txtChat.textColor=[UIColor lightGrayColor];
     txtChat.tintColor=[UIColor darkGrayColor];
 //    [[UITextView appearance] setTintColor:[UIColor lightGrayColor]];
@@ -175,14 +176,16 @@
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(285, screenSpecificSetting(215, 127), 30, 30)];
     label.textColor=[UIColor darkGrayColor];
-    label.font = [UIFont fontWithName:@"GillSans-Light" size:16];
+    label.font = [UIFont fontWithName:@"GillSans-Light" size:18];
     label.text= @"140";
     label.tag =100;
+    label.hidden=YES;
+
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
     label2.textColor=[UIColor darkGrayColor];
-    label2.font = [UIFont fontWithName:@"GillSans-Light" size:16];
+    label2.font = [UIFont fontWithName:@"GillSans-Light" size:18];
     label2.textAlignment=NSTextAlignmentCenter;
-    label2.text= @"Share a thought with anyone\n\nOr send a Private message - mention their Twitter username\n\nNo contacts access. No signups. No location tracking. Truly anonymous";
+    label2.text= @"Share a thought\n\nTo direct message real people, tap Private, mention their Twitter names";
     label2.numberOfLines=14;
     label2.tag =105;
     [txtChat addSubview:label];
@@ -350,6 +353,7 @@
                 
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     NSLog(@"item is %@",item);
+                    if (item == NULL) return;
                     NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
                     NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                     
@@ -375,6 +379,8 @@
                 //            }];
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     NSLog(@"item is %@",item);
+                    if (item == NULL) return;
+
                     NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
                     NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                     
@@ -543,6 +549,8 @@
                 
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     NSLog(@"item is %@",item);
+                    if (item == NULL) return;
+
                     NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
                     NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                     
@@ -568,6 +576,8 @@
             //            }];
             [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                 NSLog(@"item is %@",item);
+                if (item == NULL) return;
+
                 NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
                 NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                 
@@ -693,7 +703,6 @@
     else
         captureView.backgroundColor = [UIColor blackColor];
 
-    
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20,20 , 280, 280)];
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(185,275 , 110, 30)];
     label.textAlignment=NSTextAlignmentCenter;
@@ -860,7 +869,10 @@
 //        predicate = [NSPredicate predicateWithFormat:@"((text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@) && isPrivate == false)|| userId == %@",word1,word2,word3,userId];
 //    }
  
-    MSQuery *query = [self.table queryWithPredicate:predicate];    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+//    MSQuery *query = [self.table queryWithPredicate:predicate];
+    MSQuery *query = [self.table query];
+    query.predicate=predicate;
+    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
@@ -873,6 +885,28 @@
             [self.theTableView reloadData];
         }
     }];
+//    [self.table readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSLog(@"items table are %@, totalCount is %d",items,totalCount);
+//        [self logErrorIfNotNil:error];
+//    }];
+//    [self.isLikeTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSLog(@"items isLikeTable are %@, totalCount is %d",items,totalCount);
+//        [self logErrorIfNotNil:error];
+//    }];
+//    [self.isFlagTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSLog(@"items isFlagTable are %@, totalCount is %d",items,totalCount);
+//        [self logErrorIfNotNil:error];
+//    }];
+//    [self.commentTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSLog(@"items commentTable are %@, totalCount is %d",items,totalCount);
+//        [self logErrorIfNotNil:error];
+//    }];
+//    [self.isLikeCommentTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSLog(@"items isLikeCommentTable are %@, totalCount is %d",items,totalCount);
+//        [self logErrorIfNotNil:error];
+//    }];
+    
+    
 }
 -(UIColor*) pastelColorCode : (UIColor *) mix {
     CGFloat red = ( arc4random() % 256 / 256.0 );
@@ -996,7 +1030,7 @@
 -(void)populateSheetAndShow:(NSArray *) accountsArray {
     if(accountsArray.count==0){
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"Grant access to receive public or private mentions\nGo to Settings->Twitter. Scroll down and turn Anonogram on"
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Twitter Access" message:@"You need to grant access to receive public or private mentions\nGo to Settings->Twitter. Scroll down and turn Anonogram on"
                                                        delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alert show];
         return;
@@ -1092,7 +1126,7 @@
 //                                    // [countedSet addObject:[substring lowercaseString]];
 //                                }];
 
-        string = [self truncateByWordWithLimit:1000 string:string];
+        string = [self truncateByWordWithLimit:1200 string:string];
         NSLog(@"Accountstring is %@", string);
         [self getTwitterNames:string account:account];
 //        NSString *newString = [[string componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@" "];
@@ -1281,6 +1315,7 @@
         }
     }
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.hidden=NO;
     label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=YES;
@@ -1357,7 +1392,7 @@
     UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                                                                               target:nil
                                                                               action:nil];
-    isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"Public"
+    isPrivateItem = [[UIBarButtonItem alloc] initWithTitle:@"Private"
                                                                       style:UIBarButtonItemStyleBordered
                                                                      target:self action:@selector(addText)];
 //    isPrivateItem.tag=200;
@@ -1381,7 +1416,7 @@
     NSLog(@"isPrivateItem title is %@",isPrivateItem.title);
     if (isPrivateOn){
         isPrivateOn=NO;
-        isPrivateItem.title=@"Public";
+        isPrivateItem.title=@"Private";
         isPrivateItem.tintColor=[UIColor lightGrayColor];
     }
     else {
@@ -1460,6 +1495,8 @@
     
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=NO;
+    UILabel *label = (UILabel *)[self.view viewWithTag:100];
+    label.hidden=YES;
     [self.view bringSubviewToFront:txtChat];
     [txtChat becomeFirstResponder];
 }

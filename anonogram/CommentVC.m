@@ -104,6 +104,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
     self.commentTable = [self.client tableWithName:@"commentTable"];
@@ -740,10 +741,7 @@
             }
             [self logErrorIfNotNil:error];
         }];
-//        NSDictionary *item =@{@"commentId" :string};
-//        [self.isLikeCommentTable delete:item completion:^(NSDictionary *item, NSError *error) {
-//            [self logErrorIfNotNil:error];
-//        }];
+
         NSString *string1 = [NSString stringWithFormat:@"%d",self.array.count-1 ];
         NSDictionary *item1 =@{@"id" : self.postId, @"replies": string1};
         [self.table update:item1 completion:^(NSDictionary *item, NSError *error) {
@@ -803,25 +801,24 @@
 //    [self.chat_table reloadData];
 //}
 - (void) getData {
-    NSLog(@"getting data...");
+    NSLog(@"getting data...%d, %d",kLimit,self.array.count);
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     //    NSString *word1 = [defaults objectForKey:@"filterWord1"];
     //    NSString *word2 = [defaults objectForKey:@"filterWord2"];
     //    NSString *word3 = [defaults objectForKey:@"filterWord3"];
     
-    NSPredicate *predicate;
-    //    if (![defaults boolForKey:@"filter"])
-    predicate = [NSPredicate predicateWithFormat:@"postId == %@ ",self.postId];
+    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"postId == %@ ",self.postId];
     //    else {
     //
     //        predicate = [NSPredicate predicateWithFormat:@"((text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@) && isPrivate == false)|| userId == %@",word1,word2,word3,userId];
     //    }
-    
-    MSQuery *query = [self.commentTable queryWithPredicate:predicate];
-    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+      //first order by ascending duration field
+    MSQuery *query = [self.commentTable query];
+    query.predicate=predicate;
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
+    [query orderByDescending:@"timestamp"];
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
@@ -863,13 +860,14 @@
 
     [self.commentTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
 //        if (error) {
-//            NSLog(@"Error: %@", error);
+            NSLog(@"inserted item: %@", error);
             [self logErrorIfNotNil:error];
 //        } else {
 //            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
 //            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
             [self.table readWithId:self.postId completion:^(NSDictionary *item, NSError *error) {
                 NSLog(@"item is %@",item);
+                if (item == NULL) return;
                 NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]+1 ];
                 NSDictionary *itemReplies =@{@"id" : [item objectForKey:@"id" ], @"replies": string};
                 

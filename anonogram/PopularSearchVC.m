@@ -56,6 +56,7 @@
         isComment = NO;
         NSLog(@"comment update, commentedPost is %d",commentedPost);
         [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+            if (item == NULL) return;
             NSLog(@"item is %@",item);
             [self.array replaceObjectAtIndex:commentedPost withObject:item];
             [self.popularTableView reloadData];
@@ -267,6 +268,8 @@
                     
                     [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                         NSLog(@"item is %@",item);
+                        if (item == NULL) return;
+
                         NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
                         NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                         
@@ -292,6 +295,8 @@
                 //            }];
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     NSLog(@"item is %@",item);
+                    if (item == NULL) return;
+
                     NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
                     NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                     
@@ -439,6 +444,8 @@
                 
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     NSLog(@"item is %@",item);
+                    if (item == NULL) return;
+
                     NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
                     NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                     
@@ -464,6 +471,8 @@
             //            }];
             [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                 NSLog(@"item is %@",item);
+                if (item == NULL) return;
+
                 NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
                 NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                 
@@ -767,7 +776,9 @@
 - (void) getData {
     NSLog(@"getting data...");
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPrivate == NO"];
-    MSQuery *query = [self.table queryWithPredicate:predicate];
+//    MSQuery *query = [self.table queryWithPredicate:predicate];
+    MSQuery *query = [self.table query];
+    query.predicate=predicate;
     [query orderByDescending:@"likes"];
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
@@ -787,7 +798,9 @@
     NSLog(@"getting data...");
     NSString *search = [defaults objectForKey:@"search"];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@  && isPrivate == NO",search];
-    MSQuery *query = [self.table queryWithPredicate:predicate];
+//    MSQuery *query = [self.table queryWithPredicate:predicate];
+    MSQuery *query = [self.table query];
+    query.predicate=predicate;
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
