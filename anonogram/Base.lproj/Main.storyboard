@@ -25,10 +25,9 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Write something, anything ..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="7" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Qvh-oD-u2l">
-                                                    <rect key="frame" x="20" y="0.0" width="280" height="275"/>
+                                                    <rect key="frame" x="20" y="0.0" width="280" height="290"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="22"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10/12/89" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="T6U-2U-Sdh">
@@ -39,13 +38,13 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Private post" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fIR-Zg-KPx">
-                                                    <rect key="frame" x="212" y="6" width="75" height="21"/>
+                                                    <rect key="frame" x="216" y="2" width="75" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wna-fe-S0U">
+                                                <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wna-fe-S0U" userLabel="Button - like">
                                                     <rect key="frame" x="0.0" y="255" width="50" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -95,7 +94,7 @@
                                                     </connections>
                                                 </button>
                                                 <button hidden="YES" opaque="NO" alpha="0.25" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="6kC-Yi-ZpZ" userLabel="Button - Lock">
-                                                    <rect key="frame" x="278" y="-10" width="42" height="52"/>
+                                                    <rect key="frame" x="283" y="-15" width="42" height="52"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <inset key="contentEdgeInsets" minX="15" minY="18" maxX="15" maxY="18"/>
                                                     <state key="normal" image="glyphicons_203_lock.png">
@@ -105,6 +104,30 @@
                                                         <action selector="lockAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="n9P-Qt-bfa"/>
                                                     </connections>
                                                 </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="f2i-cp-vhb" userLabel="Button - user">
+                                                    <rect key="frame" x="0.0" y="0.0" width="275" height="47"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <segue destination="8Gp-98-MfR" kind="modal" identifier="user" modalTransitionStyle="crossDissolve" id="7Uo-7T-ycX"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iOS developer, startups, Founder of several companies" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VrM-cU-qfQ">
+                                                    <rect key="frame" x="8" y="20" width="302" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="160k・100k・100k" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TQW-m6-c2a">
+                                                    <rect key="frame" x="6" y="2" width="117" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
@@ -125,12 +148,6 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="a6b-xN-ANP"/>
                                 </connections>
                             </tableView>
-                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="110" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is a private post - only you and Twitter mentions can view it" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lce-mV-STL">
-                                <rect key="frame" x="15" y="100" width="290" height="42"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="18"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                     </view>
                     <navigationItem key="navigationItem" title="ANONOGRAM" id="ZwE-XD-9MZ">
@@ -775,6 +792,162 @@
             </objects>
             <point key="canvasLocation" x="909" y="180"/>
         </scene>
+        <!--User View Controller-->
+        <scene sceneID="O0a-Gr-sHf">
+            <objects>
+                <viewController id="Qej-zv-0pm" customClass="UserViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="f6I-20-c7l">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" id="aM0-5S-byF">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="193"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="160k" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="yrp-0m-Lm8">
+                                        <rect key="frame" x="146" y="141" width="44" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100k" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="sCW-XH-cmg">
+                                        <rect key="frame" x="211" y="141" width="40" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100k" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6s9-VL-tEJ">
+                                        <rect key="frame" x="261" y="141" width="44" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="posts" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UPf-UL-MKX">
+                                        <rect key="frame" x="191" y="158" width="81" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="replies" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Xhv-lJ-Uaq">
+                                        <rect key="frame" x="243" y="158" width="81" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="reputation" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Inr-qa-WzG">
+                                        <rect key="frame" x="128" y="158" width="81" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HPk-kl-nyX" userLabel="Button - location">
+                                        <rect key="frame" x="0.0" y="148" width="120" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="locationAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="GRP-vp-RUY"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Austin, TX" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fy9-a4-we8">
+                                        <rect key="frame" x="0.0" y="148" width="130" height="41"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" id="lQX-oL-XsW" userLabel="View - color">
+                                        <rect key="frame" x="10" y="10" width="40" height="40"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="v6E-Vz-FBc" userLabel="Button - username">
+                                        <rect key="frame" x="60" y="16" width="111" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <state key="normal">
+                                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="userNameAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="TRx-J6-ETK"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="62V-ZY-oOb" userLabel="Button - gender">
+                                        <rect key="frame" x="253" y="16" width="60" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                        <state key="normal">
+                                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="genderAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="gL7-Ik-672"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="bXf-wp-b7h">
+                                        <rect key="frame" x="11" y="54" width="300" height="86"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="17"/>
+                                        <state key="normal" title="Write something about yourself">
+                                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="aboutMeAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="8xM-gy-0K2"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" id="Y9f-fI-iYG">
+                                <rect key="frame" x="0.0" y="193" width="320" height="1"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Kph-DA-6fq">
+                                <rect key="frame" x="15" y="243" width="290" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                <color key="tintColor" red="0.55294117649999996" green="0.70196078429999997" blue="0.47058823529999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="DIRECT MESSAGE">
+                                    <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="composeAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="X2x-zA-SK7"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="IMA-ln-ryT">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="zuP-x2-Faq">
+                            <connections>
+                                <action selector="cancel:" destination="Qej-zv-0pm" id="n7G-eo-y8K"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="aboutMe" destination="bXf-wp-b7h" id="xyU-55-z6v"/>
+                        <outlet property="colorView" destination="lQX-oL-XsW" id="Q3c-xF-P6N"/>
+                        <outlet property="directMessage" destination="Kph-DA-6fq" id="B0l-Ku-a7Q"/>
+                        <outlet property="gender" destination="62V-ZY-oOb" id="bVK-iy-P1w"/>
+                        <outlet property="location" destination="fy9-a4-we8" id="HuJ-sx-1dF"/>
+                        <outlet property="posts" destination="sCW-XH-cmg" id="Vqk-1C-tug"/>
+                        <outlet property="replies" destination="6s9-VL-tEJ" id="JRW-6T-Rae"/>
+                        <outlet property="reputation" destination="yrp-0m-Lm8" id="47Y-4s-iQp"/>
+                        <outlet property="username" destination="v6E-Vz-FBc" id="nQz-tk-mTg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MJz-vp-F1q" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1959" y="180"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="Ndc-Tv-Yhl">
             <objects>
@@ -870,6 +1043,25 @@
             </objects>
             <point key="canvasLocation" x="909" y="1596"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ZBI-kP-n5E">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="8Gp-98-MfR" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="swt-0w-VwJ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Qej-zv-0pm" kind="relationship" relationship="rootViewController" id="bS8-7B-oBW"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dqr-A0-7uE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1433" y="180"/>
+        </scene>
     </scenes>
     <resources>
         <image name="comments-icon-614x460.png" width="614" height="460"/>
@@ -894,7 +1086,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Ty9-RM-kub"/>
-        <segue reference="8lB-T6-BcC"/>
+        <segue reference="G8Z-2i-oeg"/>
+        <segue reference="ZAK-vz-cei"/>
     </inferredMetricsTieBreakers>
 </document>

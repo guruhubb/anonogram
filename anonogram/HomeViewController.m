@@ -18,6 +18,7 @@
 #import "Flurry.h"
 #import "AppDelegate.h"
 #import "CommentVC.h"
+#import "UserViewController.h"
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 #import <Twitter/Twitter.h>
@@ -53,6 +54,8 @@
 @property (nonatomic, strong)   MSTable *isFlagTable;
 @property (nonatomic, strong)   MSTable *commentTable;
 @property (nonatomic, strong)   MSTable *isLikeCommentTable;
+@property (nonatomic, strong)   MSTable *userTable;
+
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
 @property (strong, nonatomic) NSMutableArray *array;
 @property (nonatomic, strong)   MSClient *client;
@@ -92,6 +95,8 @@
     self.isFlagTable = [self.client tableWithName:@"isFlag"];
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
+    self.userTable = [self.client tableWithName:@"userTable"];
+
     
     if (!IS_TALL_SCREEN) {
         self.theTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
@@ -107,6 +112,7 @@
     [self getData];
     [self TwitterSwitch];
     [self composeAction:nil];
+    [self postInitialUserInfo];
 }
 
 #pragma mark - Survey
@@ -140,6 +146,16 @@
     [defaults setBool:YES forKey:@"rateDoneAnonogram"];
     //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"itms-apps://itunes.apple.com/app/850204569"]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=869802697&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8"]];
+}
+-(NSString *) randomStringWithLength: (int) len {
+    NSString *letters = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    
+    NSMutableString *randomString = [NSMutableString stringWithCapacity: len];
+    
+    for (int i=0; i<len; i++) {
+        [randomString appendFormat: @"%C", [letters characterAtIndex: arc4random() % [letters length]]];
+    }
+    return randomString;
 }
 -(void) setup {
     startTime=0;
@@ -536,7 +552,14 @@
     
     UIButton *btnPressLike = (UIButton*)sender;
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
+    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"postId == %@",[dictionary objectForKey:@"id" ]];
 
+//    [self.isLikeTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        NSInteger likeCount = totalCount;
+//        NSLog(@"likeCountis %d",likeCount);
+//
+//    }];
+    
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
     [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
@@ -680,6 +703,13 @@
     }
     else if ([[segue identifier] isEqualToString:@"goToSettings"]){
         
+    }
+    else if ([[segue identifier] isEqualToString:@"user"]){
+        NSDictionary *dictionary = self.array[btn.tag];
+        UserViewController *vc = [[UserViewController alloc] init];
+        vc=(UserViewController*)[[segue destinationViewController]topViewController];
+        vc.userId =[dictionary objectForKey:@"userId"];
+
     }
     else {
         commentedPost=btn.tag;
@@ -863,7 +893,7 @@
 
     NSPredicate *predicate;
 //    if (![defaults boolForKey:@"filter"])
-        predicate = [NSPredicate predicateWithFormat:@"isPrivate == false || userId == %@ ",userId];
+        predicate = [NSPredicate predicateWithFormat:@"isPrivate == false",userId];
 //    else {
 //        
 //        predicate = [NSPredicate predicateWithFormat:@"((text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@) && isPrivate == false)|| userId == %@",word1,word2,word3,userId];
@@ -980,7 +1010,7 @@
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
+    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"toUserId" : @"",@"toUserId" : @"",@"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
 //    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
     [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
 //        if (error) {
@@ -992,7 +1022,57 @@
         [self refreshView];
     }];
 }
-
+-(void)postInitialUserInfo
+{
+    
+    UIColor *color;
+    NSString *colorString = [defaults objectForKey:@"color"];
+    if (!colorString){
+        color = [self pastelColorCode:[UIColor whiteColor]];
+        //    color = [self colorCode];
+        
+        colorString = [self hexStringForColor:color];
+        NSLog(@"color is %@",colorString);
+        [defaults setObject:colorString forKey:@"color"];
+    }
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    NSLog(@"inserting into commentTable userId = %@, postId = %@, reply = %@, color = %@",userId,postId,_txtChat.text, colorString);
+    NSString *randomString = [self randomStringWithLength:8];
+    NSDictionary *item = @{@"userId" : userId, @"posts" : @"0",@"replies" : @"0", @"color" :colorString,@"reputation" :@"0",@"username":randomString, @"aboutme":@"",@"gender" : @"",@"location":@""};
+    
+    
+    //    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
+    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userId == %@ ",userId];
+    [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        //first order by ascending duration field
+        if (items.count ==0)
+            [self.userTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
+        //        if (error) {
+        NSLog(@"inserted item: %@", error);
+        [self logErrorIfNotNil:error];
+        //        } else {
+        //            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
+        //            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
+//        [self.table readWithId:userId completion:^(NSDictionary *item, NSError *error) {
+//            NSLog(@"item is %@",item);
+//            if (item == NULL) return;
+//            NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]+1 ];
+//            NSDictionary *itemReplies =@{@"id" : [item objectForKey:@"id" ], @"replies": string};
+//            
+//            [self.table update:itemReplies   completion:^(NSDictionary *item, NSError *error) {
+//                [self logErrorIfNotNil:error];
+//            }];
+//            [self logErrorIfNotNil:error];
+        }];
+        
+        //            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
+        //                [self logErrorIfNotNil:error];
+        //            }];
+        //            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
+        //        }
+//        [self refreshView];
+    }];
+}
 
 - (void) logErrorIfNotNil:(NSError *) error
 {
@@ -1352,8 +1432,6 @@
     if (!filterHashTagArray.count)
         theTable.hidden=YES;
     NSLog(@"filterhashtagarray is %@",filterHashTagArray);
-
-    
     [theTable reloadData];
 }
 
@@ -1400,7 +1478,8 @@
                                                                  style:UIBarButtonItemStyleBordered
                                                                 target:self action:@selector(doneKeyboard)];
     
-    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
+//    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,isPrivateItem,flexItem,doneItem, nil];
+       NSArray *itemsView = [NSArray arrayWithObjects:removeItem,flexItem,doneItem, nil];
     [inputAccessoryView1 setItems:itemsView animated:NO];
     [txtChat addSubview:inputAccessoryView1];
     

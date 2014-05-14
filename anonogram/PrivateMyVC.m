@@ -125,7 +125,8 @@
         UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
         self.navigationItem.rightBarButtonItem = privateButton;
         self.array = [[NSMutableArray alloc] init];
-        [self getData];
+        [self getDataMyDirectMessages];
+//        [self getData];
 
         
     }
@@ -145,7 +146,9 @@
     UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
     self.navigationItem.rightBarButtonItem = privateButton;
     self.array = [[NSMutableArray alloc] init];
-    [self getData];
+//    [self getData];
+    [self getDataMyDirectMessages];
+
 }
 
 
@@ -315,7 +318,9 @@
     if (bottomEdge >= scrollView.contentSize.height) {
         if(isPrivateOn){
             NSLog(@"scrolling up for more");
-            [self getData];
+            [self getDataMyDirectMessages];
+//            [self getData];
+
         }
         else
             [self getDataMyAnonograms];
@@ -675,8 +680,11 @@
 //        self.array=nil;
     self.array = [[NSMutableArray alloc] init];
 
-    if(isPrivateOn)
-        [self getData];
+    if(isPrivateOn){
+//        [self getData];
+        [self getDataMyDirectMessages];
+
+    }
     else
         [self getDataMyAnonograms];
 //    }
@@ -776,6 +784,27 @@
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@",userId];
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
+    MSQuery *query = [self.table query];
+    query.predicate=predicate;
+    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+    query.includeTotalCount = YES; // Request the total item count
+    query.fetchLimit = kLimit;
+    query.fetchOffset = self.array.count;
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+        [self logErrorIfNotNil:error];
+        if(!error) {
+            //add the items to our local copy
+            [self.array addObjectsFromArray:items];
+            [self.TableView reloadData];
+        }
+    }];
+}
+- (void) getDataMyDirectMessages {
+    NSLog(@"getting direct messages...");
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"toUserId == %@ && isPrivate == true",userId];
+    //    MSQuery *query = [self.table queryWithPredicate:predicate];
     MSQuery *query = [self.table query];
     query.predicate=predicate;
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field

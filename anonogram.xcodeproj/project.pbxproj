@@ -13,6 +13,7 @@
 		CC03F8E71911A71600ED4C5D /* glyphicons_128_message_lock.png in Resources */ = {isa = PBXBuildFile; fileRef = CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */; };
 		CC03F8ED19130EB600ED4C5D /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC03F8EC19130EB600ED4C5D /* CoreData.framework */; };
 		CC0428D2191DB16600CE2817 /* WindowsAzureMobileServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0428D1191DB16600CE2817 /* WindowsAzureMobileServices.framework */; };
+		CC0428D51921D90400CE2817 /* UserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0428D41921D90400CE2817 /* UserViewController.m */; };
 		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
@@ -114,6 +115,8 @@
 		CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_128_message_lock.png; sourceTree = "<group>"; };
 		CC03F8EC19130EB600ED4C5D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CC0428D1191DB16600CE2817 /* WindowsAzureMobileServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WindowsAzureMobileServices.framework; sourceTree = "<group>"; };
+		CC0428D31921D90400CE2817 /* UserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserViewController.h; sourceTree = "<group>"; };
+		CC0428D41921D90400CE2817 /* UserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserViewController.m; sourceTree = "<group>"; };
 		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
 		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
@@ -347,6 +350,8 @@
 			children = (
 				CC94A1C21919BF4100C0F140 /* CommentCell.h */,
 				CC94A1C31919BF4100C0F140 /* CommentCell.m */,
+				CC0428D31921D90400CE2817 /* UserViewController.h */,
+				CC0428D41921D90400CE2817 /* UserViewController.m */,
 				CC94A1B71918C41F00C0F140 /* CommentVC.h */,
 				CC94A1B81918C41F00C0F140 /* CommentVC.m */,
 				CC2766D31910592100D132A1 /* PopularSearchVC.h */,
@@ -634,6 +639,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC0428D51921D90400CE2817 /* UserViewController.m in Sources */,
 				CCD954B319074BEA005EFE06 /* SettingVC.m in Sources */,
 				CCD955201908B9FE005EFE06 /* HomeViewController.m in Sources */,
 				CC94A1C41919BF4100C0F140 /* CommentCell.m in Sources */,

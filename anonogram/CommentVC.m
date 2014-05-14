@@ -865,7 +865,7 @@
 //        } else {
 //            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
 //            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
-            [self.table readWithId:self.postId completion:^(NSDictionary *item, NSError *error) {
+            [self.table readWithId:userId completion:^(NSDictionary *item, NSError *error) {
                 NSLog(@"item is %@",item);
                 if (item == NULL) return;
                 NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]+1 ];
