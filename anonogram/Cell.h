@@ -17,6 +17,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *privatePost;
 @property (weak, nonatomic) IBOutlet UILabel *replies;
 @property (weak, nonatomic) IBOutlet UIButton *replyButton;
+@property (weak, nonatomic) IBOutlet UILabel *aboutMe;
+@property (weak, nonatomic) IBOutlet UILabel *userScore;
 
 
 

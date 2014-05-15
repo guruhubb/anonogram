@@ -37,7 +37,7 @@
 //    NSInteger commentedPost;
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
-    NSString *toUserId;
+    NSString *dataId;
 //    NSTimeInterval nowTime;
 //    NSTimeInterval startTime ;
 }
@@ -47,16 +47,13 @@
 @property (nonatomic, strong)   MSTable *userTable;
 @property (weak, nonatomic) IBOutlet UIButton *directMessage;
 @property (weak, nonatomic) IBOutlet UIButton *gender;
-
 @property (weak, nonatomic) IBOutlet UIButton *username;
 @property (weak, nonatomic) IBOutlet UIButton *aboutMe;
 @property (weak, nonatomic) IBOutlet UILabel *reputation;
 @property (weak, nonatomic) IBOutlet UILabel *replies;
 @property (weak, nonatomic) IBOutlet UIView *colorView;
 @property (weak, nonatomic) IBOutlet UILabel *posts;
-
 @property (weak, nonatomic) IBOutlet UILabel *location;
-
 @property (nonatomic, strong)   MSClient *client;
 
 
@@ -127,12 +124,12 @@
 //    refreshControl = [[UIRefreshControl alloc]init];
 //    [self.TableView addSubview:refreshControl];
 //    [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
-    [self setup];
 //    [self getUUID];
 //    if (![defaults objectForKey:@"twitterAccounts"])
 //        [self twitterSwitch:nil];
     [self getData];
-    
+    [self setup];
+
 }
 -(void) setup {
     
@@ -172,6 +169,18 @@
     //    _searchBarButton.placeholder = @"Search #hashtag, @username";
     //    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [txtChat setKeyboardType:UIKeyboardTypeTwitter];
+    
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    if (![self.userId isEqualToString:userId]){
+        self.aboutMe.userInteractionEnabled=NO;
+        self.username.userInteractionEnabled=NO;
+        self.gender.userInteractionEnabled=NO;
+        
+    }
+    else {
+        self.directMessage.hidden=YES;
+    }
+        
     
 }
 
@@ -347,34 +356,34 @@
 ////    }
 ////    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 //}
-- (IBAction)lockAction:(id)sender {
-    UIButton *btn = (UIButton*)sender;
-    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+1000];
-    NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
+//- (IBAction)lockAction:(id)sender {
+//    UIButton *btn = (UIButton*)sender;
+//    UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+1000];
+//    NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
+//
+////    label.alpha=1;
+//    label.hidden=NO;
+//    [UIView animateWithDuration:3
+//                          delay:0.0
+//                        options:UIViewAnimationOptionBeginFromCurrentState
+//                     animations:^{
+//                         label.alpha=0.0; }
+//                     completion:^(BOOL finished){
+//                         label.alpha=1.0;
+//                         label.hidden=YES;
+//                     }];
+//}
 
-//    label.alpha=1;
-    label.hidden=NO;
-    [UIView animateWithDuration:3
-                          delay:0.0
-                        options:UIViewAnimationOptionBeginFromCurrentState
-                     animations:^{
-                         label.alpha=0.0; }
-                     completion:^(BOOL finished){
-                         label.alpha=1.0;
-                         label.hidden=YES;
-                     }];
-}
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
-    if (bottomEdge >= scrollView.contentSize.height) {
-        if(isPrivateOn){
-            NSLog(@"scrolling up for more");
-            [self getData];
-        }
-    }
-    }
-}
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+//    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+//    if (bottomEdge >= scrollView.contentSize.height) {
+//        if(isPrivateOn){
+//            NSLog(@"scrolling up for more");
+//            [self getData];
+//        }
+//    }
+//    }
+//}
 //- (void) deleteText  {
 //    [self.TableView beginUpdates];
 //    
@@ -723,7 +732,7 @@
 
         self.location.text = [NSString stringWithFormat:@"%@",[dictionary objectForKey:@"location"]];
         self.posts.text=[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"posts"]];
-        self.replies.text=[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"replies"]];
+        self.replies.text=[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"userreplies"]];
         self.reputation.text=[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"reputation"]];
         NSMutableString *tempHex=[[NSMutableString alloc] init];
         [tempHex appendString:[dictionary objectForKey:@"color"]];
@@ -738,8 +747,19 @@
         self.directMessage.layer.borderColor=[UIColor blueColor].CGColor;
         self.directMessage.layer.borderWidth=2.0;
         
-        
-        toUserId = [dictionary objectForKey:@"id"];
+        if([self.location.text isEqualToString:@""]){
+            self.location.text = @"location?";
+            self.location.hidden=YES;
+        }
+        if([self.aboutMe.titleLabel.text isEqualToString:@""]){
+            [self.aboutMe setTitle:@"write something about yourself..." forState:UIControlStateNormal];
+            self.aboutMe.hidden=YES;
+        }
+        if([self.gender.titleLabel.text isEqualToString:@""]){
+            [self.gender setTitle:@"Male" forState:UIControlStateNormal];
+            self.gender.hidden=YES;
+        }
+        dataId = [dictionary objectForKey:@"id"];
         [self.view setNeedsDisplay];
         }];
 
@@ -836,8 +856,6 @@
             [self postLocation];
         else
             [self postUsername];
-        
-
     }
     
     txtChat.text = @"";
@@ -846,19 +864,16 @@
     [txtChat resignFirstResponder];
     txtChat.text=@"";
     txtChat.hidden=YES;
-//    theTable.hidden=YES;
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.text = @"140";
-    
 }
 
 - (IBAction)composeAction:(id)sender {
-    
     isDirectMessage=YES;
     isAboutMe=NO;
     isLocation=NO;
-
     [self bringUpTextView];
+ 
     
 }
 
@@ -866,6 +881,8 @@
     isAboutMe=YES;
     isDirectMessage=NO;
     isLocation=NO;
+    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
+    label2.text= [NSString stringWithFormat:@"Write a bit about you...%@",self.username.titleLabel.text];
 
     [self bringUpTextView];
 
@@ -875,7 +892,6 @@
     isAboutMe=NO;
     isDirectMessage=NO;
     isLocation=NO;
-
     [self bringUpTextView];
 }
 
@@ -939,7 +955,7 @@
 -(void)postAboutMe
 {
     [Flurry logEvent:@"PostAboutMe"];
-    NSDictionary *item = @{@"id" : toUserId,@"aboutme" : txtChat.text};
+    NSDictionary *item = @{@"id" : dataId,@"aboutme" : txtChat.text};
     [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
         [self getData];
@@ -949,10 +965,22 @@
 {
     [Flurry logEvent:@"PostUsername"];
     
-    NSDictionary *item = @{@"id" : toUserId,@"username" : txtChat.text};
-    [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
+    NSDictionary *item = @{@"id" : dataId,@"username" : txtChat.text};
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username == %@",txtChat.text];
+    [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [self logErrorIfNotNil:error];
-        [self getData];
+        if (items.count) {
+            //ALERT MESSAGE
+            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Username already exists!" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [warningAlert show];
+        }
+        else {
+            [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
+                [self logErrorIfNotNil:error];
+                [self getData];
+            }];
+        }
     }];
 }
 
@@ -960,7 +988,7 @@
 {
     [Flurry logEvent:@"PostGender"];
     
-    NSDictionary *item = @{@"id" : toUserId,@"gender" : self.gender.titleLabel.text};
+    NSDictionary *item = @{@"id" : dataId,@"gender" : self.gender.titleLabel.text};
     [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
         [self getData];
@@ -970,7 +998,7 @@
 {
     [Flurry logEvent:@"PostLocation"];
     
-    NSDictionary *item = @{@"id" : toUserId,@"location" : txtChat.text};
+    NSDictionary *item = @{@"id" : dataId,@"location" : txtChat.text};
     [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
         [self getData];

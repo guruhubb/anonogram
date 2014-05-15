@@ -131,6 +131,7 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="aboutMe" destination="VrM-cU-qfQ" id="lwl-eM-UOH"/>
                                             <outlet property="flag" destination="Wpj-l2-MHz" id="KX1-Fv-t7c"/>
                                             <outlet property="like" destination="Wna-fe-S0U" id="Qhi-uX-edC"/>
                                             <outlet property="likeCount" destination="SeQ-br-N5m" id="OVR-uI-k78"/>
@@ -140,6 +141,7 @@
                                             <outlet property="replies" destination="I9N-Jc-gP3" id="lyY-c6-xfH"/>
                                             <outlet property="replyButton" destination="I4s-hq-DNh" id="pqT-ME-1Mp"/>
                                             <outlet property="timestamp" destination="T6U-2U-Sdh" id="05l-yb-hKI"/>
+                                            <outlet property="userScore" destination="TQW-m6-c2a" id="KY2-ue-2RW"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -853,8 +855,8 @@
                                             <action selector="locationAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="GRP-vp-RUY"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Austin, TX" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fy9-a4-we8">
-                                        <rect key="frame" x="0.0" y="148" width="130" height="41"/>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="location?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fy9-a4-we8">
+                                        <rect key="frame" x="0.0" y="147" width="130" height="41"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -881,7 +883,7 @@
                                         <rect key="frame" x="253" y="16" width="60" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
-                                        <state key="normal">
+                                        <state key="normal" title="gender?">
                                             <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>

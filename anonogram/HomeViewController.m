@@ -8,7 +8,7 @@
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
-#define kLimit 20
+#define kLimit 1
 #define kFlagsAllowed 10
 
 #import "HomeViewController.h"
@@ -50,6 +50,8 @@
     ACAccount* theAccount;
 }
 @property (nonatomic, strong)   MSTable *table;
+//@property (nonatomic, strong)   MSTable *extendTable;
+
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
 @property (nonatomic, strong)   MSTable *commentTable;
@@ -58,6 +60,9 @@
 
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
 @property (strong, nonatomic) NSMutableArray *array;
+@property (strong, nonatomic) NSMutableArray *userIdArray;
+@property (strong, nonatomic) NSMutableArray *userInfoArray;
+
 @property (nonatomic, strong)   MSClient *client;
 
 @end
@@ -89,8 +94,11 @@
     [self.theTableView setSeparatorInset:UIEdgeInsetsZero];
 
     self.array = [[NSMutableArray alloc] init];
+    self.userIdArray = [[NSMutableArray alloc] init];
+    self.userInfoArray = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
+//    self.extendTable = [self.client tableWithName:@"extendedTable"];
     self.isLikeTable = [self.client tableWithName:@"isLike"];
     self.isFlagTable = [self.client tableWithName:@"isFlag"];
     self.commentTable = [self.client tableWithName:@"commentTable"];
@@ -109,10 +117,10 @@
     
     [self setup];
     [self getUUID];
-    [self getData];
-    [self TwitterSwitch];
-    [self composeAction:nil];
     [self postInitialUserInfo];
+    [self getData];
+//    [self TwitterSwitch];
+//    [self composeAction:nil];
 }
 
 #pragma mark - Survey
@@ -266,71 +274,39 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
-//    [tableView setSeparatorInset:UIEdgeInsetsZero];
     if (tableView==_theTableView){
-    Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
-    if (self.array.count <= indexPath.row)
-        return cell;
-    NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
-    NSLog(@"dictionary is %@",dictionary);
-    cell.pageContent.text = [dictionary objectForKey:@"text"];
+        Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
+        if (self.array.count <= indexPath.row)
+            return cell;
+        NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
+        NSLog(@"dictionary is %@",dictionary);
+        cell.pageContent.text = [dictionary objectForKey:@"text"];
         NSString *string = @"+";
+        NSString *userScore = [NSString stringWithFormat:@"%@ \u00B7 %@ \u00B7 %@",[dictionary objectForKey:@"reputation"],[dictionary objectForKey:@"posts"],[dictionary objectForKey:@"userReplies"]];
+        cell.userScore.text = userScore;
+        cell.aboutMe.text = [dictionary objectForKey:@"aboutMe"];
         cell.likeCount.text = [string stringByAppendingString: [dictionary objectForKey:@"likes"]];
-//    cell.likeCount.text = [dictionary objectForKey:@"likes"];
-//        if ([dictionary objectForKey:@"replies"]!=(id)[NSNull null])
-            cell.replies.text = [dictionary objectForKey:@"replies"];
-//        else
-//            cell.replies.text = @"0";
-    cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
-    if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
-        cell.lock.hidden=NO;
+        cell.replies.text = [dictionary objectForKey:@"replies"];
+        cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
+        cell.flag.tag=indexPath.row;
+        cell.like.tag=indexPath.row;
+        cell.replyButton.tag=indexPath.row;
+        
+        
+        
+        indexPathRow=indexPath;
+        return cell;
     }
-    else
-        cell.lock.hidden=YES;
-//        NSMutableString *tempHex=[[NSMutableString alloc] init];
-//        [tempHex appendString:[dictionary objectForKey:@"color"]];
-//        unsigned colorInt = 0;
-//        [[NSScanner scannerWithString:tempHex] scanHexInt:&colorInt];
-//        cell.colorView.backgroundColor = UIColorFromRGB(colorInt);
-//        cell.colorView.layer.cornerRadius=15;
-//        cell.colorView.layer.masksToBounds=YES;
-
-//    if (indexPath.row%2)
-//        cell.contentView.backgroundColor =[self pastelColorCode:[UIColor whiteColor]];
-//        cell.contentView.backgroundColor = [UIColor blueColor];
-    cell.privatePost.tag=indexPath.row+1000;
-    cell.lock.tag=indexPath.row;
-//    cell.share.tag = indexPath.row;
-    cell.flag.tag=indexPath.row;
-    cell.like.tag=indexPath.row;
-    cell.replyButton.tag=indexPath.row;
-//         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
-//        [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-//            if (items.count) {
-//                cell.likeCount.textColor=[UIColor redColor];
-//            }
-//            else {
-//                cell.likeCount.textColor=[UIColor lightGrayColor];
-//                
-//            }
-////            [self.theTableView reloadData];
-//        }];
-//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//
-//    if ([userId isEqualToString:[dictionary objectForKey:@"userId"]] ){
-//        [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
+//    if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
+//        cell.lock.hidden=NO;
 //    }
-//    else {
-//        [cell.flag setImage:[UIImage imageNamed:@"glyphicons_266_flag.png"] forState:UIControlStateNormal ];
-//       
-//    }
-    indexPathRow=indexPath;
-        return cell;}
+//    else
+//        cell.lock.hidden=YES;
+//    cell.privatePost.tag=indexPath.row+1000;
+//    cell.lock.tag=indexPath.row;
+    
     else {
-        
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"List"];
-        
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"List"];
         }
@@ -340,8 +316,6 @@
             cell.textLabel.text = [filteredScreen_nameArray objectAtIndex:indexPath.row];
         cell.textLabel.font = [UIFont fontWithName:@"GillSans-Light" size:16];
         cell.textLabel.textColor = [UIColor darkGrayColor];
-        
-
         return cell;
     }
 }
@@ -420,13 +394,13 @@
     }
     [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {      float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
-    if (bottomEdge >= scrollView.contentSize.height) {
-        [self getData];
-    }
-    }
-}
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+//    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {      float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+//    if (bottomEdge >= scrollView.contentSize.height) {
+//        [self getData];
+//    }
+//    }
+//}
 - (IBAction)lockAction:(id)sender {
 
     UIButton *btn = (UIButton*)sender;
@@ -552,7 +526,7 @@
     
     UIButton *btnPressLike = (UIButton*)sender;
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
-    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"postId == %@",[dictionary objectForKey:@"id" ]];
+//    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"postId == %@",[dictionary objectForKey:@"id" ]];
 
 //    [self.isLikeTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
 //        NSInteger likeCount = totalCount;
@@ -708,7 +682,7 @@
         NSDictionary *dictionary = self.array[btn.tag];
         UserViewController *vc = [[UserViewController alloc] init];
         vc=(UserViewController*)[[segue destinationViewController]topViewController];
-        vc.userId =[dictionary objectForKey:@"userId"];
+        vc.userId =[dictionary objectForKey:@"userid"];
 
     }
     else {
@@ -886,34 +860,57 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//    NSString *word1 = [defaults objectForKey:@"filterWord1"];
-//    NSString *word2 = [defaults objectForKey:@"filterWord2"];
-//    NSString *word3 = [defaults objectForKey:@"filterWord3"];
-
-    NSPredicate *predicate;
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    NSPredicate *predicate;
 //    if (![defaults boolForKey:@"filter"])
-        predicate = [NSPredicate predicateWithFormat:@"isPrivate == false",userId];
+//        predicate = [NSPredicate predicateWithFormat:@"isPrivate == false",userId];
 //    else {
 //        
 //        predicate = [NSPredicate predicateWithFormat:@"((text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@) && isPrivate == false)|| userId == %@",word1,word2,word3,userId];
 //    }
  
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
-    MSQuery *query = [self.table query];
-    query.predicate=predicate;
-    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
-    query.includeTotalCount = YES; // Request the total item count
-    query.fetchLimit = kLimit;
-    query.fetchOffset = self.array.count;
-    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+    
+//    MSQuery *query = [self.table query];
+//    MSQuery *query = [[MSQuery alloc] initWithTable:self.table];
+//    MSQuery *query = [self.extendTable query];
+
+//    query.predicate=predicate;
+//    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
+//    query.includeTotalCount = YES; // Request the total item count
+//    query.fetchLimit = kLimit;
+//    query.fetchOffset = self.array.count;
+//    NSString *queryString = [[NSString alloc] init];
+//    queryString = [NSString stringWithFormat:@"fetchOffset=%d, fetchLimit=%d",self.array.count, kLimit];
+
+//    NSLog(@"queryString is %@",queryString);
+//    [self.table readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [self.table readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+
+        if (items.count ==0)return;
         [self logErrorIfNotNil:error];
-        if(!error) {
-            //add the items to our local copy
-            [self.array addObjectsFromArray:items];
+//        if(!error) {
+            [self.array addObjectsFromArray:items];  //copy items into array
+            NSLog(@"items are %@",items);
+//            for (NSDictionary *dictionary in items){
+//                NSArray *newUserIdArray = [defaults objectForKey:@"userIdArray"]; //get stored userIdArray
+//                for (NSString *string in newUserIdArray)
+//                    if (!([string isEqualToString:[dictionary objectForKey:@"userId"]])){
+//                        [self.userIdArray addObject:[dictionary objectForKey:@"userId"]];
+//                        NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userId == %@ ",userId];
+//                        [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//                            NSLog(@"items are %@",items);
+//                            [self.userInfoArray addObject:items];
+//                            [self.userIdArray addObject:[dictionary objectForKey:@"userId"]];
+//                        }];
+//                    }
+//                //first order by ascending duration field
+////                NSDictionary *dictionary = items[0];
+//                [self logErrorIfNotNil:error];
+//
             [self.theTableView reloadData];
-        }
+//            }
+//        }
     }];
 //    [self.table readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
 //        NSLog(@"items table are %@, totalCount is %d",items,totalCount);
@@ -1024,7 +1021,6 @@
 }
 -(void)postInitialUserInfo
 {
-    
     UIColor *color;
     NSString *colorString = [defaults objectForKey:@"color"];
     if (!colorString){
@@ -1038,7 +1034,7 @@
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //    NSLog(@"inserting into commentTable userId = %@, postId = %@, reply = %@, color = %@",userId,postId,_txtChat.text, colorString);
     NSString *randomString = [self randomStringWithLength:8];
-    NSDictionary *item = @{@"userId" : userId, @"posts" : @"0",@"replies" : @"0", @"color" :colorString,@"reputation" :@"0",@"username":randomString, @"aboutme":@"",@"gender" : @"",@"location":@""};
+    NSDictionary *item = @{@"userId" : userId, @"posts" : @"0",@"userReplies" : @"0", @"color" :colorString,@"reputation" :@"0",@"username":randomString, @"aboutme":@"",@"gender" : @"",@"location":@""};
     
     
     //    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
