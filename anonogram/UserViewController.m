@@ -28,7 +28,9 @@
     BOOL isDirectMessage;
     BOOL isAboutMe;
     BOOL isLocation;
+    BOOL myPage;
     NSInteger tapAction;
+    NSInteger characterLimit;
 //    NSIndexPath *indexPathRow;
 //    UIRefreshControl *refreshControl;
 //    NSMutableArray *buttonsArray;
@@ -38,6 +40,8 @@
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
     NSString *dataId;
+    NSString *myId;
+
 //    NSTimeInterval nowTime;
 //    NSTimeInterval startTime ;
 }
@@ -55,6 +59,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *posts;
 @property (weak, nonatomic) IBOutlet UILabel *location;
 @property (nonatomic, strong)   MSClient *client;
+@property (weak, nonatomic) IBOutlet UILabel *aboutMeLabel;
 
 
 @end
@@ -89,7 +94,8 @@
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
     self.userTable = [self.client tableWithName:@"userTable"];
-
+    myId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    if ([myId isEqualToString:self.userId]) myPage=YES;
 //    self.isLikeTable = [self.client tableWithName:@"isLike"];
 //    self.isFlagTable = [self.client tableWithName:@"isFlag"];
 //    self.commentTable = [self.client tableWithName:@"commentTable"];
@@ -128,7 +134,7 @@
 //    if (![defaults objectForKey:@"twitterAccounts"])
 //        [self twitterSwitch:nil];
     [self getData];
-    [self setup];
+//    [self setup];
 
 }
 -(void) setup {
@@ -170,18 +176,23 @@
     //    [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [txtChat setKeyboardType:UIKeyboardTypeTwitter];
     
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    if (![self.userId isEqualToString:userId]){
+//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    if (!myPage){
         self.aboutMe.userInteractionEnabled=NO;
         self.username.userInteractionEnabled=NO;
         self.gender.userInteractionEnabled=NO;
-        
+        NSLog(@"user page");
     }
     else {
+        NSLog(@"my page");
         self.directMessage.hidden=YES;
+//        self.aboutMe.hidden=NO;
+//        self.location.hidden=NO;
+//        self.gender.hidden=NO;
+//        [self.view bringSubviewToFront:self.aboutMe];
+//        [self.view bringSubviewToFront:self.location];
+//        [self.view bringSubviewToFront:self.gender];
     }
-        
-    
 }
 
 //- (IBAction)myAction:(id)sender {
@@ -233,6 +244,8 @@
 //}
 - (IBAction)cancel:(id)sender {
     [self dismissViewControllerAnimated: NO completion: nil];
+    [self postGender];
+
 }
 
 
@@ -726,7 +739,8 @@
             [self logErrorIfNotNil:error];
         self.navigationItem.title = [NSString stringWithFormat:@"%@",[dictionary objectForKey:@"username"]];
         
-        [self.aboutMe setTitle:[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"aboutme"]] forState:UIControlStateNormal];
+//        [self.aboutMe setTitle:[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"aboutme"]] forState:UIControlStateNormal];
+        self.aboutMeLabel.text=[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"aboutme"]];
         [self.username setTitle:[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"username"]] forState:UIControlStateNormal];
         [self.gender setTitle:[NSString stringWithFormat:@"%@",[dictionary objectForKey:@"gender"]] forState:UIControlStateNormal];
 
@@ -747,23 +761,28 @@
         self.directMessage.layer.borderColor=[UIColor blueColor].CGColor;
         self.directMessage.layer.borderWidth=2.0;
         
-        if([self.location.text isEqualToString:@""]){
-            self.location.text = @"location?";
-            self.location.hidden=YES;
+        if([self.location.text isEqualToString:@""] && myPage){
+            NSLog(@"location");
+            self.location.text = @"Location?";
+//            self.location.hidden=YES;
         }
-        if([self.aboutMe.titleLabel.text isEqualToString:@""]){
-            [self.aboutMe setTitle:@"write something about yourself..." forState:UIControlStateNormal];
-            self.aboutMe.hidden=YES;
+        if([self.aboutMeLabel.text isEqualToString:@""] && myPage){
+            NSLog(@"aboutme");
+            self.aboutMeLabel.text=@"Write something about yourself...";
+//            [self.aboutMe setTitle:@"Write something about yourself..." forState:UIControlStateNormal];
+//            self.aboutMe.hidden=YES;
         }
-        if([self.gender.titleLabel.text isEqualToString:@""]){
+        if([[dictionary objectForKey:@"gender"] isEqualToString:@""] && myPage){
+            NSLog(@"gender");
+
             [self.gender setTitle:@"Male" forState:UIControlStateNormal];
-            self.gender.hidden=YES;
+//            self.gender.hidden=YES;
         }
         dataId = [dictionary objectForKey:@"id"];
         [self.view setNeedsDisplay];
         }];
+    [self setup];
 
-    
 }
 
 
@@ -781,12 +800,11 @@
         [self doneKeyboard];
         return YES;
     }
-    
     NSCharacterSet *doneButtonCharacterSet = [NSCharacterSet newlineCharacterSet];
     NSRange replacementTextRange = [text rangeOfCharacterFromSet:doneButtonCharacterSet];
     NSUInteger location = replacementTextRange.location;
 
-    if (textView.text.length + text.length > 140){
+    if (textView.text.length + text.length > characterLimit){
         if (location != NSNotFound){
             [txtChat resignFirstResponder];
             txtChat.hidden=YES;
@@ -805,7 +823,7 @@
 
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.hidden=NO;
-    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
+    label.text = [NSString stringWithFormat:@"%u",characterLimit-textView.text.length];
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=YES;
 }
@@ -847,7 +865,7 @@
     if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
     {
         //    if(![txtChat.text isEqualToString:@""])
-        txtChat.text = [NSString stringWithFormat:@" %@ ",txtChat.text];
+        txtChat.text = [NSString stringWithFormat:@"%@",txtChat.text];
         if (isDirectMessage)
             [self postDirectMessage];
         else if (isAboutMe)
@@ -866,6 +884,7 @@
     txtChat.hidden=YES;
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.text = @"140";
+    
 }
 
 - (IBAction)composeAction:(id)sender {
@@ -897,14 +916,15 @@
 
 - (IBAction)genderAction:(id)sender {
     if(tapAction>2) tapAction=0;
+    if ([self.gender.titleLabel.text isEqualToString:@"Female"])
+        tapAction=1;
     if (tapAction==0)
-        self.gender.titleLabel.text=@"Female";
+        [self.gender setTitle:@"Female" forState:UIControlStateNormal];
     else if (tapAction==1)
-        self.gender.titleLabel.text=@"Male";
+        [self.gender setTitle:@"Male" forState:UIControlStateNormal];
     else
-        self.gender.titleLabel.text=@"";
+        [self.gender setTitle:@" " forState:UIControlStateNormal];
     tapAction++;
-    [self postGender];
 
 }
 
@@ -927,16 +947,24 @@
     if (isDirectMessage){
         label2.text= [NSString stringWithFormat:@"Direct message %@",self.username.titleLabel.text];
         label.text=@"140";
+        characterLimit=140;
     }
     else if (isAboutMe){
         label2.text=@"Write something about yourself ...";
         label.text =@"140";
+        characterLimit=140;
+
+    }
+    else if (isLocation){
+        label.text=@"20";
+        label2.text=@"Enter your location - e.g., San Francisco, CA";
+        characterLimit=20;
     }
     else {
         label.text=@"20";
         label2.text=@"Create a username";
+        characterLimit=20;
     }
-    
     [self.view bringSubviewToFront:txtChat];
     [txtChat becomeFirstResponder];
 }
@@ -945,7 +973,7 @@
 {
     [Flurry logEvent:@"PostDirectMessage"];
     
-    NSString *myId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+//    NSString *myId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     NSDictionary *item = @{@"userId" : myId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0",@"replies" :@"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn], @"toUserId" : self.userId};
     [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
@@ -955,16 +983,19 @@
 -(void)postAboutMe
 {
     [Flurry logEvent:@"PostAboutMe"];
+//    [self.aboutMe setTitle:txtChat.text forState:UIControlStateNormal];
+    self.aboutMeLabel.text=txtChat.text;
     NSDictionary *item = @{@"id" : dataId,@"aboutme" : txtChat.text};
     [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
-        [self getData];
+//        [self getData];
     }];
 }
 -(void)postUsername
 {
     [Flurry logEvent:@"PostUsername"];
-    
+    [self.username setTitle:txtChat.text forState:UIControlStateNormal];
+    self.navigationItem.title=txtChat.text;
     NSDictionary *item = @{@"id" : dataId,@"username" : txtChat.text};
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username == %@",txtChat.text];
@@ -978,7 +1009,7 @@
         else {
             [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
                 [self logErrorIfNotNil:error];
-                [self getData];
+//                [self getData];
             }];
         }
     }];
@@ -987,21 +1018,24 @@
 -(void)postGender
 {
     [Flurry logEvent:@"PostGender"];
-    
+
+    NSLog(@"gender is %@",self.gender.titleLabel.text);
     NSDictionary *item = @{@"id" : dataId,@"gender" : self.gender.titleLabel.text};
     [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
-        [self getData];
+        
+//        [self getData];
     }];
 }
 -(void)postLocation
 {
     [Flurry logEvent:@"PostLocation"];
-    
+    self.location.text= txtChat.text;
+
     NSDictionary *item = @{@"id" : dataId,@"location" : txtChat.text};
     [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
-        [self getData];
+//        [self getData];
     }];
 }
 - (void) logErrorIfNotNil:(NSError *) error

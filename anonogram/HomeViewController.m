@@ -285,6 +285,7 @@
         NSString *userScore = [NSString stringWithFormat:@"%@ \u00B7 %@ \u00B7 %@",[dictionary objectForKey:@"reputation"],[dictionary objectForKey:@"posts"],[dictionary objectForKey:@"userReplies"]];
         cell.userScore.text = userScore;
         cell.aboutMe.text = [dictionary objectForKey:@"aboutMe"];
+        cell.location.text = [dictionary objectForKey:@"location"];;
         cell.likeCount.text = [string stringByAppendingString: [dictionary objectForKey:@"likes"]];
         cell.replies.text = [dictionary objectForKey:@"replies"];
         cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
@@ -703,7 +704,7 @@
     
     UIView* captureView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"white"])
-        captureView.backgroundColor = [UIColor whiteColor];
+        captureView.backgroundColor = [UIColor groupTableViewBackgroundColor];
     else
         captureView.backgroundColor = [UIColor blackColor];
 
