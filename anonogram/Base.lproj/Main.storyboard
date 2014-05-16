@@ -37,28 +37,15 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" alpha="0.60000002384185791" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Wna-fe-S0U" userLabel="Button - like">
-                                                    <rect key="frame" x="0.0" y="255" width="50" height="30"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="15" maxY="0.0"/>
-                                                    <state key="normal">
-                                                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="likeAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="U0g-mk-Uuc"/>
-                                                    </connections>
-                                                </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="SeQ-br-N5m" userLabel="Label - #likes">
-                                                    <rect key="frame" x="29" y="262" width="50" height="21"/>
+                                                    <rect key="frame" x="29" y="262" width="55" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="I9N-Jc-gP3" userLabel="Label - #replies">
-                                                    <rect key="frame" x="125" y="262" width="50" height="21"/>
+                                                    <rect key="frame" x="125" y="262" width="55" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -104,7 +91,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="160k・100k・100k" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TQW-m6-c2a">
-                                                    <rect key="frame" x="10" y="2" width="117" height="21"/>
+                                                    <rect key="frame" x="10" y="2" width="125" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
                                                     <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -122,7 +109,6 @@
                                         <connections>
                                             <outlet property="aboutMe" destination="VrM-cU-qfQ" id="lwl-eM-UOH"/>
                                             <outlet property="flag" destination="Wpj-l2-MHz" id="KX1-Fv-t7c"/>
-                                            <outlet property="like" destination="Wna-fe-S0U" id="Qhi-uX-edC"/>
                                             <outlet property="likeCount" destination="SeQ-br-N5m" id="OVR-uI-k78"/>
                                             <outlet property="location" destination="QZI-xC-ea8" id="gkB-N1-E5a"/>
                                             <outlet property="pageContent" destination="Qvh-oD-u2l" id="yf3-a3-fZn"/>

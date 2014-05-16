@@ -948,26 +948,52 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && commentid == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeCommentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
-                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
-                [dictionary setValue:likesCount forKey:@"likes"];
-                
-                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-                [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+                NSString *commentId = [[self.array objectAtIndex:btnPressLike.tag] objectForKey:@"id" ];
+
+                [self.commentTable readWithId:commentId completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
+                    if(!error){
+                        NSString *string1 = [NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
+                        NSDictionary *item1 =@{@"id" : commentId, @"likes": string1};
+                        [self.commentTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+                            [self logErrorIfNotNil:error];
+                        }];
+                    }
                 }];
+
+//                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
+//                [dictionary setValue:likesCount forKey:@"likes"];
+//                
+//                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+//                [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+//                    [self logErrorIfNotNil:error];
+//                }];
                 [self.isLikeCommentTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
                 }];
                 [self.chat_table reloadData];
             }
             else {
-                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
-                [dictionary setValue:likesCount forKey:@"likes"];
+//                NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
+//                [dictionary setValue:likesCount forKey:@"likes"];
+//                
+//                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
+//                [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+//                    [self logErrorIfNotNil:error];
+//                }];
+                NSString *commentId = [[self.array objectAtIndex:btnPressLike.tag] objectForKey:@"id" ];
                 
-                NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-                [self.commentTable update:item completion:^(NSDictionary *item, NSError *error) {
+                [self.commentTable readWithId:commentId completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
+                    if(!error){
+                        NSString *string1 = [NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
+                        NSDictionary *item1 =@{@"id" : commentId, @"likes": string1};
+                        [self.commentTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+                            [self logErrorIfNotNil:error];
+                        }];
+                    }
                 }];
+
                 NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
                 NSDictionary *item1 =@{@"commentid" : [dictionary objectForKey:@"id" ], @"userid": userId};
                 
