@@ -60,6 +60,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *location;
 @property (nonatomic, strong)   MSClient *client;
 @property (weak, nonatomic) IBOutlet UILabel *aboutMeLabel;
+@property (weak, nonatomic) IBOutlet UIButton *locationButton;
 
 
 @end
@@ -181,6 +182,7 @@
         self.aboutMe.userInteractionEnabled=NO;
         self.username.userInteractionEnabled=NO;
         self.gender.userInteractionEnabled=NO;
+        self.locationButton.userInteractionEnabled=NO;
         NSLog(@"user page");
     }
     else {
@@ -244,7 +246,9 @@
 //}
 - (IBAction)cancel:(id)sender {
     [self dismissViewControllerAnimated: NO completion: nil];
-    [self postGender];
+    if (myPage) {
+        [self postGender];
+    }
 
 }
 
@@ -729,7 +733,7 @@
 
 - (void) getData {
     NSLog(@"getting data...%@",self.userId);
-    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userId == %@ ",self.userId];
+    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userid == %@ ",self.userId];
     [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         NSLog(@"items are %@",items);
 
@@ -775,7 +779,7 @@
         if([[dictionary objectForKey:@"gender"] isEqualToString:@""] && myPage){
             NSLog(@"gender");
 
-            [self.gender setTitle:@"Male" forState:UIControlStateNormal];
+            [self.gender setTitle:@"gender?" forState:UIControlStateNormal];
 //            self.gender.hidden=YES;
         }
         dataId = [dictionary objectForKey:@"id"];
@@ -974,7 +978,7 @@
     [Flurry logEvent:@"PostDirectMessage"];
     
 //    NSString *myId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSDictionary *item = @{@"userId" : myId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0",@"replies" :@"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn], @"toUserId" : self.userId};
+    NSDictionary *item = @{@"userid" : myId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0",@"replies" :@"0", @"isprivate":[NSNumber numberWithBool:isPrivateOn], @"touserid" : self.userId};
     [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
         [self cancel:nil];
@@ -1017,9 +1021,13 @@
 
 -(void)postGender
 {
+    NSString *string = self.gender.titleLabel.text;
+    if ([string isEqualToString:@"gender?"]) {
+        NSLog(@"gender is %@",string);
+        return;
+    }
     [Flurry logEvent:@"PostGender"];
 
-    NSLog(@"gender is %@",self.gender.titleLabel.text);
     NSDictionary *item = @{@"id" : dataId,@"gender" : self.gender.titleLabel.text};
     [self.userTable update:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];

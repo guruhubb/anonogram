@@ -257,7 +257,7 @@
         NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
         
         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
                 NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
@@ -306,7 +306,7 @@
                     [self logErrorIfNotNil:error];
                 }];
                 NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-                NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+                NSDictionary *item1 =@{@"postid" : [dictionary objectForKey:@"id" ], @"userid": userId};
                 
                 [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
@@ -343,7 +343,7 @@
         [self logErrorIfNotNil:error];
     }];
     //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"postId == %@",postId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"postid == %@",postId];
     
     /* delete likes of the post from isLikeTable */
     
@@ -381,7 +381,7 @@
             [self.commentTable deleteWithId:commentId completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
-            NSPredicate *predicateComment = [NSPredicate predicateWithFormat:@"commentId == %@",commentId];
+            NSPredicate *predicateComment = [NSPredicate predicateWithFormat:@"commentid == %@",commentId];
             [self.isLikeCommentTable readWithPredicate:predicateComment completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
                 NSLog(@"isLikeCommentTable items for postId are %@",items);
                 
@@ -433,7 +433,7 @@
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
 
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[dictionary objectForKey:@"id" ]];
     [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         if (items.count) {
             NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
@@ -482,7 +482,7 @@
                 [self logErrorIfNotNil:error];
             }];
             NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-            NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+            NSDictionary *item1 =@{@"postid" : [dictionary objectForKey:@"id" ], @"userid": userId};
             
             [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
@@ -496,14 +496,14 @@
     flagButton = btn.tag;
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     
-    if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userId"]] ){
+    if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userid"]] ){
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:@"Share", nil];
         actionSheet.tag=0;
         [actionSheet showInView:sender];
     }
     
     else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
         [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (!items.count) {
                 UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:@"Share", nil];
@@ -664,7 +664,7 @@
             }];
             
             NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-            NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+            NSDictionary *item1 =@{@"postid" : [dictionary objectForKey:@"id" ], @"userid": userId};
             [self.isFlagTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 //handle errors or any additional logic as needed
                 [self logErrorIfNotNil:error];
@@ -775,7 +775,7 @@
 
 - (void) getData {
     NSLog(@"getting data...");
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isPrivate == NO"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isprivate == NO"];
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
     MSQuery *query = [self.table query];
     query.predicate=predicate;
@@ -797,7 +797,7 @@
 - (void) getDataSearch {
     NSLog(@"getting data...");
     NSString *search = [defaults objectForKey:@"search"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@  && isPrivate == NO",search];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@  && isprivate == NO",search];
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
     MSQuery *query = [self.table query];
     query.predicate=predicate;

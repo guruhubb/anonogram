@@ -130,6 +130,7 @@
                                             <outlet property="replyButton" destination="I4s-hq-DNh" id="pqT-ME-1Mp"/>
                                             <outlet property="timestamp" destination="T6U-2U-Sdh" id="05l-yb-hKI"/>
                                             <outlet property="userScore" destination="TQW-m6-c2a" id="KY2-ue-2RW"/>
+                                            <outlet property="userScoreButton" destination="f2i-cp-vhb" id="ZMT-8y-wGZ"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -846,7 +847,7 @@
                                             <action selector="locationAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="GRP-vp-RUY"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="location?" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fy9-a4-we8">
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fy9-a4-we8" userLabel="Label - location">
                                         <rect key="frame" x="15" y="147" width="120" height="41"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
@@ -862,7 +863,7 @@
                                         <rect key="frame" x="60" y="16" width="149" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
-                                        <state key="normal" title="username?">
+                                        <state key="normal">
                                             <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -874,7 +875,7 @@
                                         <rect key="frame" x="253" y="16" width="60" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
-                                        <state key="normal" title="gender?">
+                                        <state key="normal">
                                             <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -882,7 +883,7 @@
                                             <action selector="genderAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="gL7-Ik-672"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="bXf-wp-b7h">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="bXf-wp-b7h" userLabel="Button - aboutme">
                                         <rect key="frame" x="11" y="54" width="300" height="86"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="17"/>
@@ -894,7 +895,7 @@
                                             <action selector="aboutMeAction:" destination="Qej-zv-0pm" eventType="touchUpInside" id="8xM-gy-0K2"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="something about you?" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="RAz-UA-hFC">
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="RAz-UA-hFC" userLabel="Label - aboutme">
                                         <rect key="frame" x="15" y="58" width="290" height="82"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="17"/>
@@ -939,6 +940,7 @@
                         <outlet property="directMessage" destination="Kph-DA-6fq" id="B0l-Ku-a7Q"/>
                         <outlet property="gender" destination="62V-ZY-oOb" id="bVK-iy-P1w"/>
                         <outlet property="location" destination="fy9-a4-we8" id="HuJ-sx-1dF"/>
+                        <outlet property="locationButton" destination="HPk-kl-nyX" id="tO3-Wv-FNH"/>
                         <outlet property="posts" destination="sCW-XH-cmg" id="Vqk-1C-tug"/>
                         <outlet property="replies" destination="6s9-VL-tEJ" id="JRW-6T-Rae"/>
                         <outlet property="reputation" destination="yrp-0m-Lm8" id="47Y-4s-iQp"/>

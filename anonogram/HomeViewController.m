@@ -57,6 +57,7 @@
 @property (nonatomic, strong)   MSTable *commentTable;
 @property (nonatomic, strong)   MSTable *isLikeCommentTable;
 @property (nonatomic, strong)   MSTable *userTable;
+@property (nonatomic, strong)   MSTable *extendTable;
 
 @property (strong, nonatomic) IBOutlet UITableView *theTableView;
 @property (strong, nonatomic) NSMutableArray *array;
@@ -72,17 +73,18 @@
 -(void)viewDidAppear:(BOOL)animated {
     if ([defaults boolForKey:@"showSurveyAnonogram"]&&![defaults boolForKey:@"rateDoneAnonogram"])
         [self performSelector:@selector(showSurvey) withObject:nil afterDelay:0.1];
-    if (isComment){
-        isComment = NO;
-        NSLog(@"comment update, commentedPost is %d",commentedPost);
-        [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
-            NSLog(@"item is %@",item);
-            if (item == NULL) return;
-            [self.array replaceObjectAtIndex:commentedPost withObject:item];
-            [self.theTableView reloadData];
-            [self logErrorIfNotNil:error];
-        }];
-     }
+//    if (isComment){
+//        isComment = NO;
+//        NSLog(@"comment update, commentedPost is %d and array is %@",commentedPost,self.array);
+//
+//        [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+//            NSLog(@"item is %@",item);
+//            if (item == NULL) return;
+//            [self.array replaceObjectAtIndex:commentedPost withObject:item];
+//            [self.theTableView reloadData];
+//            [self logErrorIfNotNil:error];
+//        }];
+//     }
 }
 
 - (void)viewDidLoad
@@ -98,14 +100,16 @@
     self.userInfoArray = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
-//    self.extendTable = [self.client tableWithName:@"extendedTable"];
+    self.extendTable = [self.client tableWithName:@"extendedTable"];
     self.isLikeTable = [self.client tableWithName:@"isLike"];
     self.isFlagTable = [self.client tableWithName:@"isFlag"];
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     self.userTable = [self.client tableWithName:@"userTable"];
+    NSString *commentCounterString;
+    [[NSNotificationCenter defaultCenter]  addObserver:self
+                                              selector:@selector(handleNotification:) name:@"replyComplete" object:nil ];
 
-    
     if (!IS_TALL_SCREEN) {
         self.theTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
@@ -122,9 +126,19 @@
 //    [self TwitterSwitch];
 //    [self composeAction:nil];
 }
-
+- (void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 #pragma mark - Survey
-
+- (void) handleNotification : (NSNotification *)notification {
+    NSLog(@"notification");
+    [self refreshView];
+//    NSString *replies = [self.array[commentedPost] objectForKey:@"replies"];
+//    NSString *aString = [NSString stringWithFormat:@"%d", [replies integerValue]+ [defaults integerForKey:@"counter"] ];
+//    NSLog(@"replies are %@ and counter is %d, and aString is %@",replies,[defaults integerForKey:@"counter"],aString);
+//    [self.array[commentedPost] setObject:aString forKey:@"replies"];
+//    [self.theTableView reloadData];
+}
 - (void) showSurvey {
     NSLog(@"showSurvey");
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Like Anonogram? Please Rate" message:nil
@@ -282,9 +296,9 @@
         NSLog(@"dictionary is %@",dictionary);
         cell.pageContent.text = [dictionary objectForKey:@"text"];
         NSString *string = @"+";
-        NSString *userScore = [NSString stringWithFormat:@"%@ \u00B7 %@ \u00B7 %@",[dictionary objectForKey:@"reputation"],[dictionary objectForKey:@"posts"],[dictionary objectForKey:@"userReplies"]];
+        NSString *userScore = [NSString stringWithFormat:@"%@ \u00B7 %@ \u00B7 %@",[dictionary objectForKey:@"reputation"],[dictionary objectForKey:@"posts"],[dictionary objectForKey:@"userreplies"]];
         cell.userScore.text = userScore;
-        cell.aboutMe.text = [dictionary objectForKey:@"aboutMe"];
+        cell.aboutMe.text = [dictionary objectForKey:@"aboutme"];
         cell.location.text = [dictionary objectForKey:@"location"];;
         cell.likeCount.text = [string stringByAppendingString: [dictionary objectForKey:@"likes"]];
         cell.replies.text = [dictionary objectForKey:@"replies"];
@@ -292,6 +306,7 @@
         cell.flag.tag=indexPath.row;
         cell.like.tag=indexPath.row;
         cell.replyButton.tag=indexPath.row;
+        cell.userScoreButton.tag=indexPath.row;
         
         
         
@@ -333,7 +348,7 @@
         NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
         
         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
                 NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
@@ -381,7 +396,7 @@
                     [self logErrorIfNotNil:error];
                 }];
                 NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-                NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+                NSDictionary *item1 =@{@"postid" : [dictionary objectForKey:@"id" ], @"userid": userId};
                 
                 [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
@@ -462,7 +477,7 @@
         [self logErrorIfNotNil:error];
     }];
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"postId == %@",postId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"postid == %@",postId];
     
     /* delete likes of the post from isLikeTable */
 
@@ -500,7 +515,7 @@
             [self.commentTable deleteWithId:commentId completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
-            NSPredicate *predicateComment = [NSPredicate predicateWithFormat:@"commentId == %@",commentId];
+            NSPredicate *predicateComment = [NSPredicate predicateWithFormat:@"commentid == %@",commentId];
             [self.isLikeCommentTable readWithPredicate:predicateComment completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
                 NSLog(@"isLikeCommentTable items for postId are %@",items);
 
@@ -536,7 +551,7 @@
 //    }];
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[dictionary objectForKey:@"id" ]];
     [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         if (items.count) {
             NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
@@ -585,7 +600,7 @@
                 [self logErrorIfNotNil:error];
             }];
             NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-            NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+            NSDictionary *item1 =@{@"postid" : [dictionary objectForKey:@"id" ], @"userid": userId};
             
             [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
@@ -599,14 +614,14 @@
     flagButton = btn.tag;
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     
-    if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userId"]] ){
+    if ([userId isEqualToString:[self.array[btn.tag] objectForKey:@"userid"]] ){
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Anonogram" otherButtonTitles:@"Share", nil];
         actionSheet.tag=0;
         [actionSheet showInView:sender];
     }
     
     else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[self.array[flagButton] objectForKey:@"id" ]];
         [self.isFlagTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (!items.count) {
                 UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Flag as Inappropriate" otherButtonTitles:@"Share", nil];
@@ -882,11 +897,12 @@
 //    query.fetchLimit = kLimit;
 //    query.fetchOffset = self.array.count;
 //    NSString *queryString = [[NSString alloc] init];
-//    queryString = [NSString stringWithFormat:@"fetchOffset=%d, fetchLimit=%d",self.array.count, kLimit];
+//    NSString* queryString = [NSString stringWithFormat:@"fetchOffset=%d, fetchLimit=%d",self.array.count, kLimit];
 
 //    NSLog(@"queryString is %@",queryString);
 //    [self.table readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-        [self.table readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [self.extendTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//            [self.extendTable readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
 
         if (items.count ==0)return;
         [self logErrorIfNotNil:error];
@@ -1008,7 +1024,7 @@
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
-    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"toUserId" : @"",@"toUserId" : @"",@"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
+    NSDictionary *item = @{@"userid" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"touserid" : @"",@"isprivate":[NSNumber numberWithBool:isPrivateOn]};
 //    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
     [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
 //        if (error) {
@@ -1035,18 +1051,18 @@
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //    NSLog(@"inserting into commentTable userId = %@, postId = %@, reply = %@, color = %@",userId,postId,_txtChat.text, colorString);
     NSString *randomString = [self randomStringWithLength:8];
-    NSDictionary *item = @{@"userId" : userId, @"posts" : @"0",@"userReplies" : @"0", @"color" :colorString,@"reputation" :@"0",@"username":randomString, @"aboutme":@"",@"gender" : @"",@"location":@""};
+    NSDictionary *item = @{@"userid" : userId, @"posts" : @"0",@"userreplies" : @"0", @"color" :colorString,@"reputation" :@"0",@"username":randomString, @"aboutme":@"",@"gender" : @"",@"location":@""};
     
     
     //    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
-    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userId == %@ ",userId];
+    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userid == %@ ",userId];
     [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         //first order by ascending duration field
         if (items.count ==0)
             [self.userTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         //        if (error) {
-        NSLog(@"inserted item: %@", error);
-        [self logErrorIfNotNil:error];
+                NSLog(@"inserted item: %@", insertedItem);
+                [self logErrorIfNotNil:error];
         //        } else {
         //            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
         //            NSDictionary *item =@{@"id" : self.postId, @"replies": string};

@@ -187,6 +187,9 @@
     return color;
 }
 - (IBAction)cancel:(id)sender {
+    [defaults setInteger:counter forKey:@"counter"];
+//    NSString *string = [NSString stringWithFormat:@"%d",counter ];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"replyComplete" object:nil];
     [self dismissViewControllerAnimated: NO completion: nil];
 }
 
@@ -652,7 +655,7 @@
     NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && commentId == %@",userId,[dictionary objectForKey:@"id" ]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && commentid == %@",userId,[dictionary objectForKey:@"id" ]];
     [self.isLikeCommentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         if (items.count) {
             NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
@@ -676,7 +679,7 @@
                 [self logErrorIfNotNil:error];
             }];
             NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-            NSDictionary *item1 =@{@"commentId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+            NSDictionary *item1 =@{@"commentid" : [dictionary objectForKey:@"id" ], @"userid": userId};
             
             [self.isLikeCommentTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
@@ -699,7 +702,7 @@
     if (self.array.count > indexPath.row ) {
         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 
-        if ([userId isEqualToString:[self.array[indexPath.row] objectForKey:@"userId"]] ){
+        if ([userId isEqualToString:[self.array[indexPath.row] objectForKey:@"userid"]] ){
         
         
 //        NSString *me = [defaults objectForKey:@"me"];
@@ -727,7 +730,7 @@
         [self.commentTable deleteWithId:commentId completion:^(NSDictionary *item, NSError *error) {
             [self logErrorIfNotNil:error];
         }];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"commentId == %@",commentId];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"commentid == %@",commentId];
         
         /* delete likes of the post from isLikeTable */
         
@@ -749,6 +752,7 @@
         }];
         [self.array removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
+        counter--;
     }
     [tableView endUpdates];
     [tableView reloadData];
@@ -807,7 +811,7 @@
     //    NSString *word2 = [defaults objectForKey:@"filterWord2"];
     //    NSString *word3 = [defaults objectForKey:@"filterWord3"];
     
-    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"postId == %@ ",self.postId];
+    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"postid == %@ ",self.postId];
     //    else {
     //
     //        predicate = [NSPredicate predicateWithFormat:@"((text contains[cd] %@ || text contains[cd] %@ || text contains[cd] %@) && isPrivate == false)|| userId == %@",word1,word2,word3,userId];
@@ -839,43 +843,45 @@
 }
 -(void)postComment
 {
-    
-    UIColor *color;
+//    UIColor *color;
     NSString *colorString = [defaults objectForKey:@"color"];
-    if (!colorString){
-        color = [self pastelColorCode:[UIColor whiteColor]];
-//    color = [self colorCode];
-
-        colorString = [self hexStringForColor:color];
-        NSLog(@"color is %@",colorString);
-        [defaults setObject:colorString forKey:@"color"];
-    }
+//    if (!colorString){
+//        color = [self pastelColorCode:[UIColor whiteColor]];
+////    color = [self colorCode];
+//
+//        colorString = [self hexStringForColor:color];
+//        NSLog(@"color is %@",colorString);
+//        [defaults setObject:colorString forKey:@"color"];
+//    }
      NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSLog(@"inserting into commentTable userId = %@, postId = %@, reply = %@, color = %@",userId,postId,_txtChat.text, colorString);
+    NSLog(@"inserting into commentTable userid = %@, postid = %@, reply = %@, color = %@",userId,postId,_txtChat.text, colorString);
 
-    NSDictionary *item = @{@"postId" : self.postId, @"userId" : userId,@"reply" : _txtChat.text, @"color" :colorString,@"likes" :@"0"};
+    NSDictionary *item = @{@"postid" : self.postId, @"userid" : userId,@"reply" : _txtChat.text, @"color" :colorString,@"likes" :@"0"};
     
     
 //    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
 
     [self.commentTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
-//        if (error) {
+        if (error) {
             NSLog(@"inserted item: %@", error);
             [self logErrorIfNotNil:error];
+            return;
+        }
+        counter++;
 //        } else {
 //            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
 //            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
-            [self.table readWithId:userId completion:^(NSDictionary *item, NSError *error) {
-                NSLog(@"item is %@",item);
-                if (item == NULL) return;
-                NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]+1 ];
-                NSDictionary *itemReplies =@{@"id" : [item objectForKey:@"id" ], @"replies": string};
-                
-                [self.table update:itemReplies   completion:^(NSDictionary *item, NSError *error) {
-                    [self logErrorIfNotNil:error];
-                }];
-                [self logErrorIfNotNil:error];
-            }];
+//            [self.table readWithId:userId completion:^(NSDictionary *item, NSError *error) {
+//                NSLog(@"item is %@",item);
+//                if (item == NULL) return;
+//                NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]+1 ];
+//                NSDictionary *itemReplies =@{@"id" : [item objectForKey:@"id" ], @"replies": string};
+//                
+//                [self.table update:itemReplies   completion:^(NSDictionary *item, NSError *error) {
+//                    [self logErrorIfNotNil:error];
+//                }];
+//                [self logErrorIfNotNil:error];
+//            }];
 
 //            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
 //                [self logErrorIfNotNil:error];
@@ -904,7 +910,7 @@
         NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
         
         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && commentId == %@",userId,[dictionary objectForKey:@"id" ]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && commentid == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeCommentTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
                 NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
@@ -928,7 +934,7 @@
                     [self logErrorIfNotNil:error];
                 }];
                 NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-                NSDictionary *item1 =@{@"commentId" : [dictionary objectForKey:@"id" ], @"userId": userId};
+                NSDictionary *item1 =@{@"commentid" : [dictionary objectForKey:@"id" ], @"userid": userId};
                 
                 [self.isLikeCommentTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
