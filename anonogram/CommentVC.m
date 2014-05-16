@@ -41,6 +41,8 @@
 @property (nonatomic, strong)   MSTable *commentTable;
 @property (nonatomic, strong)   MSTable *isLikeCommentTable;
 @property (nonatomic, strong)   MSTable *table;
+@property (nonatomic, strong)   MSTable *userTable;
+
 @end
 
 @implementation CommentVC
@@ -109,6 +111,8 @@
     self.table = [self.client tableWithName:@"anonogramTable"];
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
+    self.userTable = [self.client tableWithName:@"userTable"];
+
 //    self.postId = [defaults stringForKey:@"postId"];
     NSLog(@"postId is %@ and %@ and %@",self.postId, self.replies,self.replyTitleString);
     self.replyTitle.text=self.replyTitleString;
@@ -727,6 +731,7 @@
         //add code here for when you hit delete
 
         NSString *commentId = [[self.array objectAtIndex:indexPath.row] objectForKey:@"id" ];
+//        NSDictionary *item = @{@"id" : commentId, @"postid" : self.postId};
         [self.commentTable deleteWithId:commentId completion:^(NSDictionary *item, NSError *error) {
             [self logErrorIfNotNil:error];
         }];
@@ -743,6 +748,36 @@
                 }];
             }
             [self logErrorIfNotNil:error];
+        }];
+        
+        /* update anonogramTable and userTable with reply count */
+        
+        /* first readwithId value of count now then update value */
+
+        [self.table readWithId:self.postId completion:^(NSDictionary *item, NSError *error) {
+            [self logErrorIfNotNil:error];
+            if(!error){
+                NSString *string1 = [NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]-1 ];
+                NSDictionary *item1 =@{@"id" : self.postId, @"replies": string1};
+                [self.table update:item1 completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+            }
+        }];
+        
+        NSString *userId = [[self.array objectAtIndex:indexPath.row] objectForKey:@"userid" ];
+        NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userId];
+
+        [self.userTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            [self logErrorIfNotNil:error];
+            if(!error){
+                NSString *string1 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"userreplies"] integerValue]-1 ];
+                NSString *string2 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"reputation"] integerValue]-3 ];
+                NSDictionary *item1 =@{@"id" : [items[0] objectForKey:@"id"], @"userreplies": string1, @"reputation":string2};
+                [self.userTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+            }
         }];
 
         NSString *string1 = [NSString stringWithFormat:@"%d",self.array.count-1 ];
