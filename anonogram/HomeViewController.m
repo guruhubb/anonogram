@@ -90,7 +90,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    [self turnOnIndicator];
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     [self.theTableView setSeparatorInset:UIEdgeInsetsZero];
@@ -260,7 +260,59 @@
     }
     NSLog(@"UUID is %@",retrieveuuid);
 }
+#pragma mark - Utility  (Indicator, noInternet)
 
+- (void) turnOnIndicator {
+    UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc]     initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityView.center=self.view.center;
+    activityView.layer.shadowOffset = CGSizeMake(1, 1);
+    activityView.layer.shadowColor = [UIColor blackColor].CGColor;
+    activityView.layer.shadowOpacity=0.8 ;
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+
+    
+    activityView.tag = 10001;
+    activityView.transform = CGAffineTransformScale(activityView.transform, 1.5, 1.5);
+    [activityView startAnimating];
+    [self.view addSubview:activityView];
+}
+
+- (void) turnOffIndicator {
+    UIActivityIndicatorView *activityView=(UIActivityIndicatorView *) [self.view viewWithTag:10001];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
+    [activityView removeFromSuperview];
+    [activityView stopAnimating];
+}
+
+- (void) noInternetAvailable {
+    [self turnOffIndicator];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    UILabel *noInternet = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 280, 50)];
+    noInternet.layer.cornerRadius=5;
+    noInternet.layer.masksToBounds=YES;
+    noInternet.backgroundColor=[UIColor darkGrayColor];
+    noInternet.textColor=[UIColor whiteColor];
+    noInternet.center=self.view.center;
+    noInternet.text=@"Couldn't connect to the Internet";
+    noInternet.font=[UIFont fontWithName:@"GillSans-Light" size:15];
+    
+    [self.view addSubview:noInternet];
+//    noInternet.hidden=NO;
+    [UIView animateWithDuration:2.0
+                          delay:1.0
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                         noInternet.alpha=0.0;
+                     }
+                     completion:^(BOOL completed) {
+//                         noInternet.hidden=YES;
+//                         noInternet.alpha=1.0;
+                         [noInternet removeFromSuperview];
+                     }
+     ];
+
+}
 #pragma mark - Tableview
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -293,15 +345,9 @@
         if (self.array.count <= indexPath.row)
             return cell;
         NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
-//        NSLog(@"dictionary is %@",dictionary);
         cell.pageContent.text = [dictionary objectForKey:@"text"];
         NSString *string = @"+";
-        /* test */
-        [dictionary setValue:@"1234" forKey:@"reputation"];
-        [dictionary setValue:@"1234" forKey:@"posts"];
-        [dictionary setValue:@"123456" forKey:@"userreplies"];
-        [dictionary setValue:@"1234567" forKey:@"replies"];
-        [dictionary setValue:@"1234" forKey:@"likes"];
+
         NSString *reputation = [self abbreviateNumber:[[dictionary objectForKey:@"reputation"] integerValue] ];
         NSString *posts = [self abbreviateNumber:[[dictionary objectForKey:@"posts"] integerValue] ];
         NSString *userreplies = [self abbreviateNumber:[[dictionary objectForKey:@"userreplies"] integerValue]];
@@ -320,19 +366,10 @@
         cell.like.tag=indexPath.row;
         cell.replyButton.tag=indexPath.row;
         cell.userScoreButton.tag=indexPath.row;
-        
-        
-        
+
         indexPathRow=indexPath;
         return cell;
     }
-//    if ([[dictionary objectForKey:@"isPrivate"] boolValue]==1) {
-//        cell.lock.hidden=NO;
-//    }
-//    else
-//        cell.lock.hidden=YES;
-//    cell.privatePost.tag=indexPath.row+1000;
-//    cell.lock.tag=indexPath.row;
     
     else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"List"];
@@ -369,11 +406,10 @@
                 if (likeCount>0){
                 NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
                 [dictionary setValue:likesCount forKey:@"likes"];
+                    
                     NSString *reputationCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"reputation"] integerValue]-1 ];
                     [dictionary setValue:reputationCount forKey:@"reputation"];
                     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-                    NSLog(@"userid is %@",userId);
-                    
                     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userId];
                     [self.userTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
                         NSLog(@"items usertable are %@",items);
@@ -388,6 +424,7 @@
                             }];
                         }
                     }];
+                    
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     if (!error){
                     NSLog(@"item is %@",item);
@@ -430,11 +467,7 @@
                         }];
                     }
                 }];
-                
-                //            NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-                //            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
-                //                [self logErrorIfNotNil:error];
-                //            }];
+
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     if(!error){
                     NSLog(@"item is %@",item);
@@ -987,7 +1020,14 @@
 }
 
 #pragma mark - Get, Post Data
-
+-(BOOL)connectedToNetwork  {
+    NSURL* url = [[NSURL alloc] initWithString:@"http://m.omentos.com/backend/api.php"];
+    NSData* data = [NSData dataWithContentsOfURL:url];
+    url=nil;
+    if (data != nil)
+        return YES;
+    return NO;
+}
 - (void) getData {
     NSLog(@"getting data...");
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -1092,54 +1132,32 @@
 -(void)postComment
 {
     
-    if (isPrivateOn)
-        [Flurry logEvent:@"Private Post"];
-    else
-        [Flurry logEvent:@"Post"];
+//    if (isPrivateOn)
+//        [Flurry logEvent:@"Private Post"];
+//    else
+//        [Flurry logEvent:@"Post"];
     
-    NSArray *parameters = [txtChat.text componentsSeparatedByString:@" "];
-    NSLog(@"parameters are %@",parameters);
-    for (NSString *parameter in parameters)
-    {
-        //        NSString *param = nil;
-        //        NSRange start = [txtChat.text rangeOfString:@"#"];
-        //        if (start.location != NSNotFound)
-        //        {
-        //            param = [txtChat.text substringFromIndex:start.location + start.length];
-        //            NSRange end = [param rangeOfString:@" "];
-        //            if (end.location != NSNotFound)
-        //            {
-        //                param = [param substringToIndex:end.location];
-        //            }
-        //        }
-        if([parameter hasPrefix:@"#"] && ![hashTagArray containsObject: parameter]){
-            NSLog(@"parameter is %@",parameter);
-            [hashTagArray insertObject:parameter atIndex:0];
-            [defaults setObject:hashTagArray forKey:@"hashtags"];
-        }
-        if([parameter hasPrefix:@"@"] && ![screen_nameArray containsObject: parameter]){
-            NSLog(@"parameter is %@",parameter);
-            [screen_nameArray insertObject:parameter atIndex:0];
-            [defaults setObject:screen_nameArray forKey:@"nametags"];
-        }
-    }
-    NSLog(@"hashtagarray is %@",hashTagArray);
-//    UIColor *color;
-//    NSString *colorString = [defaults objectForKey:@"color"];
-//    if (!colorString){
-//        color = [self pastelColorCode:[UIColor whiteColor]];
-//        //    color = [self colorCode];
-//        
-//        colorString = [self hexStringForColor:color];
-//        NSLog(@"color is %@",colorString);
-//        [defaults setObject:colorString forKey:@"color"];
+//    NSArray *parameters = [txtChat.text componentsSeparatedByString:@" "];
+//    NSLog(@"parameters are %@",parameters);
+//    for (NSString *parameter in parameters)
+//    {
+//        if([parameter hasPrefix:@"#"] && ![hashTagArray containsObject: parameter]){
+//            NSLog(@"parameter is %@",parameter);
+//            [hashTagArray insertObject:parameter atIndex:0];
+//            [defaults setObject:hashTagArray forKey:@"hashtags"];
+//        }
+//        if([parameter hasPrefix:@"@"] && ![screen_nameArray containsObject: parameter]){
+//            NSLog(@"parameter is %@",parameter);
+//            [screen_nameArray insertObject:parameter atIndex:0];
+//            [defaults setObject:screen_nameArray forKey:@"nametags"];
+//        }
 //    }
+//    NSLog(@"hashtagarray is %@",hashTagArray);
+
 
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//    MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     NSDictionary *item = @{@"userid" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"touserid" : @"",@"isprivate":[NSNumber numberWithBool:isPrivateOn]};
-//    MSTable *itemTable = [client tableWithName:@"anonogramTable"];
     [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
 //        if (error) {
 //            NSLog(@"Error: %@", error);
@@ -1545,8 +1563,7 @@
         NSLog(@"delete");
 
         NSString *currentText = [textView.text substringToIndex:range.location+1];
-//        NSString *appendingText = [textView.text substringFromIndex:range.location+1];
-        
+     
         if ([currentText hasSuffix:suffix] || [currentText hasSuffix:suffix1]) {
             NSLog(@"recordingHasTag=NO");
             theTable.hidden = YES;
@@ -1587,24 +1604,10 @@
             [filterHashTagArray addObject:hashTag];
         }
     }
-//    NSString *param = nil;
-//    NSRange start = [hash rangeOfString:@"#"];
-//    if (start.location != NSNotFound)
-//    {
-//        param = [txtChat.text substringFromIndex:start.location + start.length];
-//        NSRange end = [param rangeOfString:@" "];
-//        if (end.location != NSNotFound)
-//        {
-//            param = [param substringToIndex:end.location];
-//        }
-//    }
 
     if (!filterHashTagArray.count && [hash length]<1) {
         filterHashTagArray = [NSMutableArray arrayWithArray:hashTagArray];
     }
-//    else {
-//        theTable.hidden=YES;
-//    }
 
     if (!filterHashTagArray.count)
         theTable.hidden=YES;
@@ -1636,8 +1639,6 @@
 -(void)createInputAccessoryView {
     
     UIToolbar *inputAccessoryView1 = [[UIToolbar alloc] init];
-//    inputAccessoryView1.barTintColor=[UIColor whiteColor];
-//    [inputAccessoryView1 sizeToFit];
     
     inputAccessoryView1.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
     UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
@@ -1663,12 +1664,7 @@
 }
 
 -(void) addText {
-//    [Flurry logEvent:@"isPrivate Tapped"];
-//    
-//    txtChat.text = [NSString stringWithFormat:@"@IsPrivate %@",txtChat.text];
-//    UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
-//    label2.hidden=YES;
-//    UIBarButtonItem *btn = (UIBarButtonItem *)[self.view viewWithTag:200];
+
     NSLog(@"isPrivateItem title is %@",isPrivateItem.title);
     if (isPrivateOn){
         isPrivateOn=NO;
@@ -1698,28 +1694,6 @@
     
 }
 
-//-(void)createInputAccessoryViewForSearch {
-//    
-//    _inputAccessoryView = [[UIToolbar alloc] init];
-//    _inputAccessoryView.barTintColor=[UIColor lightGrayColor];
-//    [_inputAccessoryView sizeToFit];
-//    
-//    _inputAccessoryView.frame = CGRectMake(0, screenSpecificSetting(244, 156), 320, 44);
-//    UIBarButtonItem *removeItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-//                                                                   style:UIBarButtonItemStyleBordered
-//                                                                  target:self action:@selector(searchBarCancel)];
-//    //Use this to put space in between your toolbox buttons
-//    UIBarButtonItem *flexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-//                                                                              target:nil
-//                                                                              action:nil];
-//    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Search"
-//                                                                 style:UIBarButtonItemStyleBordered
-//                                                                target:self action:@selector(searchBarClicked)];
-//    
-//    NSArray *itemsView = [NSArray arrayWithObjects:/*fontItem,*/removeItem,flexItem,doneItem, nil];
-//    [_inputAccessoryView setItems:itemsView animated:NO];
-//}
-
 -(void)doneKeyboard{
     [txtChat resignFirstResponder];
     txtChat.hidden=YES;
@@ -1728,11 +1702,9 @@
     NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
     if(!([[txtChat.text stringByTrimmingCharactersInSet: set] length] == 0) )
         {
-        //    if(![txtChat.text isEqualToString:@""])
-        txtChat.text = [NSString stringWithFormat:@" %@ ",txtChat.text];
+        txtChat.text = [NSString stringWithFormat:@"%@",txtChat.text];
         [self postComment];
         }
-
     txtChat.text = @"";
 }
 -(void)cancelKeyboard{

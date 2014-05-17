@@ -35,7 +35,7 @@
     defaults = [NSUserDefaults standardUserDefaults];
 
     editArr = [[NSArray alloc]initWithObjects:
-               @"Background Color for Share",@"Add Watermark for Share", @"Like us on Facebook",@"Follow us on Twitter",
+               @"Background Color for Share",@"Add Watermark for Share", @"Like us on Facebook",@"Follow us on Twitter",@"Follow us on Instagram",
                @"Rate App",@"Feedback",@"Restore Purchases",nil];
     [self.settingsTableView reloadData];
 //    [defaults setBool:YES forKey:kFeature2];  //test
@@ -168,22 +168,22 @@
                 [cell.textLabel setText:[editArr objectAtIndex:3]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
-//            if (indexPath.row==2) {
-//                [cell.textLabel setText:[editArr objectAtIndex:4]];
-//                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-//            }
-        }
-        if (indexPath.section == 2) {
-            if(indexPath.row==0){
+            if (indexPath.row==2) {
                 [cell.textLabel setText:[editArr objectAtIndex:4]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
-            if(indexPath.row==1){
+        }
+        if (indexPath.section == 2) {
+            if(indexPath.row==0){
                 [cell.textLabel setText:[editArr objectAtIndex:5]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
-            if(indexPath.row==2){
+            if(indexPath.row==1){
                 [cell.textLabel setText:[editArr objectAtIndex:6]];
+                [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+            }
+            if(indexPath.row==2){
+                [cell.textLabel setText:[editArr objectAtIndex:7]];
                 [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
             }
             
@@ -212,12 +212,12 @@
         }
     }
     if (indexPath.section == 1) {
-//        if (indexPath.row==0) {
-//            NSURL *instagramURL = [NSURL URLWithString:@"instagram://user?username=oneframeapp"];
-//            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-//                [[UIApplication sharedApplication] openURL:instagramURL];
-//            }
-//        }
+        if (indexPath.row==0) {
+            NSURL *instagramURL = [NSURL URLWithString:@"instagram://user?username=anonogram_app"];
+            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+                [[UIApplication sharedApplication] openURL:instagramURL];
+            }
+        }
         if (indexPath.row==0) {
             NSURL *fbURL = [NSURL URLWithString:@"fb://profile/264820483689403"];
             if ([[UIApplication sharedApplication] canOpenURL:fbURL]) {

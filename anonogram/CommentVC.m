@@ -243,25 +243,7 @@
 //    imageCounter=0;
 //    [self loadxmlparsing];
 }
-- (void) turnOnIndicator {
-    UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc]     initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityView.center=self.view.center;
-    activityView.layer.shadowOffset = CGSizeMake(1, 1);
-    activityView.layer.shadowColor = [UIColor blackColor].CGColor;
-    activityView.layer.shadowOpacity=0.8 ;
-    
-    
-    activityView.tag = 10001;
-    activityView.transform = CGAffineTransformScale(activityView.transform, 1.5, 1.5);
-    [activityView startAnimating];
-    [self.view addSubview:activityView];
-}
 
-- (void) turnOffIndicator {
-    UIActivityIndicatorView *activityView=(UIActivityIndicatorView *) [self.view viewWithTag:10001];
-    [activityView removeFromSuperview];
-    [activityView stopAnimating];
-}
 
 
 

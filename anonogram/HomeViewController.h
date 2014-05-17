@@ -13,6 +13,8 @@
 
 @interface HomeViewController : UIViewController < UITableViewDataSource, UITableViewDelegate,UITextViewDelegate, UIActionSheetDelegate>
 
-
-
+-(NSString *)abbreviateNumber:(int)num ;
+- (void) turnOnIndicator ;
+- (void) turnOffIndicator ;
+- (void) noInternetAvailable ;
 @end
