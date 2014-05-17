@@ -17,4 +17,6 @@
 - (void) turnOnIndicator ;
 - (void) turnOffIndicator ;
 - (void) noInternetAvailable ;
+-(BOOL)connectedToNetwork;
+
 @end

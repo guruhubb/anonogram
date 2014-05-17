@@ -22,6 +22,7 @@
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 #import <Twitter/Twitter.h>
+#import "Reachability.h"
 
 @interface HomeViewController (){
     NSUserDefaults *defaults;
@@ -90,7 +91,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self turnOnIndicator];
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     [self.theTableView setSeparatorInset:UIEdgeInsetsZero];
@@ -106,7 +106,7 @@
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     self.userTable = [self.client tableWithName:@"userTable"];
-    NSString *commentCounterString;
+//    NSString *commentCounterString;
     [[NSNotificationCenter defaultCenter]  addObserver:self
                                               selector:@selector(handleNotification:) name:@"replyComplete" object:nil ];
 
@@ -293,11 +293,12 @@
     noInternet.layer.masksToBounds=YES;
     noInternet.backgroundColor=[UIColor darkGrayColor];
     noInternet.textColor=[UIColor whiteColor];
-    noInternet.center=self.view.center;
+    noInternet.textAlignment=NSTextAlignmentCenter;
+    noInternet.center=self.view.window.center;
     noInternet.text=@"Couldn't connect to the Internet";
-    noInternet.font=[UIFont fontWithName:@"GillSans-Light" size:15];
+    noInternet.font=[UIFont fontWithName:@"GillSans-Light" size:20];
     
-    [self.view addSubview:noInternet];
+    [self.view.window addSubview:noInternet];
 //    noInternet.hidden=NO;
     [UIView animateWithDuration:2.0
                           delay:1.0
@@ -1020,16 +1021,34 @@
 }
 
 #pragma mark - Get, Post Data
+//-(BOOL)connectedToNetwork  {
+//    NSURL* url = [[NSURL alloc] initWithString:@"https://anon.azure-mobile.net/"];
+//    if ([NSData dataWithContentsOfURL:url] != nil)
+//        return YES;
+//    return NO;
+//}
 -(BOOL)connectedToNetwork  {
-    NSURL* url = [[NSURL alloc] initWithString:@"http://m.omentos.com/backend/api.php"];
-    NSData* data = [NSData dataWithContentsOfURL:url];
-    url=nil;
-    if (data != nil)
+    Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
+    if (networkStatus == NotReachable) {
+        NSLog(@"There IS NO internet connection");
+        return NO;
+    } else {
+        NSLog(@"There IS internet connection");
         return YES;
-    return NO;
+    }
 }
+
 - (void) getData {
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+
     NSLog(@"getting data...");
+    if (![self connectedToNetwork]){
+        NSLog(@"test if network is available");
+        [self noInternetAvailable];
+        return;
+    }
+    
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //    NSPredicate *predicate;
 //    if (![defaults boolForKey:@"filter"])
@@ -1055,10 +1074,14 @@
 
 //    NSLog(@"queryString is %@",queryString);
 //    [self.table readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+    
         [self.extendTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
 //            [self.extendTable readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
-        if (items.count ==0)return;
+            if (items.count ==0)
+                return;
+            
         [self logErrorIfNotNil:error];
 //        if(!error) {
             [self.array addObjectsFromArray:items];  //copy items into array

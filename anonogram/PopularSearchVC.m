@@ -49,6 +49,10 @@
 @property (nonatomic, strong)   MSTable *commentTable;
 @property (nonatomic, strong)   MSTable *isLikeCommentTable;
 @property (nonatomic, strong)   MSTable *userTable;
+@property (nonatomic, strong)   MSTable *popularTable;
+@property (nonatomic, strong)   MSTable *extendTable;
+
+
 
 @end
 
@@ -84,6 +88,10 @@
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     self.userTable=[self.client tableWithName:@"userTable"];
+    self.popularTable=[self.client tableWithName:@"popularTable"];
+    self.extendTable=[self.client tableWithName:@"extendTable"];
+
+
     if (!IS_TALL_SCREEN) {
         self.popularTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
@@ -882,6 +890,12 @@
 
 - (void) getData {
     NSLog(@"getting data...");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    if (![home connectedToNetwork]){
+        NSLog(@"test if network is available");
+        [home noInternetAvailable];
+        return;
+    }
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isprivate == NO"];
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
     MSQuery *query = [self.table query];
@@ -891,7 +905,8 @@
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
-    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+    [self.popularTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {
@@ -903,6 +918,12 @@
 }
 - (void) getDataSearch {
     NSLog(@"getting data...");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    if (![home connectedToNetwork]){
+        NSLog(@"test if network is available");
+        [home noInternetAvailable];
+        return;
+    }
     NSString *search = [defaults objectForKey:@"search"];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@  && isprivate == NO",search];
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
@@ -912,7 +933,9 @@
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
-    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+    [self.extendTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {

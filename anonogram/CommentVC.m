@@ -13,6 +13,7 @@
 #import "CommentVC.h"
 #import "AppDelegate.h"
 #import "NSDate+NVTimeAgo.h"
+#import "HomeViewController.h"
 @interface CommentVC (){
 
     UIRefreshControl *refreshControl;
@@ -20,6 +21,7 @@
     CGSize textSize;
     NSUserDefaults *defaults;
     NSIndexPath *indexPathRow;
+    HomeViewController *home;
 
     NSInteger loadMore;
     NSInteger oldCount;
@@ -823,6 +825,12 @@
 //}
 - (void) getData {
     NSLog(@"getting data...%d, %d",kLimit,self.array.count);
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    if (![home connectedToNetwork]){
+        NSLog(@"test if network is available");
+        [home noInternetAvailable];
+        return;
+    }
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     //    NSString *word1 = [defaults objectForKey:@"filterWord1"];
     //    NSString *word2 = [defaults objectForKey:@"filterWord2"];
@@ -841,6 +849,8 @@
     query.fetchOffset = self.array.count;
     [query orderByDescending:@"timestamp"];
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {

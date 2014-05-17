@@ -14,6 +14,7 @@
 		CC03F8ED19130EB600ED4C5D /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC03F8EC19130EB600ED4C5D /* CoreData.framework */; };
 		CC0428D2191DB16600CE2817 /* WindowsAzureMobileServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0428D1191DB16600CE2817 /* WindowsAzureMobileServices.framework */; };
 		CC0428D51921D90400CE2817 /* UserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0428D41921D90400CE2817 /* UserViewController.m */; };
+		CC0428E11927DDD800CE2817 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0428E01927DDD800CE2817 /* Reachability.m */; };
 		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
@@ -117,6 +118,8 @@
 		CC0428D1191DB16600CE2817 /* WindowsAzureMobileServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WindowsAzureMobileServices.framework; sourceTree = "<group>"; };
 		CC0428D31921D90400CE2817 /* UserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserViewController.h; sourceTree = "<group>"; };
 		CC0428D41921D90400CE2817 /* UserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserViewController.m; sourceTree = "<group>"; };
+		CC0428DF1927DDD800CE2817 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = "Reachability-2/Reachability/Reachability.h"; sourceTree = SOURCE_ROOT; };
+		CC0428E01927DDD800CE2817 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = "Reachability-2/Reachability/Reachability.m"; sourceTree = SOURCE_ROOT; };
 		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
 		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
@@ -348,6 +351,8 @@
 		CCD9545319074299005EFE06 /* anonogram */ = {
 			isa = PBXGroup;
 			children = (
+				CC0428DF1927DDD800CE2817 /* Reachability.h */,
+				CC0428E01927DDD800CE2817 /* Reachability.m */,
 				CC94A1C21919BF4100C0F140 /* CommentCell.h */,
 				CC94A1C31919BF4100C0F140 /* CommentCell.m */,
 				CC0428D31921D90400CE2817 /* UserViewController.h */,
@@ -653,6 +658,7 @@
 				CCD9545A19074299005EFE06 /* main.m in Sources */,
 				CCD954DC19074E2B005EFE06 /* VerificationController.m in Sources */,
 				CCD954D019074E2B005EFE06 /* NSData+MKBase64.m in Sources */,
+				CC0428E11927DDD800CE2817 /* Reachability.m in Sources */,
 				CCD954D219074E2B005EFE06 /* MKSKProduct.m in Sources */,
 				CCD954D319074E2B005EFE06 /* MKSKSubscriptionProduct.m in Sources */,
 				CCD9551F1908B9FE005EFE06 /* Cell.m in Sources */,

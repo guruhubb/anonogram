@@ -20,6 +20,7 @@
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 #import "CommentVC.h"
+#import "HomeViewController.h"
 
 @interface UserViewController (){
     NSUserDefaults *defaults;
@@ -41,6 +42,7 @@
     UIToolbar *_inputAccessoryView;
     NSString *dataId;
     NSString *myId;
+    HomeViewController *home;
 
 //    NSTimeInterval nowTime;
 //    NSTimeInterval startTime ;
@@ -733,9 +735,16 @@
 
 - (void) getData {
     NSLog(@"getting data...%@",self.userId);
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    if (![home connectedToNetwork]){
+        NSLog(@"test if network is available");
+        [home noInternetAvailable];
+        return;
+    }
     NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userid == %@ ",self.userId];
     [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         NSLog(@"items are %@",items);
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
     //first order by ascending duration field
         if (items.count ==0)return;

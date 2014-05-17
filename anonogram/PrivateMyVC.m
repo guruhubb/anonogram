@@ -45,6 +45,7 @@
 @property (nonatomic, strong)   MSTable *commentTable;
 @property (nonatomic, strong)   MSTable *isLikeCommentTable;
 @property (nonatomic, strong)   MSTable *userTable;
+@property (nonatomic, strong)   MSTable *directMessageTable;
 
 @property (strong, nonatomic) IBOutlet UITableView *TableView;
 @property (strong, nonatomic) NSMutableArray *array;
@@ -85,6 +86,7 @@
     self.isLikeTable = [self.client tableWithName:@"isLike"];
     self.isFlagTable = [self.client tableWithName:@"isFlag"];
     self.commentTable = [self.client tableWithName:@"commentTable"];
+    self.directMessageTable = [self.client tableWithName:@"directMessageTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     self.userTable=[self.client tableWithName:@"userTable"];
     isPrivateOn=YES;
@@ -875,6 +877,12 @@
 }
 - (void) getDataMyAnonograms {
     NSLog(@"getting data my anons...");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    if (![home connectedToNetwork]){
+        NSLog(@"test if network is available");
+        [home noInternetAvailable];
+        return;
+    }
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@",userId];
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
@@ -885,6 +893,8 @@
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {
@@ -896,8 +906,14 @@
 }
 - (void) getDataMyDirectMessages {
     NSLog(@"getting direct messages...");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    if (![home connectedToNetwork]){
+        NSLog(@"test if network is available");
+        [home noInternetAvailable];
+        return;
+    }
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"touserud == %@ && isprivate == true",userId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"touserud == %@",userId];
     //    MSQuery *query = [self.table queryWithPredicate:predicate];
     MSQuery *query = [self.table query];
     query.predicate=predicate;
@@ -905,7 +921,9 @@
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
-    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+    [self.directMessageTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {
