@@ -70,7 +70,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="dYf-rc-FNx" kind="modal" modalTransitionStyle="crossDissolve" id="ZAK-vz-cei"/>
+                                                        <segue destination="dYf-rc-FNx" kind="modal" identifier="replyHome" id="K2M-CI-kI4"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="f2i-cp-vhb" userLabel="Button - user">
@@ -80,7 +80,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="8Gp-98-MfR" kind="modal" identifier="reply" modalTransitionStyle="crossDissolve" id="7Uo-7T-ycX"/>
+                                                        <segue destination="8Gp-98-MfR" kind="modal" identifier="userHome" modalTransitionStyle="crossDissolve" id="7Uo-7T-ycX"/>
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iOS developer, startups, Founder of several companies" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VrM-cU-qfQ">
@@ -260,7 +260,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="8Gp-98-MfR" kind="modal" id="EF0-cp-oh5"/>
+                                                        <segue destination="8Gp-98-MfR" kind="modal" identifier="user" modalTransitionStyle="crossDissolve" id="EF0-cp-oh5"/>
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iOS developer, startups, Founder of several companies" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="yDd-fg-a7R">
@@ -404,7 +404,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="8Gp-98-MfR" kind="modal" id="tf5-aX-1QP"/>
+                                                        <segue destination="8Gp-98-MfR" kind="modal" identifier="user" modalTransitionStyle="crossDissolve" id="tf5-aX-1QP"/>
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="iOS developer, startups, Founder of several companies" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z8q-9o-7Eh">
@@ -414,6 +414,23 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button hidden="YES" opaque="NO" alpha="0.29999999999999966" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="89K-Gi-kKg">
+                                                    <rect key="frame" x="290" y="0.0" width="21" height="26"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <inset key="contentEdgeInsets" minX="3" minY="4" maxX="3" maxY="4"/>
+                                                    <state key="normal" image="glyphicons_203_lock.png">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="lockAction:" destination="QPS-zS-iNn" eventType="touchUpInside" id="5Hq-EE-Qlz"/>
+                                                    </connections>
+                                                </button>
+                                                <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Direct Message" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Exf-IA-t9K">
+                                                    <rect key="frame" x="183" y="2" width="101" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="15"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
@@ -421,7 +438,9 @@
                                             <outlet property="flag" destination="QGP-tW-6DC" id="gAm-EQ-i7M"/>
                                             <outlet property="likeCount" destination="som-xO-c9y" id="GGJ-G7-COa"/>
                                             <outlet property="location" destination="cl0-oJ-BCc" id="NhK-1M-RNC"/>
+                                            <outlet property="lock" destination="89K-Gi-kKg" id="C9x-aL-kXg"/>
                                             <outlet property="pageContent" destination="79h-68-tsH" id="hQM-PU-ThJ"/>
+                                            <outlet property="privatePost" destination="Exf-IA-t9K" id="Hmv-Uw-tLm"/>
                                             <outlet property="replies" destination="MPa-pL-e2g" id="XTw-PB-G5C"/>
                                             <outlet property="replyButton" destination="Vre-EA-0LS" id="tuy-hl-5fR"/>
                                             <outlet property="timestamp" destination="ZUK-lS-LBm" id="nve-vj-wns"/>
@@ -435,8 +454,8 @@
                                     <outlet property="delegate" destination="QPS-zS-iNn" id="kbK-Wj-Yrl"/>
                                 </connections>
                             </tableView>
-                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="110" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Notifications yet. Make sure access to Twitter is On. You will receive posts that mention any of your Twitter username" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="15" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zcf-Ae-A9c">
-                                <rect key="frame" x="20" y="0.0" width="280" height="275"/>
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="110" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Direct Messages yet" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="15" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zcf-Ae-A9c">
+                                <rect key="frame" x="20" y="0.0" width="280" height="290"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="GillSans-Light" family="Gill Sans" pointSize="22"/>
                                 <nil key="highlightedColor"/>
@@ -782,6 +801,11 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="SETTINGS" id="st5-4Q-zyy">
                         <barButtonItem key="backBarButtonItem" title=" " id="zjm-Jf-kM5"/>
+                        <barButtonItem key="rightBarButtonItem" image="glyphicons_113_justify.png" id="REq-EE-Jm6">
+                            <connections>
+                                <segue destination="8Gp-98-MfR" kind="modal" modalTransitionStyle="crossDissolve" id="E0e-9i-bBh"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="settingsTableView" destination="JCd-Xq-aGs" id="nAs-2A-8Pd"/>
@@ -865,7 +889,6 @@
                                     <view contentMode="scaleToFill" id="lQX-oL-XsW" userLabel="View - color">
                                         <rect key="frame" x="13" y="10" width="40" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="v6E-Vz-FBc" userLabel="Button - username">
                                         <rect key="frame" x="60" y="16" width="149" height="30"/>
@@ -1010,7 +1033,7 @@
         <scene sceneID="dxr-DX-WE8">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1UW-Tl-HeK" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="glyphicons_128_message_lock.png" id="y3n-Kt-Yoj"/>
+                    <tabBarItem key="tabBarItem" title="" image="glyphicons_010_envelope.png" id="y3n-Kt-Yoj"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="Q2e-hV-9GI">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1078,11 +1101,13 @@
         <image name="comments-icon-614x460.png" width="614" height="460"/>
         <image name="facebook-70251b04a4be865178ab592bc9586c83.png" width="500" height="500"/>
         <image name="glyphicons_003_user.png" width="23" height="22"/>
+        <image name="glyphicons_010_envelope.png" width="24" height="16"/>
         <image name="glyphicons_020_home.png" width="27" height="26"/>
         <image name="glyphicons_048_dislikes.png" width="25" height="24"/>
-        <image name="glyphicons_128_message_lock.png" width="28" height="24"/>
+        <image name="glyphicons_113_justify.png" width="24" height="21"/>
         <image name="glyphicons_136_cogwheel.png" width="24" height="24"/>
         <image name="glyphicons_187_more.png" width="22" height="6"/>
+        <image name="glyphicons_203_lock.png" width="21" height="26"/>
         <image name="glyphicons_221_unshare.png" width="24" height="18"/>
         <image name="icon-letter-mail-hi.png" width="600" height="429"/>
         <image name="instagram-512-2.png" width="512" height="512"/>
@@ -1097,7 +1122,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="Ty9-RM-kub"/>
-        <segue reference="tf5-aX-1QP"/>
+        <segue reference="EF0-cp-oh5"/>
         <segue reference="TxD-uJ-oGT"/>
     </inferredMetricsTieBreakers>
 </document>

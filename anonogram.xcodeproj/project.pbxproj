@@ -15,6 +15,8 @@
 		CC0428D2191DB16600CE2817 /* WindowsAzureMobileServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0428D1191DB16600CE2817 /* WindowsAzureMobileServices.framework */; };
 		CC0428D51921D90400CE2817 /* UserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0428D41921D90400CE2817 /* UserViewController.m */; };
 		CC0428E11927DDD800CE2817 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = CC0428E01927DDD800CE2817 /* Reachability.m */; };
+		CC0428E3192AB35100CE2817 /* glyphicons_010_envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0428E2192AB35100CE2817 /* glyphicons_010_envelope.png */; };
+		CC0428E5192AB49200CE2817 /* glyphicons_113_justify.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0428E4192AB49200CE2817 /* glyphicons_113_justify.png */; };
 		CC0FD3E119094762008F4A63 /* glyphicons_222_share.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */; };
 		CC0FD3E219094762008F4A63 /* glyphicons_266_flag.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */; };
 		CC0FD3E419094DCD008F4A63 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */; };
@@ -120,6 +122,8 @@
 		CC0428D41921D90400CE2817 /* UserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserViewController.m; sourceTree = "<group>"; };
 		CC0428DF1927DDD800CE2817 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = "Reachability-2/Reachability/Reachability.h"; sourceTree = SOURCE_ROOT; };
 		CC0428E01927DDD800CE2817 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = "Reachability-2/Reachability/Reachability.m"; sourceTree = SOURCE_ROOT; };
+		CC0428E2192AB35100CE2817 /* glyphicons_010_envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_010_envelope.png; sourceTree = "<group>"; };
+		CC0428E4192AB49200CE2817 /* glyphicons_113_justify.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_113_justify.png; sourceTree = "<group>"; };
 		CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_222_share.png; sourceTree = "<group>"; };
 		CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_266_flag.png; sourceTree = "<group>"; };
 		CC0FD3E319094DCD008F4A63 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
@@ -427,6 +431,7 @@
 				CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */,
 				CC0FD3DF19094762008F4A63 /* glyphicons_222_share.png */,
 				CC0FD3E019094762008F4A63 /* glyphicons_266_flag.png */,
+				CC0428E2192AB35100CE2817 /* glyphicons_010_envelope.png */,
 				CCD9548B19074BA3005EFE06 /* comments-icon-614x460.png */,
 				CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */,
 				CCD9548D19074BA3005EFE06 /* facebook-70251b04a4be865178ab592bc9586c83.png */,
@@ -440,6 +445,7 @@
 				CCD9549519074BA3005EFE06 /* lockImage.png */,
 				CC03F8E41911A65400ED4C5D /* glyphicons_203_lock.png */,
 				CC03F8E61911A71600ED4C5D /* glyphicons_128_message_lock.png */,
+				CC0428E4192AB49200CE2817 /* glyphicons_113_justify.png */,
 				CCD9549619074BA3005EFE06 /* more-512.png */,
 				CCD9549719074BA3005EFE06 /* square.png */,
 				CCD9549819074BA3005EFE06 /* twitter_logo_white.png */,
@@ -620,12 +626,14 @@
 				CCD9550F19075001005EFE06 /* TapjoyResources.bundle in Resources */,
 				CCD954D919074E2B005EFE06 /* featureCheck.php in Resources */,
 				CC94A1BC19191CB000C0F140 /* glyphicons_221_unshare.png in Resources */,
+				CC0428E5192AB49200CE2817 /* glyphicons_113_justify.png in Resources */,
 				CCD954A519074BA3005EFE06 /* lockImage.png in Resources */,
 				CC94A1C11919A87B00C0F140 /* glyphicons_187_more.png in Resources */,
 				CCD9549E19074BA3005EFE06 /* glyphicons_003_user.png in Resources */,
 				CCD954A719074BA3005EFE06 /* square.png in Resources */,
 				CCD954A319074BA3005EFE06 /* icon-letter-mail-hi.png in Resources */,
 				CCD9549B19074BA3005EFE06 /* comments-icon-614x460.png in Resources */,
+				CC0428E3192AB35100CE2817 /* glyphicons_010_envelope.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

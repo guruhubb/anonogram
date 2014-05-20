@@ -12,6 +12,9 @@
 #import "SettingVC.h"
 #import "Flurry.h"
 #import <Accounts/Accounts.h>
+#import "UserViewController.h"
+#import "AppDelegate.h"
+
 @implementation SettingVC
 
 
@@ -80,6 +83,14 @@
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+
+        UserViewController *vc = [[UserViewController alloc] init];
+        vc=(UserViewController*)[[segue destinationViewController]topViewController];
+        vc.userId =[SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+
+}
 
 
 #pragma mark - tableView delegated methods
@@ -212,12 +223,7 @@
         }
     }
     if (indexPath.section == 1) {
-        if (indexPath.row==0) {
-            NSURL *instagramURL = [NSURL URLWithString:@"instagram://user?username=anonogram_app"];
-            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-                [[UIApplication sharedApplication] openURL:instagramURL];
-            }
-        }
+
         if (indexPath.row==0) {
             NSURL *fbURL = [NSURL URLWithString:@"fb://profile/264820483689403"];
             if ([[UIApplication sharedApplication] canOpenURL:fbURL]) {
@@ -228,6 +234,12 @@
             NSURL *twitterURL = [NSURL URLWithString:@"twitter://user?screen_name=anonogram"];
             if ([[UIApplication sharedApplication] canOpenURL:twitterURL]) {
                 [[UIApplication sharedApplication] openURL:twitterURL];
+            }
+        }
+        if (indexPath.row==2) {
+            NSURL *instagramURL = [NSURL URLWithString:@"instagram://user?username=anonogram_app"];
+            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+                [[UIApplication sharedApplication] openURL:instagramURL];
             }
         }
     }

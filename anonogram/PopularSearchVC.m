@@ -60,17 +60,17 @@
 
 -(void)viewDidAppear:(BOOL)animated {
     
-    if (isComment){
-        isComment = NO;
-        NSLog(@"comment update, commentedPost is %d",commentedPost);
-        [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
-            if (item == NULL) return;
-            NSLog(@"item is %@",item);
-            [self.array replaceObjectAtIndex:commentedPost withObject:item];
-            [self.popularTableView reloadData];
-            [self logErrorIfNotNil:error];
-        }];
-    }
+//    if (isComment){
+//        isComment = NO;
+//        NSLog(@"comment update, commentedPost is %d",commentedPost);
+//        [self.table readWithId:[self.array[commentedPost] objectForKey:@"id"] completion:^(NSDictionary *item, NSError *error) {
+//            if (item == NULL) return;
+//            NSLog(@"item is %@",item);
+//            [self.array replaceObjectAtIndex:commentedPost withObject:item];
+//            [self.popularTableView reloadData];
+//            [self logErrorIfNotNil:error];
+//        }];
+//    }
 }
 - (void)viewDidLoad
 {
@@ -79,6 +79,7 @@
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.popularTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     [self.popularTableView setSeparatorInset:UIEdgeInsetsZero];
+    home = [[HomeViewController alloc] init];
 
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
@@ -95,7 +96,8 @@
     if (!IS_TALL_SCREEN) {
         self.popularTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
-    
+    [[NSNotificationCenter defaultCenter]  addObserver:self
+                                              selector:@selector(handleNotification:) name:@"replyComplete" object:nil ];
 
     defaults = [NSUserDefaults standardUserDefaults];
     refreshControl = [[UIRefreshControl alloc]init];
@@ -106,8 +108,20 @@
     [self getData];
     
 }
+- (void) handleNotification : (NSNotification *)notification {
+    NSLog(@"notification");
+    [self refreshView];
+    //    NSString *replies = [self.array[commentedPost] objectForKey:@"replies"];
+    //    NSString *aString = [NSString stringWithFormat:@"%d", [replies integerValue]+ [defaults integerForKey:@"counter"] ];
+    //    NSLog(@"replies are %@ and counter is %d, and aString is %@",replies,[defaults integerForKey:@"counter"],aString);
+    //    [self.array[commentedPost] setObject:aString forKey:@"replies"];
+    //    [self.theTableView reloadData];
+}
 - (IBAction)searchAction:(id)sender {
     isSearchOn=YES;
+    self.array=nil;
+    self.array = [[NSMutableArray alloc] init];
+    [self.popularTableView reloadData];
     self.navigationItem.title= [NSString stringWithFormat:@"Search"];
     _searchBarButton.hidden=NO;
     _inputAccessoryView.hidden=NO;
@@ -121,7 +135,9 @@
 - (void)searchBarCancel
 {
     isSearchOn=NO;
-
+    self.array=nil;
+    self.array = [[NSMutableArray alloc] init];
+    [self.popularTableView reloadData];
     [_searchBarButton resignFirstResponder];
     _searchBarButton.hidden=YES;
     _inputAccessoryView.hidden=YES;
@@ -141,8 +157,9 @@
     {
         [Flurry logEvent:@"Search"];
         [defaults setBool:YES forKey:@"searchOn"];
+        self.array=nil;
         self.array = [[NSMutableArray alloc] init];
-        
+        [self.popularTableView reloadData];
         [_searchBarButton resignFirstResponder];
         _searchBarButton.hidden=YES;
         _inputAccessoryView.hidden=YES;
@@ -164,7 +181,9 @@
     {
     [Flurry logEvent:@"Search"];
     [defaults setBool:YES forKey:@"searchOn"];
+    self.array=nil;
     self.array = [[NSMutableArray alloc] init];
+    [self.popularTableView reloadData];
 
     [_searchBarButton resignFirstResponder];
     _searchBarButton.hidden=YES;
@@ -191,7 +210,9 @@
                                       initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
                                       target:self action:@selector(searchAction:)] ;
     self.navigationItem.rightBarButtonItem = popularButton;
+    self.array=nil;
     self.array = [[NSMutableArray alloc] init];
+    [self.popularTableView reloadData];
     [self getData];
 
 }
@@ -200,7 +221,7 @@
     [self createInputAccessoryViewForSearch];
     _searchBarButton.delegate=self;
     _searchBarButton.hidden=YES;
-    _searchBarButton.placeholder = @"Type anything";
+    _searchBarButton.placeholder = @"Search here";
     _searchBarButton.tintColor=[UIColor lightGrayColor];
     [_searchBarButton setKeyboardType:UIKeyboardTypeTwitter];
     [self.view addSubview:_inputAccessoryView];
@@ -244,6 +265,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath: (NSIndexPath *)indexPath
 {
     Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
+    if (self.array.count==0) cell = nil;
     if (self.array.count <= indexPath.row)
         return cell;
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
@@ -391,17 +413,17 @@
 //    }
 //    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
-//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-//    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {
-//        float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
-//        if (bottomEdge >= scrollView.contentSize.height) {
-//            if (!isSearchOn)
-//                [self getData];
-//            else
-//                [self getDataSearch];
-//    }
-//    }
-//}
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {
+        float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+        if (bottomEdge >= scrollView.contentSize.height) {
+            if (!isSearchOn)
+                [self getData];
+            else
+                [self getDataSearch];
+    }
+    }
+}
 - (void) deleteText  {
     [self.popularTableView beginUpdates];
     
@@ -700,6 +722,7 @@
         vc.postId =[dictionary objectForKey:@"id"];
         vc.replies = [dictionary objectForKey:@"replies"];
         vc.replyTitleString=[dictionary objectForKey:@"text"];
+        NSLog(@"vc is %@, %@, %@",vc.postId, vc.replies, vc.replyTitleString);
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {
@@ -865,6 +888,8 @@
 //    nowTime =[[NSDate date] timeIntervalSince1970];
 //    if ((nowTime-startTime)> 5 ){
 //        startTime =[[NSDate date] timeIntervalSince1970];
+    self.array=nil;
+
     self.array = [[NSMutableArray alloc] init];
     if(!isSearchOn)
         [self getData];
@@ -891,34 +916,77 @@
 - (void) getData {
     NSLog(@"getting data...");
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
         return;
     }
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isprivate == NO"];
-//    MSQuery *query = [self.table queryWithPredicate:predicate];
-    MSQuery *query = [self.table query];
-    query.predicate=predicate;
-    [query orderByDescending:@"likes"];
-    [query orderByDescending:@"timestamp"];  //first order by ascending duration field
-    query.includeTotalCount = YES; // Request the total item count
-    query.fetchLimit = kLimit;
-    query.fetchOffset = self.array.count;
-    [self.popularTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        NSLog(@"items are %@, totalCount is %d",items,totalCount);
-        [self logErrorIfNotNil:error];
-        if(!error) {
-            //add the items to our local copy
-            [self.array addObjectsFromArray:items];
-            [self.popularTableView reloadData];
-        }
-    }];
+    NSDictionary *postValues = @{
+                                 @"offset":[NSNumber numberWithInt:self.array.count],
+                                 @"limit" :[NSNumber numberWithInt:kLimit]
+                                 };
+    NSLog(@"postvalues are %@",postValues);
+    //    NSError *error;
+    //    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:postValues
+    //                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+    //                                                         error:&error];
+    //    NSString *jsonString;
+    //    if (! jsonData) {
+    //        NSLog(@"Got an error: %@", error);
+    //    } else {
+    //        jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    //        NSLog(@"jsonString is %@",jsonString);
+    //    }
+    [self.client invokeAPI:@"getpopularfeed" body:postValues HTTPMethod:@"POST"
+                parameters:nil
+                   headers:nil
+                completion:^(id result, NSHTTPURLResponse *response, NSError *error) {
+                    //                    dispatch_async(dispatch_get_main_queue(), ^{
+                    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+                    [home turnOffIndicator];
+                    //                    });
+                    NSLog(@"URLResponse: %@", response);
+                    NSLog(@"result: %@", result);
+                    if (error)
+                    {
+                        NSString* errorMessage = @"There was a problem! ";
+                        errorMessage = [errorMessage stringByAppendingString:[error localizedDescription]];
+                        NSLog(@"error is %@",errorMessage);
+
+//                        UIAlertView* myAlert = [[UIAlertView alloc]
+//                                                initWithTitle:@"Error!"
+//                                                message:errorMessage
+//                                                delegate:nil
+//                                                cancelButtonTitle:@"Okay"
+//                                                otherButtonTitles:nil];
+//                        [myAlert show];
+                    } else {
+                        NSLog(@"result is %@",result);
+                        [self.array addObjectsFromArray:result];
+                        [self.popularTableView reloadData];
+                    }
+                }];
+    
+
+//    [self.popularTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+//        [self logErrorIfNotNil:error];
+//        if(!error) {
+//            //add the items to our local copy
+//            [self.array addObjectsFromArray:items];
+//            [self.popularTableView reloadData];
+//        }
+//    }];
 }
 - (void) getDataSearch {
     NSLog(@"getting data...");
+    [self.array removeAllObjects];
+    [self.popularTableView reloadData];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [home turnOnIndicator];
+
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
@@ -926,23 +994,38 @@
     }
     NSString *search = [defaults objectForKey:@"search"];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@  && isprivate == NO",search];
-//    MSQuery *query = [self.table queryWithPredicate:predicate];
     MSQuery *query = [self.table query];
     query.predicate=predicate;
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
-    [self.extendTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+ 
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
-        NSLog(@"items are %@, totalCount is %d",items,totalCount);
+        [home turnOffIndicator];
+//        NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
+        [self.array addObjectsFromArray:items];
         if(!error) {
             //add the items to our local copy
-            [self.array addObjectsFromArray:items];
-            [self.popularTableView reloadData];
+            for (NSMutableDictionary *dictionary in self.array){
+                NSString *userid = [dictionary objectForKey:@"userid"];
+                NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userid];
+                MSQuery *query1=[self.userTable queryWithPredicate:predicate1];
+                query1.selectFields=@[@"userreplies", @"reputation",@"posts",@"aboutme",@"location"];
+
+                [query1 readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+                    NSDictionary *dic = items[0];
+//                    NSLog(@"dic is %@",dic);
+                    [dictionary setValuesForKeysWithDictionary:dic];
+                    NSLog(@"dictionary is %@",dictionary);
+                    [self.popularTableView reloadData];
+                }];
+            }
+//            NSLog(@"self.array is %@",self.array);
         }
+
     }];
 }
 //- (void)TwitterSwitch {

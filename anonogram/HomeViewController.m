@@ -8,7 +8,7 @@
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define IS_TALL_SCREEN ( [ [ UIScreen mainScreen ] bounds ].size.height == 568 )
 #define screenSpecificSetting(tallScreen, normal) ((IS_TALL_SCREEN) ? tallScreen : normal)
-#define kLimit 1
+#define kLimit 20
 #define kFlagsAllowed 10
 
 #import "HomeViewController.h"
@@ -206,7 +206,7 @@
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
     txtChat.delegate=self;
     txtChat.hidden=YES;
-    txtChat.font=[UIFont fontWithName:@"GillSans-Light" size:18];
+    txtChat.font=[UIFont fontWithName:@"GillSans-Light" size:20];
 //    txtChat.textColor=[UIColor lightGrayColor];
     txtChat.tintColor=[UIColor darkGrayColor];
 //    [[UITextView appearance] setTintColor:[UIColor lightGrayColor]];
@@ -221,9 +221,9 @@
 
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
     label2.textColor=[UIColor darkGrayColor];
-    label2.font = [UIFont fontWithName:@"GillSans-Light" size:18];
+    label2.font = [UIFont fontWithName:@"GillSans-Light" size:20];
     label2.textAlignment=NSTextAlignmentCenter;
-    label2.text= @"Share a thought\n\nTo direct message real people, tap Private, mention their Twitter names";
+    label2.text= @"Share a thought";
     label2.numberOfLines=14;
     label2.tag =105;
     [txtChat addSubview:label];
@@ -263,22 +263,22 @@
 #pragma mark - Utility  (Indicator, noInternet)
 
 - (void) turnOnIndicator {
-    UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc]     initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityView.center=self.view.center;
-    activityView.layer.shadowOffset = CGSizeMake(1, 1);
-    activityView.layer.shadowColor = [UIColor blackColor].CGColor;
-    activityView.layer.shadowOpacity=0.8 ;
+    UIActivityIndicatorView *activityView=[[UIActivityIndicatorView alloc]     initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    activityView.center=self.view.window.center;
+//    activityView.layer.shadowOffset = CGSizeMake(1, 1);
+//    activityView.layer.shadowColor = [UIColor blackColor].CGColor;
+//    activityView.layer.shadowOpacity=0.8 ;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 
     
     activityView.tag = 10001;
     activityView.transform = CGAffineTransformScale(activityView.transform, 1.5, 1.5);
     [activityView startAnimating];
-    [self.view addSubview:activityView];
+    [self.view.window addSubview:activityView];
 }
 
 - (void) turnOffIndicator {
-    UIActivityIndicatorView *activityView=(UIActivityIndicatorView *) [self.view viewWithTag:10001];
+    UIActivityIndicatorView *activityView=(UIActivityIndicatorView *) [self.view.window viewWithTag:10001];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
     [activityView removeFromSuperview];
@@ -498,13 +498,13 @@
     }
     [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
-//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-//    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {      float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
-//    if (bottomEdge >= scrollView.contentSize.height) {
-//        [self getData];
-//    }
-//    }
-//}
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {      float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+    if (bottomEdge >= scrollView.contentSize.height) {
+        [self getData];
+    }
+    }
+}
 - (IBAction)lockAction:(id)sender {
 
     UIButton *btn = (UIButton*)sender;
@@ -529,6 +529,8 @@
     //    nowTime =[[NSDate date] timeIntervalSince1970];
     //    if ((nowTime-startTime)> 5 ){
     //        startTime =[[NSDate date] timeIntervalSince1970];
+    self.array=nil;
+
     self.array = [[NSMutableArray alloc] init];
     [self getData];
     //    }
@@ -825,7 +827,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     UIButton * btn = (UIButton *) sender;
-    NSLog(@"btn.tag is %ld",(long)btn.tag);
+    NSLog(@"btn.tag is %ld and segue identifier is %@",(long)btn.tag,[segue identifier]);
     if ([[segue identifier] isEqualToString:@"share"])
     {
         NSLog(@"blah");
@@ -839,17 +841,20 @@
 //        vc.image = image;
         
     }
-    else if ([[segue identifier] isEqualToString:@"goToSettings"]){
-        
-    }
-    else if ([[segue identifier] isEqualToString:@"user"]){
+//    else if ([[segue identifier] isEqualToString:@"goToSettings"]){
+//        
+//    }
+    else if ([[segue identifier] isEqualToString:@"userHome"]){
+        NSLog(@"go to userVC");
+
         NSDictionary *dictionary = self.array[btn.tag];
         UserViewController *vc = [[UserViewController alloc] init];
         vc=(UserViewController*)[[segue destinationViewController]topViewController];
         vc.userId =[dictionary objectForKey:@"userid"];
 
     }
-    else {
+    else if ([[segue identifier] isEqualToString:@"replyHome"]){
+        NSLog(@"go to replyVC");
         commentedPost=btn.tag;
         isComment = YES;
         NSDictionary *dictionary = self.array[commentedPost];
@@ -1041,13 +1046,32 @@
 
 - (void) getData {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-
+    [self turnOnIndicator];
     NSLog(@"getting data...");
     if (![self connectedToNetwork]){
         NSLog(@"test if network is available");
         [self noInternetAvailable];
         return;
     }
+    
+//    //Get JSON String of recipients
+//    NSError *jsonError;
+//    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:friendIds options:NSJSONWritingPrettyPrinted error:&jsonError];
+//    NSString *recipients = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//    
+//    //Send rockets to recipients
+//    NSDictionary *sendRocketsDictionary = @{
+//                                            @"recipients" : recipients,
+//                                            @"timeToLive" : [NSNumber numberWithInt:self.secondsForShare],
+//                                            @"fromUserId" : self.client.currentUser.userId,
+//                                            @"fromUsername" : self.username,
+//                                            @"isPicture": self.isSharingPicture? @YES : @NO,
+//                                            @"isVideo" : self.isSharingVideo ? @YES : @NO,
+//                                            @"originalSentRocketId" : [rocket objectForKey:@"id"],
+//                                            @"rocketFileId" : [rocketFile objectForKey:@"id"]
+//                                            };
+//    
+//    [self.client invokeAPI:@"SendRocketToFriends" body:sendRocketsDictionary HTTPMethod:@"POST" parameters:nil headers:nil completion:^(id sendRocketsResult, NSHTTPURLResponse *response, NSError *error) {
     
 //    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
 //    NSPredicate *predicate;
@@ -1061,7 +1085,60 @@
 //    MSQuery *query = [self.table queryWithPredicate:predicate];
     
 //    MSQuery *query = [self.table query];
+    
 //    MSQuery *query = [[MSQuery alloc] initWithTable:self.table];
+//    query.parameters = @{
+//                         @"offset":@"self.array.count",
+//                         @"limit" :@"kLimit"
+//                         };
+//    NSDictionary *postValues = @{ @"myParam": @"myValue"};
+
+    
+    NSDictionary *postValues = @{
+                                 @"offset":[NSNumber numberWithInt:self.array.count],
+                                 @"limit" :[NSNumber numberWithInt:kLimit]
+                                 };
+    NSLog(@"postvalues are %@",postValues);
+//    NSError *error;
+//    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:postValues
+//                                                       options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+//                                                         error:&error];
+//    NSString *jsonString;
+//    if (! jsonData) {
+//        NSLog(@"Got an error: %@", error);
+//    } else {
+//        jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+//        NSLog(@"jsonString is %@",jsonString);
+//    }
+    [self.client invokeAPI:@"gethomefeed" body:postValues HTTPMethod:@"POST"
+                parameters:nil
+                   headers:nil
+                completion:^(id result, NSHTTPURLResponse *response, NSError *error) {
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+                    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+                    [self turnOffIndicator];
+//                    });
+                    NSLog(@"URLResponse: %@", response);
+                    NSLog(@"result: %@", result);
+                    if (error)
+                    {
+                        NSString* errorMessage = @"There was a problem! ";
+                        errorMessage = [errorMessage stringByAppendingString:[error localizedDescription]];
+                        NSLog(@"error is %@",errorMessage);
+//                        UIAlertView* myAlert = [[UIAlertView alloc]
+//                                                initWithTitle:@"Error!"
+//                                                message:errorMessage
+//                                                delegate:nil
+//                                                cancelButtonTitle:@"Okay"
+//                                                otherButtonTitles:nil];
+//                        [myAlert show];
+                    } else {
+                        NSLog(@"result is %@",result);
+                        [self.array addObjectsFromArray:result];
+                        [self.theTableView reloadData];
+                    }
+                }];
+    
 //    MSQuery *query = [self.extendTable query];
 
 //    query.predicate=predicate;
@@ -1070,43 +1147,49 @@
 //    query.fetchLimit = kLimit;
 //    query.fetchOffset = self.array.count;
 //    NSString *queryString = [[NSString alloc] init];
-//    NSString* queryString = [NSString stringWithFormat:@"fetchOffset=%d, fetchLimit=%d",self.array.count, kLimit];
+//    NSString* queryString = [NSString stringWithFormat:@"offset=%d",self.array.count];
 
 //    NSLog(@"queryString is %@",queryString);
 //    [self.table readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+ 
     
-        [self.extendTable readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-//            [self.extendTable readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
-            if (items.count ==0)
-                return;
-            
-        [self logErrorIfNotNil:error];
-//        if(!error) {
-            [self.array addObjectsFromArray:items];  //copy items into array
-            NSLog(@"items are %@",items);
-//            for (NSDictionary *dictionary in items){
-//                NSArray *newUserIdArray = [defaults objectForKey:@"userIdArray"]; //get stored userIdArray
-//                for (NSString *string in newUserIdArray)
-//                    if (!([string isEqualToString:[dictionary objectForKey:@"userId"]])){
-//                        [self.userIdArray addObject:[dictionary objectForKey:@"userId"]];
-//                        NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userId == %@ ",userId];
-//                        [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-//                            NSLog(@"items are %@",items);
-//                            [self.userInfoArray addObject:items];
-//                            [self.userIdArray addObject:[dictionary objectForKey:@"userId"]];
-//                        }];
-//                    }
-//                //first order by ascending duration field
-////                NSDictionary *dictionary = items[0];
-//                [self logErrorIfNotNil:error];
+//        [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+////            [query readWithQueryString:queryString completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//                NSLog(@"items are %@",items);
 //
-            [self.theTableView reloadData];
-//            }
-//        }
-    }];
-//    [self.table readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//            if (items.count ==0)
+//                return;
+//            
+//        [self logErrorIfNotNil:error];
+////        if(!error) {
+//            [self.array addObjectsFromArray:items];  //copy items into array
+////            for (NSDictionary *dictionary in items){
+////                NSArray *newUserIdArray = [defaults objectForKey:@"userIdArray"]; //get stored userIdArray
+////                for (NSString *string in newUserIdArray)
+////                    if (!([string isEqualToString:[dictionary objectForKey:@"userId"]])){
+////                        [self.userIdArray addObject:[dictionary objectForKey:@"userId"]];
+////                        NSPredicate *predicate=[NSPredicate predicateWithFormat:@"userId == %@ ",userId];
+////                        [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+////                            NSLog(@"items are %@",items);
+////                            [self.userInfoArray addObject:items];
+////                            [self.userIdArray addObject:[dictionary objectForKey:@"userId"]];
+////                        }];
+////                    }
+////                //first order by ascending duration field
+//////                NSDictionary *dictionary = items[0];
+////                [self logErrorIfNotNil:error];
+////
+//            [self.theTableView reloadData];
+////            }
+////        }
+//    }];
+
+    
+    
+    
+    
+    //    [self.table readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
 //        NSLog(@"items table are %@, totalCount is %d",items,totalCount);
 //        [self logErrorIfNotNil:error];
 //    }];
@@ -1549,7 +1632,7 @@
     NSUInteger location = replacementTextRange.location;
     static NSString *suffix = @"#";
     static NSString *suffix1 = @"@";
-    if (textView.text.length + text.length > 140){
+    if (textView.text.length + text.length > 200){
         if (location != NSNotFound){
             [txtChat resignFirstResponder];
              txtChat.hidden=YES;
@@ -1613,7 +1696,7 @@
     }
     UILabel *label = (UILabel *)[self.view viewWithTag:100];
     label.hidden=NO;
-    label.text = [NSString stringWithFormat:@"%u",140-textView.text.length];
+    label.text = [NSString stringWithFormat:@"%u",200-textView.text.length];
     UILabel *label2 = (UILabel *)[self.view viewWithTag:105];
     label2.hidden=YES;
 }

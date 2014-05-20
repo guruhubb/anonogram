@@ -92,7 +92,8 @@
 //    self.edgesForExtendedLayout = UIRectEdgeAll;
 //    self.TableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
 //    [self.TableView setSeparatorInset:UIEdgeInsetsZero];
-    
+    home = [[HomeViewController alloc] init];
+
 //    self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -145,7 +146,7 @@
     txtChat = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 320, screenSpecificSetting(290, 202))];
     txtChat.delegate=self;
     txtChat.hidden=YES;
-    txtChat.font=[UIFont fontWithName:@"GillSans-Light" size:18];
+    txtChat.font=[UIFont fontWithName:@"GillSans-Light" size:20];
     //    txtChat.textColor=[UIColor lightGrayColor];
     txtChat.tintColor=[UIColor darkGrayColor];
     //    [[UITextView appearance] setTintColor:[UIColor lightGrayColor]];
@@ -160,7 +161,7 @@
     
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(10,screenSpecificSetting(15, -15) ,300, 190)];
     label2.textColor=[UIColor darkGrayColor];
-    label2.font = [UIFont fontWithName:@"GillSans-Light" size:18];
+    label2.font = [UIFont fontWithName:@"GillSans-Light" size:20];
     label2.textAlignment=NSTextAlignmentCenter;
     label2.text= [NSString stringWithFormat:@"Direct message %@",self.username.titleLabel.text];
     label2.numberOfLines=14;
@@ -736,6 +737,7 @@
 - (void) getData {
     NSLog(@"getting data...%@",self.userId);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
@@ -745,6 +747,7 @@
     [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         NSLog(@"items are %@",items);
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        [home turnOffIndicator];
 
     //first order by ascending duration field
         if (items.count ==0)return;
@@ -960,7 +963,7 @@
     if (isDirectMessage){
         label2.text= [NSString stringWithFormat:@"Direct message %@",self.username.titleLabel.text];
         label.text=@"140";
-        characterLimit=140;
+        characterLimit=200;
     }
     else if (isAboutMe){
         label2.text=@"Write something about yourself ...";
@@ -990,8 +993,9 @@
     NSDictionary *item = @{@"userid" : myId,@"text" : txtChat.text, @"likes" :@"0",@"flags" : @"0",@"replies" :@"0", @"isprivate":[NSNumber numberWithBool:isPrivateOn], @"touserid" : self.userId};
     [self.table insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         [self logErrorIfNotNil:error];
-        [self cancel:nil];
     }];
+    [self cancel:nil];
+
 }
 -(void)postAboutMe
 {

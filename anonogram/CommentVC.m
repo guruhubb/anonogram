@@ -108,14 +108,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    NSLog(@"commentVC");
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.table = [self.client tableWithName:@"anonogramTable"];
     self.commentTable = [self.client tableWithName:@"commentTable"];
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     self.userTable = [self.client tableWithName:@"userTable"];
-
-//    self.postId = [defaults stringForKey:@"postId"];
+    home = [[HomeViewController alloc] init];
+    //    self.postId = [defaults stringForKey:@"postId"];
     NSLog(@"postId is %@ and %@ and %@",self.postId, self.replies,self.replyTitleString);
     self.replyTitle.text=self.replyTitleString;
 //    [self turnOnIndicator];
@@ -826,6 +826,7 @@
 - (void) getData {
     NSLog(@"getting data...%d, %d",kLimit,self.array.count);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
@@ -850,7 +851,7 @@
     [query orderByDescending:@"timestamp"];
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
+        [home turnOffIndicator];
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {

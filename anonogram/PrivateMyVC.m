@@ -39,6 +39,7 @@
     NSTimeInterval startTime ;
        HomeViewController *home;
 }
+//@property (nonatomic, strong)   NSString *myId;
 @property (nonatomic, strong)   MSTable *table;
 @property (nonatomic, strong)   MSTable *isLikeTable;
 @property (nonatomic, strong)   MSTable *isFlagTable;
@@ -76,9 +77,11 @@
 {
     [super viewDidLoad];
     startTime=0;
+//    self.myId = [[NSString alloc] init];
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.TableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     [self.TableView setSeparatorInset:UIEdgeInsetsZero];
+    home = [[HomeViewController alloc] init];
 
     self.array = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
@@ -95,7 +98,8 @@
     if (!IS_TALL_SCREEN) {
         self.TableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
-
+    [[NSNotificationCenter defaultCenter]  addObserver:self
+                                              selector:@selector(handleNotification:) name:@"replyComplete" object:nil ];
     defaults = [NSUserDefaults standardUserDefaults];
     refreshControl = [[UIRefreshControl alloc]init];
     [self.TableView addSubview:refreshControl];
@@ -105,6 +109,15 @@
 //        [self twitterSwitch:nil];
     [self refreshView];
     
+}
+- (void) handleNotification : (NSNotification *)notification {
+    NSLog(@"notification");
+    [self refreshView];
+    //    NSString *replies = [self.array[commentedPost] objectForKey:@"replies"];
+    //    NSString *aString = [NSString stringWithFormat:@"%d", [replies integerValue]+ [defaults integerForKey:@"counter"] ];
+    //    NSLog(@"replies are %@ and counter is %d, and aString is %@",replies,[defaults integerForKey:@"counter"],aString);
+    //    [self.array[commentedPost] setObject:aString forKey:@"replies"];
+    //    [self.theTableView reloadData];
 }
 - (IBAction)myAction:(id)sender {
     if (isPrivateOn){
@@ -116,7 +129,9 @@
                                       initWithBarButtonSystemItem:UIBarButtonSystemItemStop
                                       target:self action:@selector(myAction:)] ;
         self.navigationItem.rightBarButtonItem = popularButton;
+        self.array=nil;
         self.array = [[NSMutableArray alloc] init];
+        [self.TableView reloadData];
         [self getDataMyAnonograms];
     }
     else {
@@ -127,10 +142,12 @@
 //        if (string !=NULL)
 //            self.navigationItem.title = string;
 //        else
-            self.navigationItem.title = [NSString stringWithFormat:@"NOTIFICATIONS"];
+            self.navigationItem.title = [NSString stringWithFormat:@"DIRECT MESSAGES"];
         UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
         self.navigationItem.rightBarButtonItem = privateButton;
+        self.array=nil;
         self.array = [[NSMutableArray alloc] init];
+        [self.TableView reloadData];
         [self getDataMyDirectMessages];
 //        [self getData];
 
@@ -151,6 +168,8 @@
     
     UIBarButtonItem *privateButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_003_user.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(myAction:)] ;
     self.navigationItem.rightBarButtonItem = privateButton;
+    self.array=nil;
+
     self.array = [[NSMutableArray alloc] init];
 //    [self getData];
     [self getDataMyDirectMessages];
@@ -210,9 +229,27 @@
     
     NSString *userScore = [NSString stringWithFormat:@"%@ \u00B7 %@ \u00B7 %@",reputation,posts,userreplies];
     
-    cell.userScore.text = userScore;
-    cell.aboutMe.text = [dictionary objectForKey:@"aboutme"];
-    cell.location.text = [dictionary objectForKey:@"location"];;
+    if (isPrivateOn){
+        cell.userScore.text = userScore;
+        cell.aboutMe.text = [dictionary objectForKey:@"aboutme"];
+        cell.location.text = [dictionary objectForKey:@"location"];
+        cell.userScoreButton.userInteractionEnabled=YES;
+
+    }
+    else {
+        cell.userScore.text = @"";
+        cell.aboutMe.text = @"";
+        cell.location.text = @"";
+        cell.userScoreButton.userInteractionEnabled=NO;
+        if ([[dictionary objectForKey:@"isprivate"] boolValue]==1) {
+            cell.lock.hidden=NO;
+        }
+        else
+            cell.lock.hidden=YES;
+        cell.privatePost.tag=indexPath.row+1000;
+        cell.lock.tag=indexPath.row;
+    }
+    
     cell.likeCount.text = [string stringByAppendingString:likes];
     cell.replies.text = replies;
     cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
@@ -224,32 +261,9 @@
     indexPathRow=indexPath;
     return cell;
 
-////    [tableView setSeparatorInset:UIEdgeInsetsZero];
-//    Cell *cell = (Cell*)[tableView dequeueReusableCellWithIdentifier:@"anonogramCell" ];
-//    if (self.array.count <= indexPath.row)
-//        return cell;
-//    NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
-//    NSLog(@"dictionary is %@",dictionary);
-//    cell.pageContent.text = [dictionary objectForKey:@"text"];
-//    NSString *string = @"+";
-//    cell.likeCount.text = [string stringByAppendingString: [dictionary objectForKey:@"likes"]];
-////    cell.likeCount.text = [dictionary objectForKey:@"likes"];
-//    cell.replies.text = [dictionary objectForKey:@"replies"];
-//    cell.timestamp.text = [[dictionary objectForKey:@"timestamp"] formattedAsTimeAgo];
-//    if ([[dictionary objectForKey:@"isprivate"] boolValue]==1) {
-//        cell.lock.hidden=NO;
-//    }
-//    else
-//        cell.lock.hidden=YES;
-////    cell.share.tag = indexPath.row;
-//    cell.flag.tag=indexPath.row;
-//    cell.like.tag=indexPath.row;
-//    cell.privatePost.tag=indexPath.row+1000;
-//    cell.lock.tag=indexPath.row;
-//    cell.replyButton.tag=indexPath.row;
-//
-//    indexPathRow=indexPath;
-//    return cell;
+
+
+
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
 
@@ -318,6 +332,7 @@
 //    [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 }
 - (IBAction)lockAction:(id)sender {
+
     UIButton *btn = (UIButton*)sender;
     UILabel *label = (UILabel*)[self.view viewWithTag:btn.tag+1000];
     NSLog(@"lock btn tag is %d and label is %@",btn.tag,label);
@@ -335,20 +350,20 @@
                      }];
 }
 
-//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-//    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
-//    if (bottomEdge >= scrollView.contentSize.height) {
-//        if(isPrivateOn){
-//            NSLog(@"scrolling up for more");
-//            [self getDataMyDirectMessages];
-////            [self getData];
-//
-//        }
-//        else
-//            [self getDataMyAnonograms];
-//    }
-//    }
-//}
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if ([scrollView.panGestureRecognizer translationInView:scrollView.superview].y < 0) {    float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
+    if (bottomEdge >= scrollView.contentSize.height) {
+        if(isPrivateOn){
+            NSLog(@"scrolling up for more");
+            [self getDataMyDirectMessages];
+//            [self getData];
+
+        }
+        else
+            [self getDataMyAnonograms];
+    }
+    }
+}
 - (void) deleteText  {
     [self.TableView beginUpdates];
     
@@ -648,6 +663,8 @@
         vc.postId =[dictionary objectForKey:@"id"];
         vc.replies = [dictionary objectForKey:@"replies"];
         vc.replyTitleString=[dictionary objectForKey:@"text"];
+        NSLog(@"vc is %@, %@, %@",vc.postId, vc.replies, vc.replyTitleString);
+
     }
 }
 - (UIImage *) captureImage : (NSInteger) index {
@@ -774,6 +791,8 @@
 //        NSLog(@"refresh now time is %f",nowTime-startTime);
 
 //        self.array=nil;
+    self.array=nil;
+
     self.array = [[NSMutableArray alloc] init];
 
     if(isPrivateOn){
@@ -878,6 +897,8 @@
 - (void) getDataMyAnonograms {
     NSLog(@"getting data my anons...");
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [home turnOnIndicator];
+
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
@@ -885,7 +906,6 @@
     }
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@",userId];
-//    MSQuery *query = [self.table queryWithPredicate:predicate];
     MSQuery *query = [self.table query];
     query.predicate=predicate;
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
@@ -894,6 +914,7 @@
     query.fetchOffset = self.array.count;
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        [home turnOffIndicator];
 
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
@@ -907,29 +928,75 @@
 - (void) getDataMyDirectMessages {
     NSLog(@"getting direct messages...");
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
         return;
     }
-    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"touserud == %@",userId];
-    //    MSQuery *query = [self.table queryWithPredicate:predicate];
-    MSQuery *query = [self.table query];
-    query.predicate=predicate;
+    NSString *myId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    
+//    NSDictionary *postValues = @{
+//                                 @"touserid":myId ,
+//                                 @"offset":[NSNumber numberWithInt:self.array.count],
+//                                 @"limit" :[NSNumber numberWithInt:kLimit]
+//                                 };
+//    NSLog(@"postvalues are %@",postValues);
+//    [self.client invokeAPI:@"getdirectmessagefeed" body:postValues HTTPMethod:@"POST"
+//                parameters:nil
+//                   headers:nil
+//                completion:^(id result, NSHTTPURLResponse *response, NSError *error) {
+//                    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+//                    [home turnOffIndicator];
+//                    NSLog(@"URLResponse: %@", response);
+//                    NSLog(@"result: %@", result);
+//                    if (error)
+//                    {
+//                        NSString* errorMessage = @"There was a problem! ";
+//                        errorMessage = [errorMessage stringByAppendingString:[error localizedDescription]];
+//                        UIAlertView* myAlert = [[UIAlertView alloc]
+//                                                initWithTitle:@"Error!"
+//                                                message:errorMessage
+//                                                delegate:nil
+//                                                cancelButtonTitle:@"Okay"
+//                                                otherButtonTitles:nil];
+//                        [myAlert show];
+//                    } else {
+//                        NSLog(@"result is %@",result);
+//                        [self.array addObjectsFromArray:result];
+//                        [self.TableView reloadData];
+//                    }
+//                }];
+    
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"touserid == %@",myId];
+    MSQuery *query = [self.table queryWithPredicate:predicate];
     [query orderByDescending:@"timestamp"];  //first order by ascending duration field
     query.includeTotalCount = YES; // Request the total item count
     query.fetchLimit = kLimit;
     query.fetchOffset = self.array.count;
-    [self.directMessageTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+    [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-
+        [home turnOffIndicator];
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
+        [self.array addObjectsFromArray:items];
         if(!error) {
             //add the items to our local copy
-            [self.array addObjectsFromArray:items];
-            [self.TableView reloadData];
+            for (NSMutableDictionary *dictionary in self.array){
+                NSString *userid = [dictionary objectForKey:@"userid"];
+                NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userid];
+                MSQuery *query1=[self.userTable queryWithPredicate:predicate1];
+                query1.selectFields=@[@"userreplies", @"reputation",@"posts",@"aboutme",@"location"];
+                [query1 readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+                    NSDictionary *dic = items[0];
+                    NSLog(@"dic is %@",dic);
+                    [dictionary setValuesForKeysWithDictionary:dic];
+                    NSLog(@"dictionary is %@",dictionary);
+                    [self.TableView reloadData];
+                }];
+            }
+            NSLog(@"self.array is %@",self.array);
         }
     }];
 }
