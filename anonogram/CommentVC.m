@@ -871,24 +871,10 @@
 }
 -(void)postComment
 {
-//    UIColor *color;
     NSString *colorString = [defaults objectForKey:@"color"];
-//    if (!colorString){
-//        color = [self pastelColorCode:[UIColor whiteColor]];
-////    color = [self colorCode];
-//
-//        colorString = [self hexStringForColor:color];
-//        NSLog(@"color is %@",colorString);
-//        [defaults setObject:colorString forKey:@"color"];
-//    }
-     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     NSLog(@"inserting into commentTable userid = %@, postid = %@, reply = %@, color = %@",userId,postId,_txtChat.text, colorString);
-
     NSDictionary *item = @{@"postid" : self.postId, @"userid" : userId,@"reply" : _txtChat.text, @"color" :colorString,@"likes" :@"0"};
-    
-    
-//    NSDictionary *item = @{@"userId" : userId,@"text" : txtChat.text, @"likes" :@"0",@"replies" :@"0",@"flags" : @"0", @"isPrivate":[NSNumber numberWithBool:isPrivateOn]};
-
     [self.commentTable insert:item completion:^(NSDictionary *insertedItem, NSError *error) {
         if (error) {
             NSLog(@"inserted item: %@", error);
@@ -896,26 +882,6 @@
             return;
         }
         counter++;
-//        } else {
-//            NSString *string = [NSString stringWithFormat:@"%d",self.array.count+1 ];
-//            NSDictionary *item =@{@"id" : self.postId, @"replies": string};
-//            [self.table readWithId:userId completion:^(NSDictionary *item, NSError *error) {
-//                NSLog(@"item is %@",item);
-//                if (item == NULL) return;
-//                NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"replies"] integerValue]+1 ];
-//                NSDictionary *itemReplies =@{@"id" : [item objectForKey:@"id" ], @"replies": string};
-//                
-//                [self.table update:itemReplies   completion:^(NSDictionary *item, NSError *error) {
-//                    [self logErrorIfNotNil:error];
-//                }];
-//                [self logErrorIfNotNil:error];
-//            }];
-
-//            [self.table update:item completion:^(NSDictionary *item, NSError *error) {
-//                [self logErrorIfNotNil:error];
-//            }];
-//            NSLog(@"Item inserted, id: %@", [insertedItem objectForKey:@"id"]);
-//        }
         [self refreshView];
     }];
 }

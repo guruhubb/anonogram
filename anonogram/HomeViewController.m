@@ -42,6 +42,7 @@
     NSInteger flagButton;
     NSInteger startParse;
     NSInteger commentedPost;
+    NSInteger likeTotalCount;
     UITextView        *txtChat;
     UIToolbar *_inputAccessoryView;
     NSTimeInterval nowTime;
@@ -91,6 +92,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self turnOnIndicator];
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     [self.theTableView setSeparatorInset:UIEdgeInsetsZero];
@@ -399,15 +401,24 @@
         NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
         
         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+        
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
-                NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
-                NSLog(@"likeCountis %d",likeCount);
-                if (likeCount>0){
+                [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
+                    [self logErrorIfNotNil:error];
+                }];
+                NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"postid == %@",[dictionary objectForKey:@"id" ]];
+                
+                [self.isLikeTable readWithPredicate:predicate2 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+                    likeTotalCount = totalCount;
+                }];
+//                NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
+//                NSLog(@"likeCountis %d",likeCount);
+//                if (likeCount>0){
                 NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
                 [dictionary setValue:likesCount forKey:@"likes"];
-                    
+                
                     NSString *reputationCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"reputation"] integerValue]-1 ];
                     [dictionary setValue:reputationCount forKey:@"reputation"];
                     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -429,8 +440,8 @@
                 [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
                     if (!error){
                     NSLog(@"item is %@",item);
-                    if (item == NULL) return;
-                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]-1 ];
+//                    if (item == NULL) return;
+                    NSString *string =[NSString stringWithFormat:@"%d",likeTotalCount ];
                     NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
                     
                     [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
@@ -439,11 +450,9 @@
                     }
                     [self logErrorIfNotNil:error];
                 }];
-                [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
-                    [self logErrorIfNotNil:error];
-                }];
+                
                 [self.theTableView reloadData];
-                   }
+//                   }
             }
             else {
                 NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
@@ -453,46 +462,53 @@
                 
                 NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
                 NSLog(@"userid is %@",userId);
-                
-                NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userId];
-                [self.userTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-                    NSLog(@"items usertable are %@",items);
-                    [self logErrorIfNotNil:error];
-                    if(!error){
-                        NSString *string2 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"reputation"] integerValue]+1 ];
-                        NSDictionary *item1 =@{@"id" : [items[0] objectForKey:@"id"],  @"reputation":string2};
-                        [self.userTable update:item1 completion:^(NSDictionary *item, NSError *error) {
-                            NSLog(@"updated item usertable is %@",item);
-                            
-                            [self logErrorIfNotNil:error];
-                        }];
-                    }
-                }];
-
-                [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
-                    if(!error){
-                    NSLog(@"item is %@",item);
-//                    if (item == NULL) return;
-
-                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
-                    NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
-                    
-                    [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
-                        [self logErrorIfNotNil:error];
-                    }];
-                    }
-                    [self logErrorIfNotNil:error];
-                }];
-//                NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
                 NSDictionary *item1 =@{@"postid" : [dictionary objectForKey:@"id" ], @"userid": userId};
                 
                 [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
                 }];
+//                NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"postid == %@",[dictionary objectForKey:@"id" ]];
+//                
+//                [self.isLikeTable readWithPredicate:predicate2 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//                    likeTotalCount = totalCount;
+//                }];
+//                
+//                NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userId];
+//                [self.userTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+//                    NSLog(@"items usertable are %@",items);
+//                    [self logErrorIfNotNil:error];
+//                    if(!error){
+//                        NSString *string2 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"reputation"] integerValue]+1 ];
+//                        NSDictionary *item1 =@{@"id" : [items[0] objectForKey:@"id"],  @"reputation":string2};
+//                        [self.userTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+//                            NSLog(@"updated item usertable is %@",item);
+//                            
+//                            [self logErrorIfNotNil:error];
+//                        }];
+//                    }
+//                }];
+//
+//                [self.table readWithId:[dictionary objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
+//                    if(!error){
+//                    NSLog(@"item is %@",item);
+////                    if (item == NULL) return;
+//
+////                    NSString *string =[NSString stringWithFormat:@"%d",[[item objectForKey:@"likes"] integerValue]+1 ];
+//                        NSString *string =[NSString stringWithFormat:@"%d",likeTotalCount ];
+//
+//                    NSDictionary *itemLikes =@{@"id" : [item objectForKey:@"id" ], @"likes": string};
+//                    
+//                    [self.table update:itemLikes   completion:^(NSDictionary *item, NSError *error) {
+//                        [self logErrorIfNotNil:error];
+//                    }];
+//                    }
+//                    [self logErrorIfNotNil:error];
+//                }];
+                
                 [self.theTableView reloadData];
             }
         }];
-        [tableView reloadData];
+//        [self.theTableView reloadData];
 
 
     }
@@ -934,10 +950,10 @@
             
             NSDictionary *dictionary=[self.array objectAtIndex:flagButton];
             NSString *flagsCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"flags"] integerValue]+1 ];
-            if ([flagsCount integerValue]>kFlagsAllowed){   //delete item if flagCount is more than kFlagsAllowed
-                [self deleteText];
-                return;
-            }
+//            if ([flagsCount integerValue]>kFlagsAllowed){   //delete item if flagCount is more than kFlagsAllowed
+//                [self deleteText];
+//                return;
+//            }
             [dictionary setValue:flagsCount forKey:@"flags"];
             NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"flags": flagsCount};
             [self.table update:item completion:^(NSDictionary *item, NSError *error) {

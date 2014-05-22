@@ -861,7 +861,7 @@
 //                                                     style:UIBarButtonItemStyleBordered
 //                                                    target:self action:@selector(addText)];
     //    isPrivateItem.tag=200;
-    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Send"
+    UIBarButtonItem *doneItem = [[UIBarButtonItem alloc] initWithTitle:@"Done"
                                                                  style:UIBarButtonItemStyleBordered
                                                                 target:self action:@selector(doneKeyboard)];
     
