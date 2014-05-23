@@ -26,7 +26,6 @@
 		CC0FD3F3190B0111008F4A63 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3F2190B0111008F4A63 /* Accounts.framework */; };
 		CC0FD3F5190B745C008F4A63 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3F4190B745C008F4A63 /* Social.framework */; };
 		CC0FD3F7190B8C51008F4A63 /* glyphicons_411_twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */; };
-		CC0FD3FD190CA0A9008F4A63 /* NewRelicAgent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */; };
 		CC2766D51910592100D132A1 /* PopularSearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC2766D41910592100D132A1 /* PopularSearchVC.m */; };
 		CC94A1B91918C41F00C0F140 /* CommentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CC94A1B81918C41F00C0F140 /* CommentVC.m */; };
 		CC94A1BC19191CB000C0F140 /* glyphicons_221_unshare.png in Resources */ = {isa = PBXBuildFile; fileRef = CC94A1BB19191CB000C0F140 /* glyphicons_221_unshare.png */; };
@@ -133,7 +132,6 @@
 		CC0FD3F2190B0111008F4A63 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		CC0FD3F4190B745C008F4A63 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		CC0FD3F6190B8C51008F4A63 /* glyphicons_411_twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_411_twitter.png; sourceTree = "<group>"; };
-		CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NewRelicAgent.framework; path = NewRelic_iOS_Agent_3.289/NewRelicAgent.framework; sourceTree = "<group>"; };
 		CC2766D31910592100D132A1 /* PopularSearchVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopularSearchVC.h; sourceTree = "<group>"; };
 		CC2766D41910592100D132A1 /* PopularSearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopularSearchVC.m; sourceTree = "<group>"; };
 		CC94A1B71918C41F00C0F140 /* CommentVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentVC.h; sourceTree = "<group>"; };
@@ -255,7 +253,6 @@
 				CCD954F819074F2D005EFE06 /* libxml2.dylib in Frameworks */,
 				CCD954F919074F2D005EFE06 /* libz.dylib in Frameworks */,
 				CCD954FC19074F2D005EFE06 /* MobileCoreServices.framework in Frameworks */,
-				CC0FD3FD190CA0A9008F4A63 /* NewRelicAgent.framework in Frameworks */,
 				CCD9545019074299005EFE06 /* CoreGraphics.framework in Frameworks */,
 				CCD9545219074299005EFE06 /* UIKit.framework in Frameworks */,
 				CCD9544E19074298005EFE06 /* Foundation.framework in Frameworks */,
@@ -313,7 +310,6 @@
 			children = (
 				CC0428D1191DB16600CE2817 /* WindowsAzureMobileServices.framework */,
 				CC03F8EC19130EB600ED4C5D /* CoreData.framework */,
-				CC0FD3FC190CA0A9008F4A63 /* NewRelicAgent.framework */,
 				CC0FD3F4190B745C008F4A63 /* Social.framework */,
 				CC0FD3F2190B0111008F4A63 /* Accounts.framework */,
 				CCD9550919074FDE005EFE06 /* MessageUI.framework */,

@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Tapjoy/Tapjoy.h>
+//#import <Tapjoy/Tapjoy.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "MKStoreManager.h"
 #import "Flurry.h"
 #import <WindowsAzureMobileServices/WindowsAzureMobileServices.h>
 #import "SSKeychain.h"
-#import <NewRelicAgent/NewRelic.h>
+//#import <NewRelicAgent/NewRelic.h>
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
