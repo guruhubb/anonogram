@@ -460,6 +460,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="DIRECT MESSAGES" id="qMR-s9-hcQ">
                         <barButtonItem key="backBarButtonItem" title="  " id="3pH-Ij-c32"/>
@@ -1120,8 +1121,8 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="tf5-aX-1QP"/>
-        <segue reference="TxD-uJ-oGT"/>
-        <segue reference="Ty9-RM-kub"/>
+        <segue reference="7Uo-7T-ycX"/>
+        <segue reference="G8Z-2i-oeg"/>
+        <segue reference="K2M-CI-kI4"/>
     </inferredMetricsTieBreakers>
 </document>

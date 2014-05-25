@@ -503,23 +503,25 @@
         }
         [self logErrorIfNotNil:error];
     }];
-    
+    [self.table deleteWithId:postId completion:^(NSDictionary *item, NSError *error) {
+        [self logErrorIfNotNil:error];
+    }];
     /* update reputation and posts count in userTable */
 
-//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userId];
-//    [self.userTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-//        [self logErrorIfNotNil:error];
-//        if(!error){
-//            NSString *string1 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"posts"] integerValue]-1 ];
-//            NSString *string2 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"reputation"] integerValue]-6 ];
-//            NSDictionary *item1 =@{@"id" : [items[0] objectForKey:@"id"], @"posts": string1, @"reputation":string2};
-//            [self.userTable update:item1 completion:^(NSDictionary *item, NSError *error) {
-//                [self logErrorIfNotNil:error];
-//                [self refreshView];
-//            }];
-//        }
-//    }];
+    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
+    NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userid == %@",userId];
+    [self.userTable readWithPredicate:predicate1 completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
+        [self logErrorIfNotNil:error];
+        if(!error){
+            NSString *string1 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"posts"] integerValue]-1 ];
+            NSString *string2 = [NSString stringWithFormat:@"%d",[[items[0] objectForKey:@"reputation"] integerValue]-6 ];
+            NSDictionary *item1 =@{@"id" : [items[0] objectForKey:@"id"], @"posts": string1, @"reputation":string2};
+            [self.userTable update:item1 completion:^(NSDictionary *item, NSError *error) {
+                [self logErrorIfNotNil:error];
+                [self refreshView];
+            }];
+        }
+    }];
 
     [self.array removeObjectAtIndex:flagButton];
     [self.popularTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
