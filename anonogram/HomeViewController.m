@@ -32,7 +32,7 @@
     BOOL isHashTag;
     BOOL isComment;
     BOOL isRed;
-    BOOL likeDone;
+//    BOOL likeDone;
     NSIndexPath *indexPathRow;
     UIRefreshControl *refreshControl;
     NSMutableArray *buttonsArray;
@@ -94,7 +94,7 @@
 {
     [super viewDidLoad];
 //    [self turnOnIndicator];
-    likeDone=YES;
+//    likeDone=YES;
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
     [self.theTableView setSeparatorInset:UIEdgeInsetsZero];
@@ -408,9 +408,9 @@
         theTable.hidden=YES;
     }
     else {
-        if(!likeDone) return;
+//        if(!likeDone) return;
         NSDictionary *dictionary=[self.array objectAtIndex:indexPath.row];
-        likeDone=NO;
+//        likeDone=NO;
         NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
         
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[dictionary objectForKey:@"id" ]];
@@ -418,7 +418,7 @@
             if (items.count) {
                 [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
-                    likeDone = YES;
+//                    likeDone = YES;
                 }];
 //                NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"postid == %@",[dictionary objectForKey:@"id" ]];
 //                
@@ -478,7 +478,7 @@
                 
                 [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
                     [self logErrorIfNotNil:error];
-                    likeDone=YES;
+//                    likeDone=YES;
                 }];
 //                NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"postid == %@",[dictionary objectForKey:@"id" ]];
 //                
@@ -554,7 +554,7 @@
 }
 - (void) refreshView
 {
-    likeDone=YES;
+//    likeDone=YES;
     
     //    nowTime =[[NSDate date] timeIntervalSince1970];
     //    if ((nowTime-startTime)> 5 ){

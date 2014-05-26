@@ -274,8 +274,8 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userid == %@  && postid == %@",userId,[dictionary objectForKey:@"id" ]];
         [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
             if (items.count) {
-                NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
-                NSLog(@"likeCountis %d",likeCount);
+//                NSInteger likeCount = [[dictionary objectForKey:@"likes"] integerValue];
+//                NSLog(@"likeCountis %d",likeCount);
 //                if (likeCount>0){
                     NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]-1 ];
                     [dictionary setValue:likesCount forKey:@"likes"];
