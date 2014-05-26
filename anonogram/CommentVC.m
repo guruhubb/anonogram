@@ -826,7 +826,7 @@
 - (void) getData {
     NSLog(@"getting data...%d, %d",kLimit,self.array.count);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [home turnOnIndicator];
+//    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
@@ -851,7 +851,7 @@
     [query orderByDescending:@"timestamp"];
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        [home turnOffIndicator];
+//        [home turnOffIndicator];
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         if(!error) {

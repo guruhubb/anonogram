@@ -931,7 +931,7 @@
 - (void) getData {
     NSLog(@"getting data...");
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [home turnOnIndicator];
+//    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
@@ -959,7 +959,7 @@
                 completion:^(id result, NSHTTPURLResponse *response, NSError *error) {
                     //                    dispatch_async(dispatch_get_main_queue(), ^{
                     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-                    [home turnOffIndicator];
+//                    [home turnOffIndicator];
                     //                    });
                     NSLog(@"URLResponse: %@", response);
                     NSLog(@"result: %@", result);
@@ -1000,7 +1000,7 @@
     [self.array removeAllObjects];
     [self.popularTableView reloadData];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [home turnOnIndicator];
+//    [home turnOnIndicator];
 
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
@@ -1018,7 +1018,7 @@
  
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        [home turnOffIndicator];
+//        [home turnOffIndicator];
 //        NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         [self.array addObjectsFromArray:items];

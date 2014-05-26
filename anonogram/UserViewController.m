@@ -737,7 +737,7 @@
 - (void) getData {
     NSLog(@"getting data...%@",self.userId);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [home turnOnIndicator];
+//    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
@@ -747,7 +747,7 @@
     [self.userTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         NSLog(@"items are %@",items);
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        [home turnOffIndicator];
+//        [home turnOffIndicator];
 
     //first order by ascending duration field
         if (items.count ==0)return;

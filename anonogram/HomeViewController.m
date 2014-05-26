@@ -93,7 +93,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self turnOnIndicator];
+//    [self turnOnIndicator];
     likeDone=YES;
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.theTableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
@@ -290,7 +290,7 @@
 }
 
 - (void) noInternetAvailable {
-    [self turnOffIndicator];
+//    [self turnOffIndicator];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     UILabel *noInternet = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 280, 50)];
     noInternet.layer.cornerRadius=5;
@@ -1169,7 +1169,7 @@
 
 - (void) getData {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [self turnOnIndicator];
+//    [self turnOnIndicator];
     NSLog(@"getting data...");
     if (![self connectedToNetwork]){
         NSLog(@"test if network is available");
@@ -1239,7 +1239,7 @@
                 completion:^(id result, NSHTTPURLResponse *response, NSError *error) {
 //                    dispatch_async(dispatch_get_main_queue(), ^{
                     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-                    [self turnOffIndicator];
+//                    [self turnOffIndicator];
 //                    });
                     NSLog(@"URLResponse: %@", response);
                     NSLog(@"result: %@", result);

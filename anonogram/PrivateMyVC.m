@@ -915,7 +915,7 @@
 - (void) getDataMyAnonograms {
     NSLog(@"getting data my anons...");
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [home turnOnIndicator];
+//    [home turnOnIndicator];
 
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
@@ -932,7 +932,7 @@
     query.fetchOffset = self.array.count;
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        [home turnOffIndicator];
+//        [home turnOffIndicator];
 
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
@@ -946,7 +946,7 @@
 - (void) getDataMyDirectMessages {
     NSLog(@"getting direct messages...");
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [home turnOnIndicator];
+//    [home turnOnIndicator];
     if (![home connectedToNetwork]){
         NSLog(@"test if network is available");
         [home noInternetAvailable];
