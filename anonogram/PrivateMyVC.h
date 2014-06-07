@@ -13,6 +13,7 @@
 
 @interface PrivateMyVC : UIViewController < UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
+@property (weak, nonatomic) IBOutlet UIView *noDirectMessageView;
 
 
 @end

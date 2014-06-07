@@ -13,6 +13,7 @@
 
 @interface HomeViewController : UIViewController < UITableViewDataSource, UITableViewDelegate,UITextViewDelegate, UIActionSheetDelegate>
 
+@property (weak, nonatomic) IBOutlet UIView *firstLaunchView;
 -(NSString *)abbreviateNumber:(int)num ;
 - (void) turnOnIndicator ;
 - (void) turnOffIndicator ;

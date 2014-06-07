@@ -78,6 +78,8 @@
 {
     [super viewDidLoad];
     startTime=0;
+    _noDirectMessageView.layer.cornerRadius=5.0;
+    _noDirectMessageView.layer.frame=CGRectMake(20, screenSpecificSetting(121,121-88), 280,154);
 //    self.myId = [[NSString alloc] init];
     self.edgesForExtendedLayout = UIRectEdgeAll;
     self.TableView.contentInset = UIEdgeInsetsMake(0., 0., CGRectGetHeight(self.tabBarController.tabBar.frame), 0);
@@ -150,6 +152,7 @@
         self.array = [[NSMutableArray alloc] init];
         [self.TableView reloadData];
         [self getDataMyDirectMessages];
+        
 //        [self getData];
 
         
@@ -995,10 +998,12 @@
     query.fetchOffset = self.array.count;
     [query readWithCompletion:^(NSArray *items, NSInteger totalCount, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        [home turnOffIndicator];
+//        [home turnOffIndicator];
         NSLog(@"items are %@, totalCount is %d",items,totalCount);
         [self logErrorIfNotNil:error];
         [self.array addObjectsFromArray:items];
+        if (!self.array.count) _noDirectMessageView.hidden=NO;
+        else _noDirectMessageView.hidden=YES;
         if(!error) {
             //add the items to our local copy
             for (NSMutableDictionary *dictionary in self.array){
@@ -1018,6 +1023,11 @@
         }
     }];
 }
+- (IBAction)noDMAction:(id)sender {
+    _noDirectMessageView.hidden=YES;
+}
+
+
 - (IBAction)twitterSwitch:(id)sender {
 //}
 //- (IBAction)TwitterSwitch:(id)sender {
@@ -1215,7 +1225,7 @@
 
 -(void)postComment
 {
-    [Flurry logEvent:@"Post"];
+//    [Flurry logEvent:@"Private Post"];
     
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     MSClient *client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];

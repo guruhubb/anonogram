@@ -176,6 +176,8 @@
 }// called when keyboard search button pressed
 - (void)searchBarClicked
 {
+    [Flurry logEvent:@"Search"];
+
     NSCharacterSet *set = [NSCharacterSet whitespaceCharacterSet];
 
     if(!([[_searchBarButton.text stringByTrimmingCharactersInSet: set] length] == 0) )
