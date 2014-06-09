@@ -96,8 +96,8 @@
     self.isLikeCommentTable = [self.client tableWithName:@"isLikeCommentTable"];
     self.userTable=[self.client tableWithName:@"userTable"];
     isPrivateOn=YES;
-    UILabel *label = (UILabel*)[self.view viewWithTag:110];
-    label.text =@"No Notifications yet\n\nMake sure access to Twitter is On\n\nYou will receive posts that mention your Twitter username";
+//    UILabel *label = (UILabel*)[self.view viewWithTag:110];
+//    label.text =@"No Notifications yet\n\nMake sure access to Twitter is On\n\nYou will receive posts that mention your Twitter username";
     if (!IS_TALL_SCREEN) {
         self.TableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
@@ -125,8 +125,10 @@
 - (IBAction)myAction:(id)sender {
     if (isPrivateOn){
         isPrivateOn = NO;
-        UILabel *label = (UILabel*)[self.view viewWithTag:110];
-        label.hidden=YES;
+//        UILabel *label = (UILabel*)[self.view viewWithTag:110];
+//        label.hidden=YES;
+        _noDirectMessageView.hidden=YES;
+
         self.navigationItem.title= [NSString stringWithFormat:@"My Anonograms"];
         UIBarButtonItem *popularButton = [[UIBarButtonItem alloc]
                                       initWithBarButtonSystemItem:UIBarButtonSystemItemStop
