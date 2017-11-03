@@ -54,8 +54,6 @@
     self.array = [[NSMutableArray alloc] init];
     self.theTableView.delegate=self;
     self.theTableView.dataSource=self;
-//    [self createContentPages];
-//    self.items = [[NSMutableArray alloc] init];
     self.client = [(AppDelegate *) [[UIApplication sharedApplication] delegate] client];
     self.busyCount = 0;
     self.table = [self.client tableWithName:@"anonogramTable"];
@@ -65,37 +63,16 @@
     if (!IS_TALL_SCREEN) {
         self.theTableView.frame = CGRectMake(0, 0, 320, 480-64);  // for 3.5 screen; remove autolayout
     }
-//    [date formattedAsTimeAgo]
-//    NSString *mysqlDatetime = <Get from the database>
-//    NSString *timeAgoFormattedDate = [NSDate mysqlDatetimeFormattedAsTimeAgo:mysqlDatetime];
     defaults = [NSUserDefaults standardUserDefaults];
-//    token = [defaults objectForKey:@"booklyAccessToken"];
     refreshControl = [[UIRefreshControl alloc]init];
     [self.theTableView addSubview:refreshControl];
     [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
     [[NSNotificationCenter defaultCenter]  addObserver:self
                                               selector:@selector(refreshView) name:@"searchNow" object:nil];
-    // Create the todoService - this creates the Mobile Service client inside the wrapped service
-//    self.todoService = [[TodoService alloc]init];
-    
-//    [self refreshDataOnSuccess:^{
-//        [self.theTableView reloadData];
-//    }];
-//    if (_pageIndex==2) [self getTwitterUsername];
-//    loadMore=YES;
+
 }
 
-- (void) createContentPages
-{
-//    NSMutableArray *pageStrings = [[NSMutableArray alloc] init];
-//    for (int i = 1; i < 10; i++)
-//    {
-//        NSString *contentString = [[NSString alloc]initWithFormat:@"Chapter %d \nThis is the page %d of content displayed using UIPageViewController in iOS 5.", i, i];
-//        [pageStrings addObject:contentString];
-//    }
-//    _pageContent = [[NSMutableArray alloc] initWithArray:pageStrings];
-//    NSLog(@"pageContent is %@",_pageContent);
-}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -114,24 +91,15 @@
     NSDictionary *dictionary = [self.array objectAtIndex:indexPath.row];
     NSLog(@"dictionary is %@",dictionary);
     
-//    if (_pageIndex==0 ){
+
     cell.pageContent.text = [dictionary objectForKey:@"text"];
     cell.likeCount.text = [dictionary objectForKey:@"likes"];
-//    if ([[dictionary objectForKey:@"timestamp"] isEqualToString:@""]) {
-//        cell.timestamp.text = @"";
-//    }
-//    else
-//    cell.timestamp.text = [NSDate mysqlDatetimeFormattedAsTimeAgo:[dictionary objectForKey:@"timestamp"]];
-//     cell.timestamp.text =[NSDate stringForDisplayFromDate: mysqlDatetimeFormattedAsTimeAgo:[dictionary objectForKey:@"timestamp"]];
 
     cell.share.tag = indexPath.row;
     cell.flag.tag=indexPath.row;
     cell.like.tag=indexPath.row;
         
         
-//    }
-//    NSLog(@"title is %@ and %@",self.navigationItem.title, self.navigationController.navigationItem.title);
-//    cell.flag.imageView.image=nil;
     if (_pageIndex==0 )
         [cell.flag setImage:[UIImage imageNamed:@"trash.png"] forState:UIControlStateNormal ];
     else {
@@ -142,17 +110,6 @@
             if (items.count) cell.flag.userInteractionEnabled=NO;
         }];
     }
-    
-    //TO DO get isFlag and isLike status and disable button if already set
-//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"userId == %@  && postId == %@",userId,[dictionary objectForKey:@"id" ]];
-//    [self.isLikeTable readWithPredicate:predicate completion:^(NSArray *items, NSInteger totalCount, NSError *error) {
-//        if (items.count) cell.like.userInteractionEnabled=NO;
-//    }];
- 
-    
-    
-
     indexPathRow=indexPath;
     
     return cell;
@@ -161,74 +118,27 @@
     float bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height;
     if (bottomEdge >= scrollView.contentSize.height) {
         [self getData];
-        // we are at the end
-//        loadMore++;
-//        [self loadxmlparsing];
-        
     }
 }
-//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-//    [tableView beginUpdates];
-//    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
-//        [Flurry logEvent:@"Comment: Delete"];
-//        //add code here for when you hit delete
-//        
-//        NSString *commentId=[[self.array objectAtIndex:indexPath.row] objectForKey:@"id"];
-//        //        NSString *strlblcomments =[[self.array objectAtIndex:indexPath.row] objectForKey:@"comment"];
-//        //        NSLog(@"commentId is %@",strlblcomments);
-//        //        if ([strlblcomments isEqualToString:@""]) return;
-//        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-////        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-////        NSString *token = [defaults objectForKey:@"booklyAccessToken"];
-//        
-//        NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
-//        
-//        NSLog(@"final url is %@",urlString1);
-//        
-//        NSURL *url = [[NSURL alloc]initWithString:urlString1];
-//        NSLog(@"url is%@",url);
-//        [NSData dataWithContentsOfURL:url];
-//        [self.array removeObjectAtIndex:1];
-//        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
-//    }
-//    [tableView endUpdates];
-//}
+
 - (void) deleteText  {
     [self.theTableView beginUpdates];
-//    UITableViewCellEditingStyle editingStyle=1;
-//    if (editingStyle == UITableViewCellEditingStyleDelete) {  //&& page=mypages or page = private
-        [Flurry logEvent:@"Delete"];
-        //add code here for when you hit delete
-        
-//        NSString *postId=[[self.array objectAtIndex:indexPathRow.row] objectForKey:@"id"];
+    [Flurry logEvent:@"Delete"];
 
-//        NSString *strcommentId=[commentId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-
-//        NSString *urlString1=[NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=deleteComment&commentId=%@&authtoken=%@",strcommentId,token];
-    
-//        NSLog(@"final url is %@",urlString1);
-    
-//        NSURL *url = [[NSURL alloc]initWithString:urlString1];
-//        NSLog(@"url is%@",url);
-//        [NSData dataWithContentsOfURL:url];
     NSLog(@"delete id is %@",[[self.array objectAtIndex:flagButton] objectForKey:@"id" ]);
-//    [self.table delete:[[self.array objectAtIndex:flagButton] objectForKey:@"id" ] completion:^(id itemId, NSError *error) {
-//        //handle errors or any additional logic as needed
-//    }];
+
     [self.table deleteWithId:[[self.array objectAtIndex:flagButton] objectForKey:@"id" ] completion:^(NSDictionary *item, NSError *error) {
         [self logErrorIfNotNil:error];
     }];
     
         [self.array removeObjectAtIndex:flagButton];
         [self.theTableView deleteRowsAtIndexPaths:[NSMutableArray arrayWithObjects:indexPathRow, nil] withRowAnimation:UITableViewRowAnimationTop];
-//    }
     [self.theTableView endUpdates];
     [self.theTableView reloadData];
 }
 - (IBAction)likeAction:(id)sender {
     [Flurry logEvent:@"Like"];
     UIButton *btnPressLike = (UIButton*)sender;
-//    btnPressLike.userInteractionEnabled=NO;
     NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
 
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
@@ -242,11 +152,7 @@
             [self.table update:item completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
-//            NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//            NSDictionary *item1 =@{@"postId" :[dictionary  objectForKey:@"id" ], @"userId": userId};
-//            NSLog (@"items are %@",items[0]);
-//            NSMutableDictionary *dic = items[0];
-            
+
             [self.isLikeTable deleteWithId:[items[0] objectForKey:@"id"]completion:^(NSDictionary *item, NSError *error) {
                 [self logErrorIfNotNil:error];
             }];
@@ -270,96 +176,6 @@
             [self.theTableView reloadData];
         }
     }];
-
-//    NSDictionary *dictionary=[self.array objectAtIndex:btnPressLike.tag];
-//    NSString *likesCount = [NSString stringWithFormat:@"%d",[[dictionary objectForKey:@"likes"] integerValue]+1 ];
-//    [dictionary setValue:likesCount forKey:@"likes"];
-//    NSDictionary *item =@{@"id" : [dictionary objectForKey:@"id" ], @"likes": likesCount};
-//    [self.table update:item completion:^(NSDictionary *item, NSError *error) {
-//        //handle errors or any additional logic as needed
-//         [self logErrorIfNotNil:error];
-//    }];
-//    
-//    NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
-//    NSDictionary *item1 =@{@"postId" : [dictionary objectForKey:@"id" ], @"userId": userId};
-//    [self.isLikeTable insert:item1 completion:^(NSDictionary *item, NSError *error) {
-//        //handle errors or any additional logic as needed
-//        [self logErrorIfNotNil:error];
-//    }];
-//    [self.theTableView reloadData];
-
-
-//    NSInteger tagLikeBtn = btnPressLike.tag;
-//    BOOL isLikeValue = [[dictionary objectForKey:@"islike"] boolValue];  // 0 for UnLike, 1 for Like
-//    if (!isLikeValue) {
-////        [self facebookUpdateNewLikeActivity];
-//        [dictionary setValue:@"1" forKey:@"islike"];
-//        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
-//        count++;
-//        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
-//        //        [cell.btnLike setBackgroundImage:[UIImage imageNamed:@"heart_like.png"] forState:UIControlStateNormal];
-//        //  btnPressLike.userInteractionEnabled=FALSE;
-//        [self.theTableView reloadData];
-//        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-//        
-//        dispatch_barrier_async(queue, ^{
-//            
-//            
-//            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
-//            NSString *strMediaId=[dicMedia objectForKey:@"id"];
-//            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//            NSLog(@"media id is%@",strWithOutSpaceMediaId);
-//            
-//            NSString *strTagId=[dicMedia objectForKey:@"tagId"];
-//            NSString *strWithOutSpaceTagId = [strTagId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//            
-//            NSLog(@"tag id IS %@",strWithOutSpaceTagId);
-//            
-//            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=postLike&mediaId=%@&tagId=%@&authtoken=%@",strWithOutSpaceMediaId,strWithOutSpaceTagId,token];
-//            
-//            
-//            NSLog(@"final url is %@",urlString);
-//            
-//            NSURL *url = [[NSURL alloc] initWithString:urlString];
-//            NSLog(@"url is%@",url);
-//            //    IsLikeUnlikeTag=TRUE;
-//            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-//            url=nil;
-//            xmlParser=nil;
-//            //        [xmlParser setDelegate:self];
-//        });
-//        //   dispatch_release(queue);
-//    }
-//    else {
-//        [dictionary setValue:@"0" forKey:@"islike"];
-//        count--;
-//        [dictionary setValue:[NSString stringWithFormat:@"%ld", (long)count] forKey:@"like"];
-//        [self.theTableView reloadData];
-//        
-//        dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-//        
-//        dispatch_barrier_async(queue, ^{
-//            
-//            
-//            NSDictionary *dicMedia=[self.array objectAtIndex:tagLikeBtn];
-//            NSString *strMediaId=[dicMedia objectForKey:@"id"];
-//            NSString *strWithOutSpaceMediaId = [strMediaId stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-//            NSLog(@"media id is%@",strWithOutSpaceMediaId);
-//            NSString *urlString= [NSString stringWithFormat:@"http://m.omentos.com/backend/api.php?method=disLike&mediaId=%@&authtoken=%@",strWithOutSpaceMediaId,token];
-//            
-//            
-//            NSLog(@"final url is %@",urlString);
-//            
-//            NSURL *url = [[NSURL alloc] initWithString:urlString];
-//            NSLog(@"url is%@",url);
-//            NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];        //Set delegate
-//            //        [NSData dataWithContentsOfURL:url];
-//            url=nil;
-//            xmlParser=nil;
-//        });
-//        //   dispatch_release(queue);
-//    }
-    
 
 }
 
@@ -435,13 +251,7 @@
     UIImage * screenshot = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return screenshot;
-//    /* Render the screen shot at custom resolution */
-//    CGRect cropRect= CGRectMake(0 ,0 ,2560,2560);
-//    UIGraphicsBeginImageContextWithOptions(cropRect.size, YES, 1.0f);
-//    [screenshot drawInRect:cropRect];
-//    UIImage * customScreenShot = UIGraphicsGetImageFromCurrentImageContext();
-//    UIGraphicsEndImageContext();
-//    return customScreenShot;
+
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -487,30 +297,18 @@
           [[NSUserDefaults standardUserDefaults] setValue:buttonsArray[buttonIndex] forKey:@"twitterHandle"];
         [self refreshView];
     }
-//    [[self.view viewWithTag:1] removeFromSuperview];
 }
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 
 - (void) refreshView
 {
-//    self.array = nil;
-//    packagesOriginalImages=nil;
+
     self.array = [[NSMutableArray alloc] init];
-//    packagesOriginalImages=[[NSMutableArray alloc]init];
     [self getData];
-//    loadMore=1;
-//    
-//    dispatch_queue_t queue = dispatch_queue_create("com.saswata.queue", DISPATCH_QUEUE_SERIAL);
-//    dispatch_barrier_async(queue, ^{
-////        [self loadxmlparsing];
-//    });
-//    //   dispatch_release(queue);
-//    [self.theTableView reloadData];
     [refreshControl endRefreshing];
 
 }
@@ -529,118 +327,18 @@
     
 }
 
-//- (void) refreshDataOnSuccess:(completionBlock)completion
-//{
-//    // TODO
-//    // Create a predicate that finds items where complete is false
-//    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"complete == NO"];
-//    
-//    // TODO
-//    // Query the TodoItem table and update the items property with the results from the service
-//    [self.table readWithPredicate:predicate completion:^(NSArray *results, NSInteger totalCount, NSError *error)
-//     {
-//         self.items = [results mutableCopy];
-//         completion();
-//     }];
-//    
-//    completion();
-//}
-
-//-(void) addItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-//{
-//    // TODO
-//    // Insert the item into the TodoItem table and add to the items array on completion
-//    [self.table insert:item completion:^(NSDictionary *result, NSError *error) {
-//        NSUInteger index = [items count];
-//        [(NSMutableArray *)items insertObject:item atIndex:index];
-//        
-//        // Let the caller know that we finished
-//        completion(index);
-//    }];
-//    
-//    NSUInteger index = [items count];
-//    [(NSMutableArray *)items insertObject:item atIndex:index];
-//    
-//    // Let the caller know that we finished
-//    completion(index);
-//    
-//}
-
-//-(void) completeItem:(NSDictionary *)item completion:(completionWithIndexBlock)completion
-//{
-//    // Cast the public items property to the mutable type (it was created as mutable)
-//    NSMutableArray *mutableItems = (NSMutableArray *) items;
-//    
-//    // Set the item to be complete (we need a mutable copy)
-//    NSMutableDictionary *mutable = [item mutableCopy];
-//    [mutable setObject:@(YES) forKey:@"complete"];
-//    
-//    // Replace the original in the items array
-//    NSUInteger index = [items indexOfObjectIdenticalTo:item];
-//    [mutableItems replaceObjectAtIndex:index withObject:mutable];
-//    
-//    // TODO
-//    // Update the item in the TodoItem table and remove from the items array on completion
-//    [self.table update:mutable completion:^(NSDictionary *item, NSError *error) {
-//        
-//        // TODO
-//        // Get a fresh index in case the list has changed
-//        NSUInteger index = [items indexOfObjectIdenticalTo:mutable];
-//        
-//        [mutableItems removeObjectAtIndex:index];
-//        
-//        // Let the caller know that we have finished
-//        completion(index);
-//    }];
-//    
-//    
-//    [mutableItems removeObjectAtIndex:index];
-//    
-//    // Let the caller know that we have finished
-//    completion(index);
-//    
-//}
-
 - (void) logErrorIfNotNil:(NSError *) error
 {
     if (error) {
         NSLog(@"ERROR %@", error);
     }
 }
-//- (void) loadResults {
-//    MSQuery *query = [self.table query];
-//    
-//    query.includeTotalCount = YES;
-//    query.fetchLimit = 20;
-//    query.fetchOffset = self.loadedItems.count;
-//    
-//    [query readWithCompletion:^(NSArray *itemsDB, NSInteger totalCount, NSError *error) {
-//        if(!error) {
-//            //add the items to our local copy
-//            [self.loadedItems addObjectsFromArray:itemsDB];
-//            
-//            //set a flag to keep track if there are any additional records we need to load
-//            self.moreResults = (self.loadedItems.count < totalCount);
-//        }
-//    }];
-//    
-//}
 
 - (void) getData {
-//    if (!loadMore) {
-//        return;
-//    }
-
     NSLog(@"getting data...");
     NSString *userId = [SSKeychain passwordForService:@"com.anonogram.guruhubb" account:@"user"];
     MSQuery * query;
     switch (_pageIndex) {
-//        case 0:{ //mypage
-//            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userId == %@",userId];
-//            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
-//
-//        }
-//            break;
         case 0: { //private
             NSPredicate * predicate = [NSPredicate predicateWithFormat:@"(isPrivate == YES)  &&  (text contains[cd] %@)",[defaults objectForKey:@"twitterHandle"]];
             query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
@@ -659,11 +357,6 @@
             [query orderByDescending:@"timestamp"];  //first order by ascending duration field
 
         }
-            break;
-//        case 4: {//search
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"text contains[cd] %@",[defaults objectForKey:@"search"] ];
-//            query = [[MSQuery alloc] initWithTable:self.table predicate:predicate];
-//        }
             break;
         default:{ //home
             query = [[MSQuery alloc] initWithTable:self.table ];
@@ -741,11 +434,6 @@
      {
          if(granted) {
              NSArray *accountsArray = [accountStore accountsWithAccountType:accountType];
-//             ACAccount *twitterAccount;
-//             if (accountsArray.count!=0) {
-//                twitterAccount = [accountsArray objectAtIndex:0];
-//             }
-//             NSLog(@"%@",accountsArray);
              if ([accountsArray count] > 0) {
                  ACAccount *twitterAccount = [accountsArray objectAtIndex:0];
                  NSLog(@"%@",twitterAccount.username);
@@ -756,51 +444,6 @@
              
          }}];
     NSLog(@"twitterHandle is %@",[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]);
-    //get the username later...
-    //        [textField setText:[[NSUserDefaults standardUserDefaults] valueForKey:@"twitterHandle"]];
-    
-//    NSURL *url = [NSURL URLWithString:@"https://api.twitter.com/1.1/users/show.json"];
-//    NSMutableDictionary *params = [NSMutableDictionary new];
-//    [params setObject:tempUserID forKey:@"user_id"];
-//    [params setObject:@"0" forKey:@"include_rts"]; // don't include retweets
-//    [params setObject:@"1" forKey:@"trim_user"]; // trim the user information
-//    [params setObject:@"1" forKey:@"count"]; // i don't even know what this does but it does something useful
-//    SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodGET URL:url parameters:params];
-//
-//
-//    //  Attach an account to the request
-//    [request setAccount:twitterAccount]; // this can be any Twitter account obtained from the Account store
-//    
-//    [request performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
-//        if (responseData) {
-//            NSDictionary *twitterData = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingAllowFragments error:NULL];
-//            NSLog(@"received Twitter data: %@", twitterData);
-//            
-//            // to do something useful with this data:
-//            NSString *screen_name = [twitterData objectForKey:@"screen_name"]; // the screen name you were after
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                // update your UI in here
-//                twitterScreenNameLabel.text = screen_name;
-//            });
-//            
-            // A handy bonus tip: twitter display picture
-//            NSString *profileImageUrl = [twitterData objectForKey:@"profile_image_url"];
-//            
-//            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//                
-//                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profileImageUrl]];
-//                UIImage *image = [UIImage imageWithData:imageData]; // the matching profile image
-//                
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    // assign it to an imageview in your UI here
-//                    twitterProfileImageView.image = image;
-//                });
-//            });
-//        }else{
-//            NSLog(@"Error while downloading Twitter user data: %@", error);
-//        }
-//    }];
 }
 
 
